@@ -13,6 +13,7 @@ from cryptography.exceptions import (
 from cryptography.hazmat.backends.openssl.utils import (
     _calculate_digest_and_algorithm,
     _check_not_prehashed,
+    _evp_pkey_derive,
     _warn_sign_verify_deprecated,
 )
 from cryptography.hazmat.primitives import hashes, serialization
@@ -160,6 +161,7 @@ class _EllipticCurvePrivateKey(object):
         _warn_sign_verify_deprecated()
         _check_signature_algorithm(signature_algorithm)
         _check_not_prehashed(signature_algorithm.algorithm)
+        assert isinstance(signature_algorithm.algorithm, hashes.HashAlgorithm)
         return _ECDSASignatureContext(
             self._backend, self, signature_algorithm.algorithm
         )
@@ -260,6 +262,7 @@ class _EllipticCurvePublicKey(object):
 
         _check_signature_algorithm(signature_algorithm)
         _check_not_prehashed(signature_algorithm.algorithm)
+        assert isinstance(signature_algorithm.algorithm, hashes.HashAlgorithm)
         return _ECDSAVerificationContext(
             self._backend, self, signature, signature_algorithm.algorithm
         )

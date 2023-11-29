@@ -126,29 +126,34 @@ class _DHPrivateKey(object):
             x=self._backend._bn_to_int(priv_key[0]),
         )
 
-    def exchange(self, peer_public_key):
+    def exchange(self, peer_public_key: dh.DHPublicKey) -> bytes:
+        if not isinstance(peer_public_key, _DHPublicKey):
+            raise TypeError("peer_public_key must be a DHPublicKey")
 
-        buf = self._backend._ffi.new("unsigned char[]", self._key_size_bytes)
-        pub_key = self._backend._ffi.new("BIGNUM **")
-        self._backend._lib.DH_get0_key(
-            peer_public_key._dh_cdata, pub_key, self._backend._ffi.NULL
+        ctx = self._backend._lib.EVP_PKEY_CTX_new(
+            self._evp_pkey, self._backend._ffi.NULL
         )
-        self._backend.openssl_assert(pub_key[0] != self._backend._ffi.NULL)
-        res = self._backend._lib.DH_compute_key(
-            buf, pub_key[0], self._dh_cdata
+        self._backend.openssl_assert(ctx != self._backend._ffi.NULL)
+        ctx = self._backend._ffi.gc(ctx, self._backend._lib.EVP_PKEY_CTX_free)
+        res = self._backend._lib.EVP_PKEY_derive_init(ctx)
+        self._backend.openssl_assert(res == 1)
+        res = self._backend._lib.EVP_PKEY_derive_set_peer(
+            ctx, peer_public_key._evp_pkey
         )
 
-        if res == -1:
-            errors_with_text = self._backend._consume_errors_with_text()
-            raise ValueError(
-                "Error computing shared key. Public key is likely invalid "
-                "for this exchange.",
-                errors_with_text,
+        self._exchange_assert(res == 1)
+        keylen = self._backend._ffi.new("size_t *")
+        res = self._backend._lib.EVP_PKEY_derive(
+            ctx, self._backend._ffi.NULL, keylen
             )
-        else:
-            self._backend.openssl_assert(res >= 1)
 
-            key = self._backend._ffi.buffer(buf)[:res]
+        self._exchange_assert(res == 1)
+        self._backend.openssl_assert(keylen[0] > 0)
+        buf = self._backend._ffi.new("unsigned char[]", keylen[0])
+        res = self._backend._lib.EVP_PKEY_derive(ctx, buf, keylen)
+        self._backend.openssl_assert(res == 1)
+
+        key = self._backend._ffi.buffer(buf, keylen[0])[:]
             pad = self._key_size_bytes - len(key)
 
             if pad > 0:
@@ -156,7 +161,15 @@ class _DHPrivateKey(object):
 
             return key
 
-    def public_key(self):
+    def _exchange_assert(self, ok):
+        if not ok:
+            errors_with_text = self._backend._consume_errors_with_text()
+            raise ValueError(
+                "Error computing shared key.",
+                errors_with_text,
+            )
+
+    def public_key(self) -> dh.DHPublicKey:
         dh_cdata = _dh_params_dup(self._dh_cdata, self._backend)
         pub_key = self._backend._ffi.new("BIGNUM **")
         self._backend._lib.DH_get0_key(

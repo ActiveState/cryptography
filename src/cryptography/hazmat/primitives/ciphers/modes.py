@@ -9,6 +9,11 @@ import abc
 import six
 
 from cryptography import utils
+from cryptography.exceptions import UnsupportedAlgorithm, _Reasons
+from cryptography.hazmat.primitives._cipheralgorithm import (
+    BlockCipherAlgorithm,
+    CipherAlgorithm,
+)
 
 
 @six.add_metaclass(abc.ABCMeta)
@@ -79,6 +84,13 @@ def _check_iv_length(self, algorithm):
         )
 
 
+def _check_nonce_length(nonce, name, algorithm):
+    if len(nonce) * 8 != algorithm.block_size:
+        raise ValueError(
+            "Invalid nonce size ({}) for {}.".format(len(nonce), name)
+        )
+
+
 def _check_iv_and_key_length(self, algorithm):
     _check_aes_key_length(self, algorithm)
     _check_iv_length(self, algorithm)
@@ -93,7 +105,10 @@ class CBC(object):
         utils._check_byteslike("initialization_vector", initialization_vector)
         self._initialization_vector = initialization_vector
 
-    initialization_vector = utils.read_only_property("_initialization_vector")
+    @property
+    def initialization_vector(self):
+        return self._initialization_vector
+
     validate_for_algorithm = _check_iv_and_key_length
 
 
@@ -110,7 +125,9 @@ class XTS(object):
 
         self._tweak = tweak
 
-    tweak = utils.read_only_property("_tweak")
+    @property
+    def tweak(self):
+        return self._tweak
 
     def validate_for_algorithm(self, algorithm):
         if algorithm.key_size not in (256, 512):
@@ -136,7 +153,9 @@ class OFB(object):
         utils._check_byteslike("initialization_vector", initialization_vector)
         self._initialization_vector = initialization_vector
 
-    initialization_vector = utils.read_only_property("_initialization_vector")
+    @property
+    def initialization_vector(self):
+        return self._initialization_vector
     validate_for_algorithm = _check_iv_and_key_length
 
 
@@ -149,7 +168,9 @@ class CFB(object):
         utils._check_byteslike("initialization_vector", initialization_vector)
         self._initialization_vector = initialization_vector
 
-    initialization_vector = utils.read_only_property("_initialization_vector")
+    @property
+    def initialization_vector(self):
+        return self._initialization_vector
     validate_for_algorithm = _check_iv_and_key_length
 
 
@@ -162,7 +183,9 @@ class CFB8(object):
         utils._check_byteslike("initialization_vector", initialization_vector)
         self._initialization_vector = initialization_vector
 
-    initialization_vector = utils.read_only_property("_initialization_vector")
+    @property
+    def initialization_vector(self):
+        return self._initialization_vector
     validate_for_algorithm = _check_iv_and_key_length
 
 
@@ -175,16 +198,13 @@ class CTR(object):
         utils._check_byteslike("nonce", nonce)
         self._nonce = nonce
 
-    nonce = utils.read_only_property("_nonce")
+    @property
+    def nonce(self):
+        return self._nonce
 
     def validate_for_algorithm(self, algorithm):
         _check_aes_key_length(self, algorithm)
-        if len(self.nonce) * 8 != algorithm.block_size:
-            raise ValueError(
-                "Invalid nonce size ({}) for {}.".format(
-                    len(self.nonce), self.name
-                )
-            )
+        _check_nonce_length(self.nonce, self.name, algorithm)
 
 
 @utils.register_interface(Mode)
@@ -218,8 +238,25 @@ class GCM(object):
         self._tag = tag
         self._min_tag_length = min_tag_length
 
-    tag = utils.read_only_property("_tag")
-    initialization_vector = utils.read_only_property("_initialization_vector")
+    @property
+    def tag(self):
+        return self._tag
 
-    def validate_for_algorithm(self, algorithm):
+    @property
+    def initialization_vector(self):
+        return self._initialization_vector
+
+    def validate_for_algorithm(self, algorithm: CipherAlgorithm):
         _check_aes_key_length(self, algorithm)
+        if not isinstance(algorithm, BlockCipherAlgorithm):
+            raise UnsupportedAlgorithm(
+                "GCM requires a block cipher algorithm",
+                _Reasons.UNSUPPORTED_CIPHER,
+            )
+        block_size_bytes = algorithm.block_size // 8
+        if self._tag is not None and len(self._tag) > block_size_bytes:
+            raise ValueError(
+                "Authentication tag cannot be more than {} bytes.".format(
+                    block_size_bytes
+                )
+            )

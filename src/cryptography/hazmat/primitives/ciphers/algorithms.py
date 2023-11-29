@@ -163,8 +163,23 @@ class ChaCha20(object):
 
         self._nonce = nonce
 
-    nonce = utils.read_only_property("_nonce")
+    @property
+    def nonce(self):
+        return self._nonce
 
     @property
     def key_size(self):
+        return len(self.key) * 8
+
+
+class SM4(CipherAlgorithm, BlockCipherAlgorithm):
+    name = "SM4"
+    block_size = 128
+    key_sizes = frozenset([128])
+
+    def __init__(self, key: bytes):
+        self.key = _verify_key_size(self, key)
+
+    @property
+    def key_size(self) -> int:
         return len(self.key) * 8

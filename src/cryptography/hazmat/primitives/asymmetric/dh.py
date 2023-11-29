@@ -10,6 +10,8 @@ import six
 
 from cryptography import utils
 from cryptography.hazmat.backends import _get_backend
+from cryptography.hazmat.backends.interfaces import Backend
+from cryptography.hazmat.primitives import serialization
 
 
 _MIN_MODULUS_SIZE = 512
@@ -20,37 +22,45 @@ def generate_parameters(generator, key_size, backend=None):
     return backend.generate_dh_parameters(generator, key_size)
 
 
-class DHPrivateNumbers(object):
-    def __init__(self, x, public_numbers):
-        if not isinstance(x, six.integer_types):
-            raise TypeError("x must be an integer.")
+class DHParameterNumbers(object):
+    def __init__(self, p, g, q=None):
+        if not isinstance(x, six.integer_types) or not isinstance(p,six.integer_types:
+            raise TypeError("p and g must be integers")
+        if q is not None and not isinstance(q, six.integer_types):
+            raise TypeError("q must be integer or None")
 
-        if not isinstance(public_numbers, DHPublicNumbers):
-            raise TypeError(
-                "public_numbers must be an instance of " "DHPublicNumbers."
+        if g < 2:
+            raise ValueError("DH generator must be 2 or greater")
+
+        if p.bit_length() < _MIN_MODULUS_SIZE:
+            raise ValueError(
+                "p (modulus) must be at least {}-bit".format(_MIN_MODULUS_SIZE)
             )
 
-        self._x = x
-        self._public_numbers = public_numbers
+        self._p = p
+        self._g = g
+        self._q = q
 
     def __eq__(self, other):
-        if not isinstance(other, DHPrivateNumbers):
+        if not isinstance(other, DHParameterNumbers):
             return NotImplemented
 
         return (
-            self._x == other._x
-            and self._public_numbers == other._public_numbers
+            self._p == other._p and self._g == other._g and self._q == other._q
         )
 
     def __ne__(self, other):
         return not self == other
 
-    def private_key(self, backend=None):
+    def parameters(
+        self, backend: typing.Optional[Backend] = None
+    ) -> "DHParameters":
         backend = _get_backend(backend)
-        return backend.load_dh_private_numbers(self)
+        return backend.load_dh_parameter_numbers(self)
 
-    public_numbers = utils.read_only_property("_public_numbers")
-    x = utils.read_only_property("_x")
+    p = property(lambda self: self._p)
+    g = property(lambda self: self._g)
+    q = property(lambda self: self._q)
 
 
 class DHPublicNumbers(object):
@@ -82,49 +92,41 @@ class DHPublicNumbers(object):
         backend = _get_backend(backend)
         return backend.load_dh_public_numbers(self)
 
-    y = utils.read_only_property("_y")
-    parameter_numbers = utils.read_only_property("_parameter_numbers")
+    y = property(lambda self: self._y)
+    parameter_numbers = property(lambda self: self._parameter_numbers)
 
 
-class DHParameterNumbers(object):
-    def __init__(self, p, g, q=None):
-        if not isinstance(p, six.integer_types) or not isinstance(
-            g, six.integer_types
-        ):
-            raise TypeError("p and g must be integers")
-        if q is not None and not isinstance(q, six.integer_types):
-            raise TypeError("q must be integer or None")
+class DHPrivateNumbers(object):
+    def __init__(self, x: int, public_numbers: DHPublicNumbers) -> None:
+        if not isinstance(x, int):
+            raise TypeError("x must be an integer.")
 
-        if g < 2:
-            raise ValueError("DH generator must be 2 or greater")
-
-        if p.bit_length() < _MIN_MODULUS_SIZE:
-            raise ValueError(
-                "p (modulus) must be at least {}-bit".format(_MIN_MODULUS_SIZE)
+        if not isinstance(public_numbers, DHPublicNumbers):
+            raise TypeError(
+                "public_numbers must be an instance of " "DHPublicNumbers."
             )
 
-        self._p = p
-        self._g = g
-        self._q = q
+        self._x = x
+        self._public_numbers = public_numbers
 
     def __eq__(self, other):
-        if not isinstance(other, DHParameterNumbers):
+        if not isinstance(other, DHPrivateNumbers):
             return NotImplemented
 
         return (
-            self._p == other._p and self._g == other._g and self._q == other._q
+            self._x == other._x
+            and self._public_numbers == other._public_numbers
         )
 
     def __ne__(self, other):
         return not self == other
 
-    def parameters(self, backend=None):
+    def private_key(self, backend=None):
         backend = _get_backend(backend)
-        return backend.load_dh_parameter_numbers(self)
+        return backend.load_dh_private_numbers(self)
 
-    p = utils.read_only_property("_p")
-    g = utils.read_only_property("_g")
-    q = utils.read_only_property("_q")
+    public_numbers = property(lambda self: self._public_numbers)
+    x = property(lambda self: self._x)
 
 
 @six.add_metaclass(abc.ABCMeta)
@@ -160,22 +162,25 @@ class DHPrivateKey(object):
         """
 
     @abc.abstractmethod
-    def public_key(self):
-        """
-        The DHPublicKey associated with this private key.
-        """
-
-    @abc.abstractmethod
     def parameters(self):
         """
-        The DHParameters object associated with this private key.
+        The DHParameters object associated with this public key.
         """
 
     @abc.abstractmethod
-    def exchange(self, peer_public_key):
+    def public_numbers(self)
         """
-        Given peer's DHPublicKey, carry out the key exchange and
-        return shared key as bytes.
+        Returns a DHPublicNumbers.
+        """
+
+    @abc.abstractmethod
+    def public_bytes(
+        self,
+        encoding,
+        format:,
+    ) -> bytes:
+        """
+        Returns the key serialized as bytes.
         """
 
 

@@ -17,32 +17,9 @@ from cryptography.exceptions import (
     _Reasons,
 )
 from cryptography.hazmat.backends import _get_backend
-from cryptography.hazmat.backends.interfaces import CipherBackend
+from cryptography.hazmat.backends.interfaces import Backend, CipherBackend
+from cryptography.hazmat.primitives._cipheralgorithm import CipherAlgorithm
 from cryptography.hazmat.primitives.ciphers import modes
-
-
-@six.add_metaclass(abc.ABCMeta)
-class CipherAlgorithm(object):
-    @abc.abstractproperty
-    def name(self):
-        """
-        A string naming this mode (e.g. "AES", "Camellia").
-        """
-
-    @abc.abstractproperty
-    def key_size(self):
-        """
-        The size of the key being used as an integer in bits (e.g. 128, 256).
-        """
-
-
-@six.add_metaclass(abc.ABCMeta)
-class BlockCipherAlgorithm(object):
-    @abc.abstractproperty
-    def block_size(self):
-        """
-        The size of a block as an integer in bits (e.g. 64, 128).
-        """
 
 
 @six.add_metaclass(abc.ABCMeta)
@@ -238,4 +215,5 @@ class _AEADEncryptionContext(_AEADCipherContext):
             raise NotYetFinalized(
                 "You must finalize encryption before " "getting the tag."
             )
+        assert self._tag is not None
         return self._tag

@@ -14,8 +14,8 @@ from cryptography.exceptions import (
     _Reasons,
 )
 from cryptography.hazmat.backends import _get_backend
-from cryptography.hazmat.backends.interfaces import HMACBackend
-from cryptography.hazmat.primitives import constant_time, hmac
+from cryptography.hazmat.backends.interfaces import Backend, HMACBackend
+from cryptography.hazmat.primitives import constant_time, hashes, hmac
 from cryptography.hazmat.primitives.kdf import KeyDerivationFunction
 
 

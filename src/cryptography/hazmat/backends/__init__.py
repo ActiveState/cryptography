@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+from cryptography.hazmat.backends.interfaces import Backend
 
 _default_backend = None
 

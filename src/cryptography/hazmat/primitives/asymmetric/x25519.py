@@ -9,6 +9,7 @@ import abc
 import six
 
 from cryptography.exceptions import UnsupportedAlgorithm, _Reasons
+from cryptography.hazmat.primitives import _serialization
 
 
 @six.add_metaclass(abc.ABCMeta)

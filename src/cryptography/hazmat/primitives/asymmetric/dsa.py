@@ -10,6 +10,13 @@ import six
 
 from cryptography import utils
 from cryptography.hazmat.backends import _get_backend
+from cryptography.hazmat.backends.interfaces import Backend
+from cryptography.hazmat.primitives import _serialization, hashes
+from cryptography.hazmat.primitives.asymmetric import (
+    AsymmetricSignatureContext,
+    AsymmetricVerificationContext,
+    utils as asym_utils,
+)
 
 
 @six.add_metaclass(abc.ABCMeta)
@@ -167,9 +174,9 @@ class DSAParameterNumbers(object):
         self._q = q
         self._g = g
 
-    p = utils.read_only_property("_p")
-    q = utils.read_only_property("_q")
-    g = utils.read_only_property("_g")
+    p = property(lambda self: self._p)
+    q = property(lambda self: self._q)
+    g = property(lambda self: self._g)
 
     def parameters(self, backend=None):
         backend = _get_backend(backend)
@@ -204,8 +211,8 @@ class DSAPublicNumbers(object):
         self._y = y
         self._parameter_numbers = parameter_numbers
 
-    y = utils.read_only_property("_y")
-    parameter_numbers = utils.read_only_property("_parameter_numbers")
+    y = property(lambda self: self._y)
+    parameter_numbers = property(lambda self: self._parameter_numbers)
 
     def public_key(self, backend=None):
         backend = _get_backend(backend)
@@ -242,8 +249,8 @@ class DSAPrivateNumbers(object):
         self._public_numbers = public_numbers
         self._x = x
 
-    x = utils.read_only_property("_x")
-    public_numbers = utils.read_only_property("_public_numbers")
+    x = property(lambda self: self._x)
+    public_numbers = property(lambda self: self._public_numbers)
 
     def private_key(self, backend=None):
         backend = _get_backend(backend)

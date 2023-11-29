@@ -14,8 +14,11 @@ from cryptography.exceptions import (
     _Reasons,
 )
 from cryptography.hazmat.backends import _get_backend
-from cryptography.hazmat.backends.interfaces import HMACBackend
-from cryptography.hazmat.backends.interfaces import HashBackend
+from cryptography.hazmat.backends.interfaces import (
+    Backend,
+    HMACBackend,
+    HashBackend,
+)
 from cryptography.hazmat.primitives import constant_time, hashes, hmac
 from cryptography.hazmat.primitives.kdf import KeyDerivationFunction
 
@@ -99,6 +102,10 @@ class ConcatKDFHMAC(object):
         self._otherinfo = otherinfo
         if self._otherinfo is None:
             self._otherinfo = b""
+	if algorithm.block_size is None:
+            raise TypeError(
+                "{} is unsupported for ConcatKDF".format(algorithm.name)
+            )
 
         if salt is None:
             salt = b"\x00" * algorithm.block_size

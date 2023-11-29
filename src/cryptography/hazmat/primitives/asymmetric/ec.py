@@ -12,6 +12,13 @@ import six
 from cryptography import utils
 from cryptography.hazmat._oid import ObjectIdentifier
 from cryptography.hazmat.backends import _get_backend
+from cryptography.hazmat.backends.interfaces import Backend
+from cryptography.hazmat.primitives import _serialization, hashes
+from cryptography.hazmat.primitives.asymmetric import (
+    AsymmetricSignatureContext,
+    AsymmetricVerificationContext,
+    utils as asym_utils,
+)
 
 
 class EllipticCurveOID(object):
@@ -400,9 +407,9 @@ class EllipticCurvePublicNumbers(object):
         else:
             raise ValueError("Unsupported elliptic curve point type")
 
-    curve = utils.read_only_property("_curve")
-    x = utils.read_only_property("_x")
-    y = utils.read_only_property("_y")
+    curve = property(lambda self: self._curve)
+    x = property(lambda self: self._x)
+    y = property(lambda self: self._y)
 
     def __eq__(self, other):
         if not isinstance(other, EllipticCurvePublicNumbers):
@@ -446,8 +453,8 @@ class EllipticCurvePrivateNumbers(object):
         backend = _get_backend(backend)
         return backend.load_elliptic_curve_private_numbers(self)
 
-    private_value = utils.read_only_property("_private_value")
-    public_numbers = utils.read_only_property("_public_numbers")
+    private_value = property(lambda self: self._private_value)
+    public_numbers = property(lambda self: self._public_numbers)
 
     def __eq__(self, other):
         if not isinstance(other, EllipticCurvePrivateNumbers):

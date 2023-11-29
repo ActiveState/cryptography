@@ -15,7 +15,7 @@ from cryptography.hazmat.bindings._openssl import ffi, lib
 from cryptography.hazmat.bindings.openssl._conditional import CONDITIONAL_NAMES
 
 _OpenSSLErrorWithText = collections.namedtuple(
-    "_OpenSSLErrorWithText", ["code", "lib", "func", "reason", "reason_text"]
+    "_OpenSSLErrorWithText", ["code", "lib", "reason", "reason_text"]
 )
 
 
@@ -23,7 +23,6 @@ class _OpenSSLError(object):
     def __init__(self, code, lib, func, reason):
         self._code = code
         self._lib = lib
-        self._func = func
         self._reason = reason
 
     def _lib_reason_match(self, lib, reason):
@@ -31,7 +30,6 @@ class _OpenSSLError(object):
 
     code = utils.read_only_property("_code")
     lib = utils.read_only_property("_lib")
-    func = utils.read_only_property("_func")
     reason = utils.read_only_property("_reason")
 
 
@@ -43,10 +41,9 @@ def _consume_errors(lib):
             break
 
         err_lib = lib.ERR_GET_LIB(code)
-        err_func = lib.ERR_GET_FUNC(code)
         err_reason = lib.ERR_GET_REASON(code)
 
-        errors.append(_OpenSSLError(code, err_lib, err_func, err_reason))
+        errors.append(_OpenSSLError(code, err_lib, err_reason))
 
     return errors
 
@@ -60,7 +57,7 @@ def _errors_with_text(errors):
 
         errors_with_text.append(
             _OpenSSLErrorWithText(
-                err.code, err.lib, err.func, err.reason, err_text_reason
+                err.code, err.lib, err.reason, err_text_reason
             )
         )
 
@@ -113,9 +110,26 @@ class Binding(object):
     ffi = ffi
     _lib_loaded = False
     _init_lock = threading.Lock()
+    _legacy_provider = None
+    _default_provider = None
 
     def __init__(self):
         self._ensure_ffi_initialized()
+    def _enable_fips(self):
+        # This function enables FIPS mode for OpenSSL 3.0.0 on installs that
+        # have the FIPS provider installed properly.
+        _openssl_assert(self.lib, self.lib.CRYPTOGRAPHY_OPENSSL_300_OR_GREATER)
+        self._base_provider = self.lib.OSSL_PROVIDER_load(
+            self.ffi.NULL, b"base"
+        )
+        _openssl_assert(self.lib, self._base_provider != self.ffi.NULL)
+        self.lib._fips_provider = self.lib.OSSL_PROVIDER_load(
+            self.ffi.NULL, b"fips"
+        )
+        _openssl_assert(self.lib, self.lib._fips_provider != self.ffi.NULL)
+
+        res = self.lib.EVP_default_properties_enable_fips(self.ffi.NULL, 1)
+        _openssl_assert(self.lib, res == 1)
 
     @classmethod
     def _register_osrandom_engine(cls):
@@ -140,6 +154,19 @@ class Binding(object):
                 # adds all ciphers/digests for EVP
                 cls.lib.OpenSSL_add_all_algorithms()
                 cls._register_osrandom_engine()
+                if cls.lib.CRYPTOGRAPHY_OPENSSL_300_OR_GREATER:
+                    cls._legacy_provider = cls.lib.OSSL_PROVIDER_load(
+                        cls.ffi.NULL, b"legacy"
+                    )
+                    _openssl_assert(
+                        cls.lib, cls._legacy_provider != cls.ffi.NULL
+                    )
+                    cls._default_provider = cls.lib.OSSL_PROVIDER_load(
+                        cls.ffi.NULL, b"default"
+                    )
+                    _openssl_assert(
+                        cls.lib, cls._default_provider != cls.ffi.NULL
+                    )
 
     @classmethod
     def init_static_locks(cls):
