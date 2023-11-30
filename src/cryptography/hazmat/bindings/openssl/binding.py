@@ -113,10 +113,27 @@ class Binding(object):
     ffi = ffi
     _lib_loaded = False
     _init_lock = threading.Lock()
+    _legacy_provider = None
+    _default_provider = None
 
     def __init__(self):
         self._ensure_ffi_initialized()
 
+    def _enable_fips(self):
+        # This function enables FIPS mode for OpenSSL 3.0.0 on installs that
+        # have the FIPS provider installed properly.
+        _openssl_assert(self.lib, self.lib.CRYPTOGRAPHY_OPENSSL_300_OR_GREATER)
+        self._base_provider = self.lib.OSSL_PROVIDER_load(
+            self.ffi.NULL, b"base"
+        )
+        _openssl_assert(self.lib, self._base_provider != self.ffi.NULL)
+        self.lib._fips_provider = self.lib.OSSL_PROVIDER_load(
+            self.ffi.NULL, b"fips"
+        )
+        _openssl_assert(self.lib, self.lib._fips_provider != self.ffi.NULL)
+
+        res = self.lib.EVP_default_properties_enable_fips(self.ffi.NULL, 1)
+        _openssl_assert(self.lib, res == 1)
     @classmethod
     def _register_osrandom_engine(cls):
         # Clear any errors extant in the queue before we start. In many
@@ -140,6 +157,19 @@ class Binding(object):
                 # adds all ciphers/digests for EVP
                 cls.lib.OpenSSL_add_all_algorithms()
                 cls._register_osrandom_engine()
+                if cls.lib.CRYPTOGRAPHY_OPENSSL_300_OR_GREATER:
+                    cls._legacy_provider = cls.lib.OSSL_PROVIDER_load(
+                        cls.ffi.NULL, b"legacy"
+                    )
+                    _openssl_assert(
+                        cls.lib, cls._legacy_provider != cls.ffi.NULL
+                    )
+                    cls._default_provider = cls.lib.OSSL_PROVIDER_load(
+                        cls.ffi.NULL, b"default"
+                    )
+                    _openssl_assert(
+                        cls.lib, cls._default_provider != cls.ffi.NULL
+                    )
 
     @classmethod
     def init_static_locks(cls):
