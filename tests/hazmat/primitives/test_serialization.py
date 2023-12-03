@@ -11,41 +11,19 @@ import textwrap
 import pytest
 
 from cryptography.exceptions import UnsupportedAlgorithm
-from cryptography.hazmat.primitives.asymmetric import (
-    dsa,
-    ec,
-    ed25519,
-    ed448,
-    rsa,
-    x25519,
-    x448,
-)
+from cryptography.hazmat.primitives.asymmetric import (dsa, ec, ed448, ed25519,
+                                                       rsa, x448, x25519)
 from cryptography.hazmat.primitives.serialization import (
-    BestAvailableEncryption,
-    Encoding,
-    KeySerializationEncryption,
-    NoEncryption,
-    PrivateFormat,
-    PublicFormat,
-    load_der_parameters,
-    load_der_private_key,
-    load_der_public_key,
-    load_pem_parameters,
-    load_pem_private_key,
-    load_pem_public_key,
-    load_ssh_private_key,
-    load_ssh_public_key,
-    ssh,
-)
+    BestAvailableEncryption, Encoding, KeySerializationEncryption,
+    NoEncryption, PrivateFormat, PublicFormat, load_der_parameters,
+    load_der_private_key, load_der_public_key, load_pem_parameters,
+    load_pem_private_key, load_pem_public_key, load_ssh_private_key,
+    load_ssh_public_key, ssh)
 
-
-from .test_ec import _skip_curve_unsupported
-from .utils import (
-    _check_dsa_private_numbers,
-    _check_rsa_private_numbers,
-)
 from ...doubles import DummyKeySerializationEncryption
 from ...utils import load_vectors_from_file
+from .test_ec import _skip_curve_unsupported
+from .utils import _check_dsa_private_numbers, _check_rsa_private_numbers
 
 
 def _skip_fips_format(key_path, password, backend):

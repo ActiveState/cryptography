@@ -14,9 +14,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
 from cryptography.hazmat.primitives.serialization.pkcs12 import (
-    load_key_and_certificates,
-    serialize_key_and_certificates,
-)
+    load_key_and_certificates, serialize_key_and_certificates)
 
 from ...doubles import DummyKeySerializationEncryption
 from ...utils import load_vectors_from_file

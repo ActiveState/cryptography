@@ -12,38 +12,25 @@ import os
 import typing
 
 import pytest
-
 import pytz
 
 from cryptography import utils, x509
 from cryptography.exceptions import UnsupportedAlgorithm
 from cryptography.hazmat.bindings._rust import asn1
 from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import (
-    dh,
-    dsa,
-    ec,
-    ed25519,
-    ed448,
-    padding,
-    rsa,
-)
-from cryptography.hazmat.primitives.asymmetric.utils import (
-    decode_dss_signature,
-)
+from cryptography.hazmat.primitives.asymmetric import (dh, dsa, ec, ed448,
+                                                       ed25519, padding, rsa)
+from cryptography.hazmat.primitives.asymmetric.utils import \
+    decode_dss_signature
 from cryptography.x509.name import _ASN1Type
-from cryptography.x509.oid import (
-    AuthorityInformationAccessOID,
-    ExtendedKeyUsageOID,
-    ExtensionOID,
-    NameOID,
-    SignatureAlgorithmOID,
-    SubjectInformationAccessOID,
-)
+from cryptography.x509.oid import (AuthorityInformationAccessOID,
+                                   ExtendedKeyUsageOID, ExtensionOID, NameOID,
+                                   SignatureAlgorithmOID,
+                                   SubjectInformationAccessOID)
 
 from ..hazmat.primitives.fixtures_dsa import DSA_KEY_2048
 from ..hazmat.primitives.fixtures_ec import EC_KEY_SECP256R1
-from ..hazmat.primitives.fixtures_rsa import RSA_KEY_2048, RSA_KEY_512
+from ..hazmat.primitives.fixtures_rsa import RSA_KEY_512, RSA_KEY_2048
 from ..hazmat.primitives.test_ec import _skip_curve_unsupported
 from ..utils import load_nist_vectors, load_vectors_from_file
 

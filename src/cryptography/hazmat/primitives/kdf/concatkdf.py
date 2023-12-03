@@ -7,18 +7,11 @@ import struct
 import typing
 
 from cryptography import utils
-from cryptography.exceptions import (
-    AlreadyFinalized,
-    InvalidKey,
-    UnsupportedAlgorithm,
-    _Reasons,
-)
+from cryptography.exceptions import (AlreadyFinalized, InvalidKey,
+                                     UnsupportedAlgorithm, _Reasons)
 from cryptography.hazmat.backends import _get_backend
-from cryptography.hazmat.backends.interfaces import (
-    Backend,
-    HMACBackend,
-    HashBackend,
-)
+from cryptography.hazmat.backends.interfaces import (Backend, HashBackend,
+                                                     HMACBackend)
 from cryptography.hazmat.primitives import constant_time, hashes, hmac
 from cryptography.hazmat.primitives.kdf import KeyDerivationFunction
 

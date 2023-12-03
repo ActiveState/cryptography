@@ -6,10 +6,7 @@ import abc
 
 import pytest
 
-from cryptography.utils import (
-    InterfaceNotImplemented,
-    verify_interface,
-)
+from cryptography.utils import InterfaceNotImplemented, verify_interface
 
 
 class TestVerifyInterface(object):

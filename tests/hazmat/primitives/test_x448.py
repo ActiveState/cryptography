@@ -10,16 +10,11 @@ import pytest
 
 from cryptography.exceptions import _Reasons
 from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric.x448 import (
-    X448PrivateKey,
-    X448PublicKey,
-)
+from cryptography.hazmat.primitives.asymmetric.x448 import (X448PrivateKey,
+                                                            X448PublicKey)
 
-from ...utils import (
-    load_nist_vectors,
-    load_vectors_from_file,
-    raises_unsupported_algorithm,
-)
+from ...utils import (load_nist_vectors, load_vectors_from_file,
+                      raises_unsupported_algorithm)
 
 
 @pytest.mark.supported(

@@ -5,17 +5,13 @@
 
 from cryptography.exceptions import InvalidTag
 
-
 _ENCRYPT = 1
 _DECRYPT = 0
 
 
 def _aead_cipher_name(cipher):
-    from cryptography.hazmat.primitives.ciphers.aead import (
-        AESCCM,
-        AESGCM,
-        ChaCha20Poly1305,
-    )
+    from cryptography.hazmat.primitives.ciphers.aead import (AESCCM, AESGCM,
+                                                             ChaCha20Poly1305)
 
     if isinstance(cipher, ChaCha20Poly1305):
         return b"chacha20-poly1305"

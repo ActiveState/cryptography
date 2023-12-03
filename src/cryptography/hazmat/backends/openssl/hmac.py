@@ -3,11 +3,8 @@
 # for complete details.
 
 
-from cryptography.exceptions import (
-    InvalidSignature,
-    UnsupportedAlgorithm,
-    _Reasons,
-)
+from cryptography.exceptions import (InvalidSignature, UnsupportedAlgorithm,
+                                     _Reasons)
 from cryptography.hazmat.primitives import constant_time, hashes
 
 

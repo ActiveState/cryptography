@@ -12,11 +12,8 @@ from cryptography.exceptions import AlreadyFinalized, InvalidKey, _Reasons
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF, HKDFExpand
 
-from ...utils import (
-    load_nist_vectors,
-    load_vectors_from_file,
-    raises_unsupported_algorithm,
-)
+from ...utils import (load_nist_vectors, load_vectors_from_file,
+                      raises_unsupported_algorithm)
 
 
 class TestHKDF(object):

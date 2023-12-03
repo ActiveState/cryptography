@@ -10,7 +10,6 @@ from cryptography.hazmat.backends import _get_backend
 from cryptography.hazmat.backends.interfaces import Backend
 from cryptography.hazmat.primitives import serialization
 
-
 _MIN_MODULUS_SIZE = 512
 
 

@@ -13,11 +13,8 @@ from cryptography.hazmat.primitives.hashes import MD5, SHA1
 from cryptography.hazmat.primitives.twofactor import InvalidToken
 from cryptography.hazmat.primitives.twofactor.hotp import HOTP
 
-from ....utils import (
-    load_nist_vectors,
-    load_vectors_from_file,
-    raises_unsupported_algorithm,
-)
+from ....utils import (load_nist_vectors, load_vectors_from_file,
+                       raises_unsupported_algorithm)
 
 vectors = load_vectors_from_file("twofactor/rfc-4226.txt", load_nist_vectors)
 

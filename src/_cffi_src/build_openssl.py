@@ -9,11 +9,8 @@ from distutils import dist
 from distutils.ccompiler import get_default_compiler
 from distutils.command.config import config
 
-from _cffi_src.utils import (
-    build_ffi_for_binding,
-    compiler_type,
-    extra_link_args,
-)
+from _cffi_src.utils import (build_ffi_for_binding, compiler_type,
+                             extra_link_args)
 
 
 def _get_openssl_libraries(platform):

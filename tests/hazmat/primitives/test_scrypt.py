@@ -8,13 +8,9 @@ import os
 
 import pytest
 
-from cryptography.exceptions import (
-    AlreadyFinalized,
-    InvalidKey,
-    UnsupportedAlgorithm,
-)
-from cryptography.hazmat.primitives.kdf.scrypt import Scrypt, _MEM_LIMIT
-
+from cryptography.exceptions import (AlreadyFinalized, InvalidKey,
+                                     UnsupportedAlgorithm)
+from cryptography.hazmat.primitives.kdf.scrypt import _MEM_LIMIT, Scrypt
 from tests.utils import load_nist_vectors, load_vectors_from_file
 
 vectors = load_vectors_from_file(

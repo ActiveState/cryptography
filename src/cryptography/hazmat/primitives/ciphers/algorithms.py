@@ -4,10 +4,8 @@
 
 
 from cryptography import utils
-from cryptography.hazmat.primitives.ciphers import (
-    BlockCipherAlgorithm,
-    CipherAlgorithm,
-)
+from cryptography.hazmat.primitives.ciphers import (BlockCipherAlgorithm,
+                                                    CipherAlgorithm)
 from cryptography.hazmat.primitives.ciphers.modes import ModeWithNonce
 
 

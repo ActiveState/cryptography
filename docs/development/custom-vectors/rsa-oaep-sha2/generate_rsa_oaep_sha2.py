@@ -9,7 +9,6 @@ import os
 from cryptography.hazmat.backends.openssl.backend import backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding, rsa
-
 from tests.utils import load_pkcs1_vectors, load_vectors_from_file
 
 

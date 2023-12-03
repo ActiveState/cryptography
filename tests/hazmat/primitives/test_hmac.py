@@ -7,16 +7,13 @@ import binascii
 
 import pytest
 
-from cryptography.exceptions import (
-    AlreadyFinalized,
-    InvalidSignature,
-    _Reasons,
-)
+from cryptography.exceptions import (AlreadyFinalized, InvalidSignature,
+                                     _Reasons)
 from cryptography.hazmat.primitives import hashes, hmac
 
-from .utils import generate_base_hmac_test
 from ...doubles import DummyHashAlgorithm
 from ...utils import raises_unsupported_algorithm
+from .utils import generate_base_hmac_test
 
 
 @pytest.mark.supported(

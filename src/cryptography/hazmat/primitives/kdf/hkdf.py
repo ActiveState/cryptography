@@ -6,12 +6,8 @@
 import typing
 
 from cryptography import utils
-from cryptography.exceptions import (
-    AlreadyFinalized,
-    InvalidKey,
-    UnsupportedAlgorithm,
-    _Reasons,
-)
+from cryptography.exceptions import (AlreadyFinalized, InvalidKey,
+                                     UnsupportedAlgorithm, _Reasons)
 from cryptography.hazmat.backends import _get_backend
 from cryptography.hazmat.backends.interfaces import Backend, HMACBackend
 from cryptography.hazmat.primitives import constant_time, hashes, hmac

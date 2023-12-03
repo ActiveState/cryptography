@@ -11,22 +11,14 @@ import pytest
 from cryptography.exceptions import AlreadyFinalized, _Reasons
 from cryptography.hazmat.primitives import ciphers
 from cryptography.hazmat.primitives.ciphers import modes
-from cryptography.hazmat.primitives.ciphers.algorithms import (
-    AES,
-    ARC4,
-    Blowfish,
-    CAST5,
-    Camellia,
-    IDEA,
-    SEED,
-    TripleDES,
-)
+from cryptography.hazmat.primitives.ciphers.algorithms import (AES, ARC4,
+                                                               CAST5, IDEA,
+                                                               SEED, Blowfish,
+                                                               Camellia,
+                                                               TripleDES)
 
-from ...utils import (
-    load_nist_vectors,
-    load_vectors_from_file,
-    raises_unsupported_algorithm,
-)
+from ...utils import (load_nist_vectors, load_vectors_from_file,
+                      raises_unsupported_algorithm)
 
 
 class TestAES(object):

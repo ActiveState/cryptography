@@ -16,12 +16,10 @@ from cryptography.hazmat.backends import _get_backend
 from cryptography.hazmat.backends.interfaces import Backend
 from cryptography.hazmat.primitives.asymmetric import dsa, ec, ed25519, rsa
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.primitives.serialization import (
-    Encoding,
-    NoEncryption,
-    PrivateFormat,
-    PublicFormat,
-)
+from cryptography.hazmat.primitives.serialization import (Encoding,
+                                                          NoEncryption,
+                                                          PrivateFormat,
+                                                          PublicFormat)
 
 try:
     from bcrypt import kdf as _bcrypt_kdf

@@ -11,12 +11,10 @@ import re
 import typing
 from contextlib import contextmanager
 
+import cryptography_vectors
 import pytest
 
 from cryptography.exceptions import UnsupportedAlgorithm
-
-import cryptography_vectors
-
 
 HashVector = collections.namedtuple("HashVector", ["message", "digest"])
 KeyedHashVector = collections.namedtuple(

@@ -7,10 +7,8 @@ import binascii
 
 import pytest
 
-from cryptography.hazmat.primitives.asymmetric.x448 import (
-    X448PrivateKey,
-    X448PublicKey,
-)
+from cryptography.hazmat.primitives.asymmetric.x448 import (X448PrivateKey,
+                                                            X448PublicKey)
 
 from .utils import wycheproof_tests
 

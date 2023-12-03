@@ -4,23 +4,14 @@
 
 
 from cryptography import utils
-from cryptography.exceptions import (
-    InvalidSignature,
-    UnsupportedAlgorithm,
-    _Reasons,
-)
+from cryptography.exceptions import (InvalidSignature, UnsupportedAlgorithm,
+                                     _Reasons)
 from cryptography.hazmat.backends.openssl.utils import (
-    _calculate_digest_and_algorithm,
-    _check_not_prehashed,
-    _evp_pkey_derive,
-    _warn_sign_verify_deprecated,
-)
+    _calculate_digest_and_algorithm, _check_not_prehashed, _evp_pkey_derive,
+    _warn_sign_verify_deprecated)
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import (
-    AsymmetricSignatureContext,
-    AsymmetricVerificationContext,
-    ec,
-)
+    AsymmetricSignatureContext, AsymmetricVerificationContext, ec)
 
 
 def _check_signature_algorithm(

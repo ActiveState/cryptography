@@ -3,12 +3,9 @@
 # for complete details.
 
 
-from cryptography.hazmat.primitives.asymmetric.dsa import (
-    DSAParameterNumbers,
-    DSAPrivateNumbers,
-    DSAPublicNumbers,
-)
-
+from cryptography.hazmat.primitives.asymmetric.dsa import (DSAParameterNumbers,
+                                                           DSAPrivateNumbers,
+                                                           DSAPublicNumbers)
 
 DSA_KEY_1024 = DSAPrivateNumbers(
     public_numbers=DSAPublicNumbers(
