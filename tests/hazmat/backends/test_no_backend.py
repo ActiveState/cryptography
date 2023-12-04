@@ -3,6 +3,7 @@
 # for complete details.
 from cryptography.hazmat.backends import _get_backend, default_backend
 
+
 def test_get_backend_no_backend():
     assert _get_backend(None) is default_backend()
 

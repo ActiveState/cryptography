@@ -8,8 +8,10 @@ import os
 import subprocess
 import time
 import zipfile
+
 import click
 import requests
+
 
 def run(*args, **kwargs):
     print('[running] {0}'.format(list(args)))

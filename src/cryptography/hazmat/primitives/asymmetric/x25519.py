@@ -2,8 +2,10 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import abc
+
 from cryptography.exceptions import UnsupportedAlgorithm, _Reasons
 from cryptography.hazmat.primitives import _serialization
+
 
 class X25519PublicKey(metaclass=abc.ABCMeta):
 

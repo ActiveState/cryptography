@@ -3,16 +3,24 @@
 # for complete details.
 import binascii
 import os
+
 import pytest
-from cryptography.exceptions import AlreadyFinalized, AlreadyUpdated, InvalidSignature, InvalidTag, NotYetFinalized
+
+from cryptography.exceptions import (AlreadyFinalized, AlreadyUpdated,
+                                     InvalidSignature, InvalidTag,
+                                     NotYetFinalized)
 from cryptography.hazmat.primitives import hashes, hmac, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives.ciphers import BlockCipherAlgorithm, Cipher, algorithms
+from cryptography.hazmat.primitives.ciphers import (BlockCipherAlgorithm,
+                                                    Cipher, algorithms)
 from cryptography.hazmat.primitives.ciphers.modes import GCM
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF, HKDFExpand
-from cryptography.hazmat.primitives.kdf.kbkdf import KBKDFCMAC, KBKDFHMAC, CounterLocation, Mode
+from cryptography.hazmat.primitives.kdf.kbkdf import (KBKDFCMAC, KBKDFHMAC,
+                                                      CounterLocation, Mode)
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+
 from ...utils import load_vectors_from_file
+
 
 def _load_all_params(path, file_names, param_loader):
     all_params = []

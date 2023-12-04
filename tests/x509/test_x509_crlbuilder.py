@@ -2,16 +2,21 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import datetime
+
 import pytest
 import pytz
+
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec, ed448, ed25519
-from cryptography.x509.oid import AuthorityInformationAccessOID, NameOID, SignatureAlgorithmOID
+from cryptography.x509.oid import (AuthorityInformationAccessOID, NameOID,
+                                   SignatureAlgorithmOID)
+
 from ..hazmat.primitives.fixtures_dsa import DSA_KEY_2048
 from ..hazmat.primitives.fixtures_ec import EC_KEY_SECP256R1
 from ..hazmat.primitives.fixtures_rsa import RSA_KEY_512, RSA_KEY_2048
 from ..hazmat.primitives.test_ec import _skip_curve_unsupported
+
 
 class TestCertificateRevocationListBuilder(object):
 

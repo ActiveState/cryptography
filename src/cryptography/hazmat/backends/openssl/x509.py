@@ -3,7 +3,9 @@
 # for complete details.
 import datetime
 import warnings
+
 from cryptography import utils, x509
+
 # This exists for pyOpenSSL compatibility and SHOULD NOT BE USED
 # WE WILL REMOVE THIS VERY SOON.
 

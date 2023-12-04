@@ -1,9 +1,12 @@
 import os
+
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives.asymmetric.utils import encode_dss_signature
+from cryptography.hazmat.primitives.asymmetric.utils import \
+    encode_dss_signature
 from tests.utils import load_fips_ecdsa_signing_vectors, load_vectors_from_file
+
 CRYPTOGRAPHY_HASH_TYPES = {'SHA-1': hashes.SHA1, 'SHA-224': hashes.SHA224, 'SHA-256': hashes.SHA256, 'SHA-384': hashes.SHA384, 'SHA-512': hashes.SHA512}
 
 def verify_one_vector(vector):

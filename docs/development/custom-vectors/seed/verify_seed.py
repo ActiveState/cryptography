@@ -1,6 +1,9 @@
 import binascii
+
 import botan
+
 from tests.utils import load_nist_vectors
+
 
 def encrypt(mode, key, iv, plaintext):
     encryptor = botan.Cipher('SEED/{0}/NoPadding'.format(mode), 'encrypt', binascii.unhexlify(key))

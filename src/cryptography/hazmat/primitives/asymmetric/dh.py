@@ -2,9 +2,11 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import abc
+
 from cryptography.hazmat.backends import _get_backend
 from cryptography.hazmat.backends.interfaces import Backend
 from cryptography.hazmat.primitives import serialization
+
 _MIN_MODULUS_SIZE = 512
 
 def generate_parameters(generator, key_size, backend=None):

@@ -4,12 +4,14 @@
 import base64
 import struct
 from urllib.parse import quote, urlencode
+
 from cryptography.exceptions import UnsupportedAlgorithm, _Reasons
 from cryptography.hazmat.backends import _get_backend
 from cryptography.hazmat.backends.interfaces import Backend, HMACBackend
 from cryptography.hazmat.primitives import constant_time, hmac
 from cryptography.hazmat.primitives.hashes import SHA1, SHA256, SHA512
 from cryptography.hazmat.primitives.twofactor import InvalidToken
+
 _ALLOWED_HASH_TYPES = typing.Union[SHA1, SHA256, SHA512]
 
 def _generate_uri(hotp, type_name, account_name, issuer, extra_parameters):

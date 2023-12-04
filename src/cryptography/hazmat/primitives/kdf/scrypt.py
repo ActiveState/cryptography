@@ -2,12 +2,15 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import sys
+
 from cryptography import utils
-from cryptography.exceptions import AlreadyFinalized, InvalidKey, UnsupportedAlgorithm, _Reasons
+from cryptography.exceptions import (AlreadyFinalized, InvalidKey,
+                                     UnsupportedAlgorithm, _Reasons)
 from cryptography.hazmat.backends import _get_backend
 from cryptography.hazmat.backends.interfaces import Backend, ScryptBackend
 from cryptography.hazmat.primitives import constant_time
 from cryptography.hazmat.primitives.kdf import KeyDerivationFunction
+
 # This is used by the scrypt tests to skip tests that require more memory
 # than the MEM_LIMIT
 _MEM_LIMIT = sys.maxsize // 2

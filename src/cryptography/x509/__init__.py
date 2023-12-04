@@ -2,11 +2,45 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 from cryptography.x509 import certificate_transparency
-from cryptography.x509.base import AttributeNotFound, Certificate, CertificateBuilder, CertificateRevocationList, CertificateRevocationListBuilder, CertificateSigningRequest, CertificateSigningRequestBuilder, InvalidVersion, RevokedCertificate, RevokedCertificateBuilder, Version, load_der_x509_certificate, load_der_x509_crl, load_der_x509_csr, load_pem_x509_certificate, load_pem_x509_crl, load_pem_x509_csr, random_serial_number
-from cryptography.x509.extensions import AccessDescription, AuthorityInformationAccess, AuthorityKeyIdentifier, BasicConstraints, CertificateIssuer, CertificatePolicies, CRLDistributionPoints, CRLNumber, CRLReason, DeltaCRLIndicator, DistributionPoint, DuplicateExtension, ExtendedKeyUsage, Extension, ExtensionNotFound, Extensions, ExtensionType, FreshestCRL, GeneralNames, InhibitAnyPolicy, InvalidityDate, IssuerAlternativeName, IssuingDistributionPoint, KeyUsage, NameConstraints, NoticeReference, OCSPNoCheck, OCSPNonce, PolicyConstraints, PolicyInformation, PrecertificateSignedCertificateTimestamps, PrecertPoison, ReasonFlags, SignedCertificateTimestamps, SubjectAlternativeName, SubjectInformationAccess, SubjectKeyIdentifier, TLSFeature, TLSFeatureType, UnrecognizedExtension, UserNotice
-from cryptography.x509.general_name import DirectoryName, DNSName, GeneralName, IPAddress, OtherName, RegisteredID, RFC822Name, UniformResourceIdentifier, UnsupportedGeneralNameType
-from cryptography.x509.name import Name, NameAttribute, RelativeDistinguishedName
-from cryptography.x509.oid import AuthorityInformationAccessOID, CertificatePoliciesOID, CRLEntryExtensionOID, ExtendedKeyUsageOID, ExtensionOID, NameOID, ObjectIdentifier, SignatureAlgorithmOID
+from cryptography.x509.base import (AttributeNotFound, Certificate,
+                                    CertificateBuilder,
+                                    CertificateRevocationList,
+                                    CertificateRevocationListBuilder,
+                                    CertificateSigningRequest,
+                                    CertificateSigningRequestBuilder,
+                                    InvalidVersion, RevokedCertificate,
+                                    RevokedCertificateBuilder, Version,
+                                    load_der_x509_certificate,
+                                    load_der_x509_crl, load_der_x509_csr,
+                                    load_pem_x509_certificate,
+                                    load_pem_x509_crl, load_pem_x509_csr,
+                                    random_serial_number)
+from cryptography.x509.extensions import (
+    AccessDescription, AuthorityInformationAccess, AuthorityKeyIdentifier,
+    BasicConstraints, CertificateIssuer, CertificatePolicies,
+    CRLDistributionPoints, CRLNumber, CRLReason, DeltaCRLIndicator,
+    DistributionPoint, DuplicateExtension, ExtendedKeyUsage, Extension,
+    ExtensionNotFound, Extensions, ExtensionType, FreshestCRL, GeneralNames,
+    InhibitAnyPolicy, InvalidityDate, IssuerAlternativeName,
+    IssuingDistributionPoint, KeyUsage, NameConstraints, NoticeReference,
+    OCSPNoCheck, OCSPNonce, PolicyConstraints, PolicyInformation,
+    PrecertificateSignedCertificateTimestamps, PrecertPoison, ReasonFlags,
+    SignedCertificateTimestamps, SubjectAlternativeName,
+    SubjectInformationAccess, SubjectKeyIdentifier, TLSFeature, TLSFeatureType,
+    UnrecognizedExtension, UserNotice)
+from cryptography.x509.general_name import (DirectoryName, DNSName,
+                                            GeneralName, IPAddress, OtherName,
+                                            RegisteredID, RFC822Name,
+                                            UniformResourceIdentifier,
+                                            UnsupportedGeneralNameType)
+from cryptography.x509.name import (Name, NameAttribute,
+                                    RelativeDistinguishedName)
+from cryptography.x509.oid import (AuthorityInformationAccessOID,
+                                   CertificatePoliciesOID,
+                                   CRLEntryExtensionOID, ExtendedKeyUsageOID,
+                                   ExtensionOID, NameOID, ObjectIdentifier,
+                                   SignatureAlgorithmOID)
+
 OID_AUTHORITY_INFORMATION_ACCESS = ExtensionOID.AUTHORITY_INFORMATION_ACCESS
 OID_AUTHORITY_KEY_IDENTIFIER = ExtensionOID.AUTHORITY_KEY_IDENTIFIER
 OID_BASIC_CONSTRAINTS = ExtensionOID.BASIC_CONSTRAINTS

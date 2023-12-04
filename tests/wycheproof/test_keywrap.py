@@ -2,9 +2,13 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import binascii
+
 import pytest
+
 from cryptography.hazmat.primitives import keywrap
+
 from .utils import wycheproof_tests
+
 
 @wycheproof_tests('kwp_test.json')
 def test_keywrap_with_padding(backend, wycheproof):

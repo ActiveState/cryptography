@@ -2,11 +2,15 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import binascii
+
 import pytest
+
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives.ciphers.algorithms import AES
 from cryptography.hazmat.primitives.cmac import CMAC
+
 from .utils import wycheproof_tests
+
 
 @wycheproof_tests('aes_cmac_test.json')
 def test_aes_cmac(backend, wycheproof):

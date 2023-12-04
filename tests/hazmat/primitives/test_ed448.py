@@ -3,11 +3,17 @@
 # for complete details.
 import binascii
 import os
+
 import pytest
+
 from cryptography.exceptions import InvalidSignature, _Reasons
 from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric.ed448 import Ed448PrivateKey, Ed448PublicKey
-from ...utils import load_nist_vectors, load_vectors_from_file, raises_unsupported_algorithm
+from cryptography.hazmat.primitives.asymmetric.ed448 import (Ed448PrivateKey,
+                                                             Ed448PublicKey)
+
+from ...utils import (load_nist_vectors, load_vectors_from_file,
+                      raises_unsupported_algorithm)
+
 
 @pytest.mark.supported(only_if=lambda backend: not backend.ed448_supported(), skip_message='Requires OpenSSL without Ed448 support')
 def test_ed448_unsupported(backend):

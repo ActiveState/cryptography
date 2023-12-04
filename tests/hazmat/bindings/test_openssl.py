@@ -2,8 +2,11 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import pytest
+
 from cryptography.exceptions import InternalError
-from cryptography.hazmat.bindings.openssl.binding import Binding, _consume_errors, _openssl_assert, _verify_package_version
+from cryptography.hazmat.bindings.openssl.binding import (
+    Binding, _consume_errors, _openssl_assert, _verify_package_version)
+
 
 class TestOpenSSL(object):
 

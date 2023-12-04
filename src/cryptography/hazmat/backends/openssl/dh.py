@@ -5,6 +5,7 @@ from cryptography.exceptions import UnsupportedAlgorithm, _Reasons
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import dh
 
+
 def _dh_params_dup(dh_cdata, backend):
     lib = backend._lib
     ffi = backend._ffi

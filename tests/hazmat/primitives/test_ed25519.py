@@ -3,11 +3,16 @@
 # for complete details.
 import binascii
 import os
+
 import pytest
+
 from cryptography.exceptions import InvalidSignature, _Reasons
 from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey, Ed25519PublicKey
+from cryptography.hazmat.primitives.asymmetric.ed25519 import (
+    Ed25519PrivateKey, Ed25519PublicKey)
+
 from ...utils import load_vectors_from_file, raises_unsupported_algorithm
+
 
 def load_ed25519_vectors(vector_data):
     """

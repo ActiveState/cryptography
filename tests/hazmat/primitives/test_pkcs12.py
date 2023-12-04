@@ -3,15 +3,20 @@
 # for complete details.
 import os
 from datetime import datetime
+
 import pytest
+
 from cryptography import x509
 from cryptography.hazmat.backends.openssl.backend import _RC2
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
-from cryptography.hazmat.primitives.serialization.pkcs12 import load_key_and_certificates, serialize_key_and_certificates
+from cryptography.hazmat.primitives.serialization.pkcs12 import (
+    load_key_and_certificates, serialize_key_and_certificates)
+
 from ...doubles import DummyKeySerializationEncryption
 from ...utils import load_vectors_from_file
+
 
 @pytest.mark.skip_fips(reason='PKCS12 unsupported in FIPS mode. So much bad crypto in it.')
 class TestPKCS12Loading(object):

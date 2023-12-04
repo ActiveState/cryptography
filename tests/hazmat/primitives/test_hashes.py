@@ -2,12 +2,16 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import binascii
+
 import pytest
+
 from cryptography.exceptions import AlreadyFinalized, _Reasons
 from cryptography.hazmat.primitives import hashes
+
 from ...doubles import DummyHashAlgorithm
 from ...utils import raises_unsupported_algorithm
 from .utils import generate_base_hash_test
+
 
 class TestHashContext(object):
 

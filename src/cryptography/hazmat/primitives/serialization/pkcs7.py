@@ -8,6 +8,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec, rsa
 from cryptography.utils import _check_byteslike
 
+
 def load_pem_pkcs7_certificates(data):
     backend = _get_backend(None)
     return backend.load_pem_pkcs7_certificates(data)

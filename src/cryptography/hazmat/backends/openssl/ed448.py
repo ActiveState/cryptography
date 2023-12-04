@@ -3,7 +3,9 @@
 # for complete details.
 from cryptography import exceptions
 from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric.ed448 import Ed448PrivateKey, Ed448PublicKey
+from cryptography.hazmat.primitives.asymmetric.ed448 import (Ed448PrivateKey,
+                                                             Ed448PublicKey)
+
 _ED448_KEY_SIZE = 57
 _ED448_SIG_SIZE = 114
 

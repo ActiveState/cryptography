@@ -2,8 +2,10 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives._asymmetric import AsymmetricPadding as AsymmetricPadding
+from cryptography.hazmat.primitives._asymmetric import \
+    AsymmetricPadding as AsymmetricPadding
 from cryptography.hazmat.primitives.asymmetric import rsa
+
 
 class PKCS1v15(AsymmetricPadding):
     name = 'EMSA-PKCS1-v1_5'

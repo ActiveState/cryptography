@@ -3,7 +3,9 @@
 # for complete details.
 from cryptography.hazmat.backends.openssl.utils import _evp_pkey_derive
 from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric.x448 import X448PrivateKey, X448PublicKey
+from cryptography.hazmat.primitives.asymmetric.x448 import (X448PrivateKey,
+                                                            X448PublicKey)
+
 _X448_KEY_SIZE = 56
 
 class _X448PublicKey(X448PublicKey):

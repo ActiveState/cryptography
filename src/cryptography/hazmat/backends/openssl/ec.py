@@ -2,10 +2,15 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 from cryptography import utils
-from cryptography.exceptions import InvalidSignature, UnsupportedAlgorithm, _Reasons
-from cryptography.hazmat.backends.openssl.utils import _calculate_digest_and_algorithm, _check_not_prehashed, _evp_pkey_derive, _warn_sign_verify_deprecated
+from cryptography.exceptions import (InvalidSignature, UnsupportedAlgorithm,
+                                     _Reasons)
+from cryptography.hazmat.backends.openssl.utils import (
+    _calculate_digest_and_algorithm, _check_not_prehashed, _evp_pkey_derive,
+    _warn_sign_verify_deprecated)
 from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import AsymmetricSignatureContext, AsymmetricVerificationContext, ec
+from cryptography.hazmat.primitives.asymmetric import (
+    AsymmetricSignatureContext, AsymmetricVerificationContext, ec)
+
 
 def _check_signature_algorithm(signature_algorithm):
     if not isinstance(signature_algorithm, ec.ECDSA):

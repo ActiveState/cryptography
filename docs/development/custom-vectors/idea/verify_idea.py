@@ -1,6 +1,9 @@
 import binascii
+
 import botan
+
 from tests.utils import load_nist_vectors
+
 BLOCK_SIZE = 64
 
 def encrypt(mode, key, iv, plaintext):

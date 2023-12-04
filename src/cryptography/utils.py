@@ -7,6 +7,7 @@ import inspect
 import sys
 import types
 import warnings
+
 # We use a UserWarning subclass, instead of DeprecationWarning, because CPython
 # decided deprecation warnings should be invisble by default.
 

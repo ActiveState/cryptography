@@ -2,11 +2,15 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import binascii
+
 import pytest
+
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding, rsa
+
 from .utils import wycheproof_tests
+
 # Not supported by OpenSSL for RSA signing
 _DIGESTS = {'SHA-1': hashes.SHA1(), 'SHA-224': hashes.SHA224(), 'SHA-256': hashes.SHA256(), 'SHA-384': hashes.SHA384(), 'SHA-512': hashes.SHA512(), 'SHA-512/224': None, 'SHA-512/256': None, 'SHA3-224': hashes.SHA3_224(), 'SHA3-256': hashes.SHA3_256(), 'SHA3-384': hashes.SHA3_384(), 'SHA3-512': hashes.SHA3_512()}
 

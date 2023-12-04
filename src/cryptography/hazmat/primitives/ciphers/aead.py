@@ -2,9 +2,11 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import os
+
 from cryptography import exceptions, utils
 from cryptography.hazmat.backends.openssl import aead
 from cryptography.hazmat.backends.openssl.backend import backend
+
 
 class ChaCha20Poly1305(object):
     _MAX_SIZE = 2 ** 32

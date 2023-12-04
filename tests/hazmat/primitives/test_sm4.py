@@ -3,10 +3,14 @@
 # for complete details.
 import binascii
 import os
+
 import pytest
+
 from cryptography.hazmat.primitives.ciphers import algorithms, modes
+
 from ...utils import load_nist_vectors
 from .utils import generate_encrypt_test
+
 
 @pytest.mark.supported(only_if=lambda backend: backend.cipher_supported(algorithms.SM4(b'\x00' * 16), modes.ECB()), skip_message='Does not support SM4 ECB')
 class TestSM4ModeECB(object):

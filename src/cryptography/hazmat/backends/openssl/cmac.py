@@ -2,9 +2,11 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 from cryptography import utils
-from cryptography.exceptions import InvalidSignature, UnsupportedAlgorithm, _Reasons
+from cryptography.exceptions import (InvalidSignature, UnsupportedAlgorithm,
+                                     _Reasons)
 from cryptography.hazmat.primitives import constant_time
 from cryptography.hazmat.primitives.ciphers.modes import CBC
+
 
 class _CMACContext(object):
 

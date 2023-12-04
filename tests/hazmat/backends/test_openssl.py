@@ -6,7 +6,9 @@ import os
 import subprocess
 import sys
 import textwrap
+
 import pytest
+
 from cryptography import utils, x509
 from cryptography.exceptions import InternalError, _Reasons
 from cryptography.hazmat.backends.openssl.backend import Backend, backend
@@ -16,10 +18,14 @@ from cryptography.hazmat.primitives.asymmetric import dh, dsa, padding
 from cryptography.hazmat.primitives.ciphers import Cipher
 from cryptography.hazmat.primitives.ciphers.algorithms import AES
 from cryptography.hazmat.primitives.ciphers.modes import CBC
-from ...doubles import DummyAsymmetricPadding, DummyCipherAlgorithm, DummyHashAlgorithm, DummyMode
-from ...utils import load_nist_vectors, load_vectors_from_file, raises_unsupported_algorithm
+
+from ...doubles import (DummyAsymmetricPadding, DummyCipherAlgorithm,
+                        DummyHashAlgorithm, DummyMode)
+from ...utils import (load_nist_vectors, load_vectors_from_file,
+                      raises_unsupported_algorithm)
 from ...x509.test_x509 import _load_cert
 from ..primitives.fixtures_rsa import RSA_KEY_512, RSA_KEY_2048
+
 
 def skip_if_libre_ssl(openssl_version):
     if 'LibreSSL' in openssl_version:
@@ -446,7 +452,8 @@ def test_pyopenssl_csr_fallback():
     with pytest.warns(utils.CryptographyDeprecationWarning):
         req_ossl = cert._x509_req
     assert req_ossl is not None
-    from cryptography.hazmat.backends.openssl.x509 import _CertificateSigningRequest
+    from cryptography.hazmat.backends.openssl.x509 import \
+        _CertificateSigningRequest
     with pytest.warns(utils.CryptographyDeprecationWarning):
         _CertificateSigningRequest(backend, req_ossl)
 
@@ -456,6 +463,7 @@ def test_pyopenssl_crl_fallback():
     with pytest.warns(utils.CryptographyDeprecationWarning):
         req_crl = cert._x509_crl
     assert req_crl is not None
-    from cryptography.hazmat.backends.openssl.x509 import _CertificateRevocationList
+    from cryptography.hazmat.backends.openssl.x509 import \
+        _CertificateRevocationList
     with pytest.warns(utils.CryptographyDeprecationWarning):
         _CertificateRevocationList(backend, req_crl)

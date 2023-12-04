@@ -3,10 +3,14 @@
 # for complete details.
 import binascii
 import os
+
 import pytest
+
 from cryptography.hazmat.primitives.ciphers import algorithms
+
 from ...utils import load_nist_vectors
 from .utils import generate_stream_encryption_test
+
 
 @pytest.mark.supported(only_if=lambda backend: backend.cipher_supported(algorithms.ARC4(b'\x00' * 16), None), skip_message='Does not support ARC4')
 class TestARC4(object):

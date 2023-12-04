@@ -2,6 +2,7 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import os
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 with open(os.path.join(HERE, 'src/osrandom_engine.h')) as f:
     INCLUDES = f.read()

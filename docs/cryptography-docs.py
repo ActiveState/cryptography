@@ -3,6 +3,7 @@
 # for complete details.
 from docutils import nodes
 from docutils.parsers.rst import Directive
+
 DANGER_MESSAGE = '\n\nThis is a "Hazardous Materials" module. You should **ONLY** use it if you\'re\n\n100% absolutely sure that you know what you\'re doing because this module is\n\nfull of land mines, dragons, and dinosaurs with laser guns.\n\n'
 DANGER_ALTERNATE = '\n\n\n\nYou may instead be interested in :doc:`{alternate}`.\n\n'
 

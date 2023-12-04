@@ -5,16 +5,24 @@ import binascii
 import itertools
 import os
 from binascii import hexlify
+
 import pytest
+
 from cryptography import exceptions, utils, x509
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives.asymmetric.utils import Prehashed, encode_dss_signature
+from cryptography.hazmat.primitives.asymmetric.utils import (
+    Prehashed, encode_dss_signature)
 from cryptography.utils import CryptographyDeprecationWarning
+
 from ...doubles import DummyKeySerializationEncryption
-from ...utils import load_fips_ecdsa_key_pair_vectors, load_fips_ecdsa_signing_vectors, load_kasvs_ecdh_vectors, load_nist_vectors, load_vectors_from_file, raises_unsupported_algorithm
+from ...utils import (load_fips_ecdsa_key_pair_vectors,
+                      load_fips_ecdsa_signing_vectors, load_kasvs_ecdh_vectors,
+                      load_nist_vectors, load_vectors_from_file,
+                      raises_unsupported_algorithm)
 from .fixtures_ec import EC_KEY_SECP384R1
 from .utils import skip_fips_traditional_openssl
+
 _HASH_TYPES: typing.Dict[str, typing.Type[hashes.HashAlgorithm]] = {'SHA-1': hashes.SHA1, 'SHA-224': hashes.SHA224, 'SHA-256': hashes.SHA256, 'SHA-384': hashes.SHA384, 'SHA-512': hashes.SHA512}
 
 def _skip_ecdsa_vector(backend, curve_type, hash_type):

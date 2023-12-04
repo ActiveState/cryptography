@@ -3,11 +3,17 @@
 # for complete details.
 import binascii
 import os
+
 import pytest
+
 from cryptography.exceptions import _Reasons
 from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric.x448 import X448PrivateKey, X448PublicKey
-from ...utils import load_nist_vectors, load_vectors_from_file, raises_unsupported_algorithm
+from cryptography.hazmat.primitives.asymmetric.x448 import (X448PrivateKey,
+                                                            X448PublicKey)
+
+from ...utils import (load_nist_vectors, load_vectors_from_file,
+                      raises_unsupported_algorithm)
+
 
 @pytest.mark.supported(only_if=lambda backend: not backend.x448_supported(), skip_message='Requires OpenSSL without X448 support')
 def test_x448_unsupported(backend):

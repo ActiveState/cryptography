@@ -2,12 +2,17 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import pytest
+
 from cryptography.exceptions import AlreadyFinalized, InvalidKey, _Reasons
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers import algorithms
-from cryptography.hazmat.primitives.kdf.kbkdf import KBKDFCMAC, KBKDFHMAC, CounterLocation, Mode
-from ...doubles import DummyBlockCipherAlgorithm, DummyCipherAlgorithm, DummyHashAlgorithm
+from cryptography.hazmat.primitives.kdf.kbkdf import (KBKDFCMAC, KBKDFHMAC,
+                                                      CounterLocation, Mode)
+
+from ...doubles import (DummyBlockCipherAlgorithm, DummyCipherAlgorithm,
+                        DummyHashAlgorithm)
 from ...utils import raises_unsupported_algorithm
+
 
 class TestKBKDFHMAC(object):
 

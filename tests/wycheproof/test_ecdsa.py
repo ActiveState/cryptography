@@ -2,11 +2,15 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import binascii
+
 import pytest
+
 from cryptography.exceptions import InvalidSignature, UnsupportedAlgorithm
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec
+
 from .utils import wycheproof_tests
+
 _DIGESTS = {'SHA-1': hashes.SHA1(), 'SHA-224': hashes.SHA224(), 'SHA-256': hashes.SHA256(), 'SHA-384': hashes.SHA384(), 'SHA-512': hashes.SHA512(), 'SHA3-224': hashes.SHA3_224(), 'SHA3-256': hashes.SHA3_256(), 'SHA3-384': hashes.SHA3_384(), 'SHA3-512': hashes.SHA3_512()}
 
 @wycheproof_tests('ecdsa_test.json', 'ecdsa_brainpoolP224r1_sha224_test.json', 'ecdsa_brainpoolP256r1_sha256_test.json', 'ecdsa_brainpoolP320r1_sha384_test.json', 'ecdsa_brainpoolP384r1_sha384_test.json', 'ecdsa_brainpoolP512r1_sha512_test.json', 'ecdsa_secp224r1_sha224_test.json', 'ecdsa_secp224r1_sha256_test.json', 'ecdsa_secp224r1_sha512_test.json', 'ecdsa_secp224r1_sha3_224_test.json', 'ecdsa_secp224r1_sha3_256_test.json', 'ecdsa_secp224r1_sha3_512_test.json', 'ecdsa_secp256k1_sha256_test.json', 'ecdsa_secp256k1_sha512_test.json', 'ecdsa_secp256k1_sha3_256_test.json', 'ecdsa_secp256k1_sha3_512_test.json', 'ecdsa_secp256r1_sha256_test.json', 'ecdsa_secp256r1_sha512_test.json', 'ecdsa_secp256r1_sha3_256_test.json', 'ecdsa_secp256r1_sha3_512_test.json', 'ecdsa_secp384r1_sha384_test.json', 'ecdsa_secp384r1_sha512_test.json', 'ecdsa_secp384r1_sha3_384_test.json', 'ecdsa_secp384r1_sha3_512_test.json', 'ecdsa_secp521r1_sha512_test.json', 'ecdsa_secp521r1_sha3_512_test.json')

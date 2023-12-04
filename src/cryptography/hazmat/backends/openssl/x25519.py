@@ -3,7 +3,9 @@
 # for complete details.
 from cryptography.hazmat.backends.openssl.utils import _evp_pkey_derive
 from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey, X25519PublicKey
+from cryptography.hazmat.primitives.asymmetric.x25519 import (X25519PrivateKey,
+                                                              X25519PublicKey)
+
 _X25519_KEY_SIZE = 32
 
 class _X25519PublicKey(X25519PublicKey):

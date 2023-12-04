@@ -2,9 +2,12 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import abc
+
 from cryptography import utils
 from cryptography.exceptions import UnsupportedAlgorithm, _Reasons
-from cryptography.hazmat.primitives._cipheralgorithm import BlockCipherAlgorithm, CipherAlgorithm
+from cryptography.hazmat.primitives._cipheralgorithm import (
+    BlockCipherAlgorithm, CipherAlgorithm)
+
 
 class Mode(metaclass=abc.ABCMeta):
 

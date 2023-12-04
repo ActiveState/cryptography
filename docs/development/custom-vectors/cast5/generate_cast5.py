@@ -2,8 +2,10 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import binascii
+
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import algorithms, base, modes
+
 
 def encrypt(mode, key, iv, plaintext):
     cipher = base.Cipher(algorithms.CAST5(binascii.unhexlify(key)), mode(binascii.unhexlify(iv)), default_backend())

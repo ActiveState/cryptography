@@ -4,8 +4,11 @@
 import sys
 import types
 import warnings
+
 import pytest
+
 from cryptography.utils import deprecated
+
 
 class TestDeprecated(object):
 

@@ -2,10 +2,13 @@ import hashlib
 import os
 from binascii import hexlify
 from collections import defaultdict
+
 from cryptography_vectors import open_vector_file
 from ecdsa import SECP256k1, SigningKey
 from ecdsa.util import sigdecode_der, sigencode_der
+
 from tests.utils import load_fips_ecdsa_signing_vectors, load_vectors_from_file
+
 HASHLIB_HASH_TYPES = {'SHA-1': hashlib.sha1, 'SHA-224': hashlib.sha224, 'SHA-256': hashlib.sha256, 'SHA-384': hashlib.sha384, 'SHA-512': hashlib.sha512}
 
 class TruncatedHash(object):

@@ -5,7 +5,9 @@
 import os
 import platform
 import sys
+
 from setuptools import setup
+
 try:
     from setuptools_rust import RustExtension
 except ImportError:

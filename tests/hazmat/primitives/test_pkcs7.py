@@ -2,13 +2,17 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import os
+
 import pytest
+
 from cryptography import x509
 from cryptography.exceptions import _Reasons
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ed25519
 from cryptography.hazmat.primitives.serialization import pkcs7
+
 from ...utils import load_vectors_from_file, raises_unsupported_algorithm
+
 
 class TestPKCS7Loading(object):
 

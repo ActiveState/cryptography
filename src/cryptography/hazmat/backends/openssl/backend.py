@@ -6,40 +6,69 @@ import contextlib
 import itertools
 import warnings
 from contextlib import contextmanager
+
 from cryptography import utils, x509
 from cryptography.exceptions import UnsupportedAlgorithm, _Reasons
 from cryptography.hazmat.backends.interfaces import Backend as BackendInterface
 from cryptography.hazmat.backends.openssl import aead
 from cryptography.hazmat.backends.openssl.ciphers import _CipherContext
 from cryptography.hazmat.backends.openssl.cmac import _CMACContext
-from cryptography.hazmat.backends.openssl.decode_asn1 import _CRL_ENTRY_REASON_ENUM_TO_CODE
-from cryptography.hazmat.backends.openssl.dh import _dh_params_dup, _DHParameters, _DHPrivateKey, _DHPublicKey
-from cryptography.hazmat.backends.openssl.dsa import _DSAParameters, _DSAPrivateKey, _DSAPublicKey
-from cryptography.hazmat.backends.openssl.ec import _EllipticCurvePrivateKey, _EllipticCurvePublicKey
-from cryptography.hazmat.backends.openssl.ed448 import _ED448_KEY_SIZE, _Ed448PrivateKey, _Ed448PublicKey
-from cryptography.hazmat.backends.openssl.ed25519 import _Ed25519PrivateKey, _Ed25519PublicKey
-from cryptography.hazmat.backends.openssl.encode_asn1 import _CRL_ENTRY_EXTENSION_ENCODE_HANDLERS, _CRL_EXTENSION_ENCODE_HANDLERS, _EXTENSION_ENCODE_HANDLERS, _OCSP_BASICRESP_EXTENSION_ENCODE_HANDLERS, _OCSP_REQUEST_EXTENSION_ENCODE_HANDLERS, _encode_asn1_int_gc, _encode_asn1_str_gc, _encode_name_gc, _txt2obj_gc
+from cryptography.hazmat.backends.openssl.decode_asn1 import \
+    _CRL_ENTRY_REASON_ENUM_TO_CODE
+from cryptography.hazmat.backends.openssl.dh import (_dh_params_dup,
+                                                     _DHParameters,
+                                                     _DHPrivateKey,
+                                                     _DHPublicKey)
+from cryptography.hazmat.backends.openssl.dsa import (_DSAParameters,
+                                                      _DSAPrivateKey,
+                                                      _DSAPublicKey)
+from cryptography.hazmat.backends.openssl.ec import (_EllipticCurvePrivateKey,
+                                                     _EllipticCurvePublicKey)
+from cryptography.hazmat.backends.openssl.ed448 import (_ED448_KEY_SIZE,
+                                                        _Ed448PrivateKey,
+                                                        _Ed448PublicKey)
+from cryptography.hazmat.backends.openssl.ed25519 import (_Ed25519PrivateKey,
+                                                          _Ed25519PublicKey)
+from cryptography.hazmat.backends.openssl.encode_asn1 import (
+    _CRL_ENTRY_EXTENSION_ENCODE_HANDLERS, _CRL_EXTENSION_ENCODE_HANDLERS,
+    _EXTENSION_ENCODE_HANDLERS, _OCSP_BASICRESP_EXTENSION_ENCODE_HANDLERS,
+    _OCSP_REQUEST_EXTENSION_ENCODE_HANDLERS, _encode_asn1_int_gc,
+    _encode_asn1_str_gc, _encode_name_gc, _txt2obj_gc)
 from cryptography.hazmat.backends.openssl.hashes import _HashContext
 from cryptography.hazmat.backends.openssl.hmac import _HMACContext
-from cryptography.hazmat.backends.openssl.poly1305 import _POLY1305_KEY_SIZE, _Poly1305Context
-from cryptography.hazmat.backends.openssl.rsa import _RSAPrivateKey, _RSAPublicKey
-from cryptography.hazmat.backends.openssl.x448 import _X448PrivateKey, _X448PublicKey
+from cryptography.hazmat.backends.openssl.poly1305 import (_POLY1305_KEY_SIZE,
+                                                           _Poly1305Context)
+from cryptography.hazmat.backends.openssl.rsa import (_RSAPrivateKey,
+                                                      _RSAPublicKey)
+from cryptography.hazmat.backends.openssl.x448 import (_X448PrivateKey,
+                                                       _X448PublicKey)
 from cryptography.hazmat.backends.openssl.x509 import _RawRevokedCertificate
-from cryptography.hazmat.backends.openssl.x25519 import _X25519PrivateKey, _X25519PublicKey
+from cryptography.hazmat.backends.openssl.x25519 import (_X25519PrivateKey,
+                                                         _X25519PublicKey)
 from cryptography.hazmat.bindings._rust import asn1
 from cryptography.hazmat.bindings._rust import x509 as rust_x509
 from cryptography.hazmat.bindings.openssl import binding
 from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import dh, dsa, ec, ed448, ed25519, rsa
-from cryptography.hazmat.primitives.asymmetric.padding import MGF1, OAEP, PSS, PKCS1v15
+from cryptography.hazmat.primitives.asymmetric import (dh, dsa, ec, ed448,
+                                                       ed25519, rsa)
+from cryptography.hazmat.primitives.asymmetric.padding import (MGF1, OAEP, PSS,
+                                                               PKCS1v15)
 from cryptography.hazmat.primitives.asymmetric.types import PRIVATE_KEY_TYPES
-from cryptography.hazmat.primitives.ciphers.algorithms import AES, ARC4, CAST5, IDEA, SEED, SM4, Blowfish, Camellia, ChaCha20, TripleDES
-from cryptography.hazmat.primitives.ciphers.modes import CBC, CFB, CFB8, CTR, ECB, GCM, OFB, XTS
+from cryptography.hazmat.primitives.ciphers.algorithms import (AES, ARC4,
+                                                               CAST5, IDEA,
+                                                               SEED, SM4,
+                                                               Blowfish,
+                                                               Camellia,
+                                                               ChaCha20,
+                                                               TripleDES)
+from cryptography.hazmat.primitives.ciphers.modes import (CBC, CFB, CFB8, CTR,
+                                                          ECB, GCM, OFB, XTS)
 from cryptography.hazmat.primitives.kdf import scrypt
 from cryptography.hazmat.primitives.serialization import pkcs7, ssh
 from cryptography.x509 import ocsp
 from cryptography.x509.base import PUBLIC_KEY_TYPES
 from cryptography.x509.name import Name
+
 _MemoryBIO = collections.namedtuple('_MemoryBIO', ['bio', 'char_ptr'])
 # Not actually supported, just used as a marker for some serialization tests.
 

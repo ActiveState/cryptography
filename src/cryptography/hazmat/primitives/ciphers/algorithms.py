@@ -2,8 +2,10 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 from cryptography import utils
-from cryptography.hazmat.primitives.ciphers import BlockCipherAlgorithm, CipherAlgorithm
+from cryptography.hazmat.primitives.ciphers import (BlockCipherAlgorithm,
+                                                    CipherAlgorithm)
 from cryptography.hazmat.primitives.ciphers.modes import ModeWithNonce
+
 
 def _verify_key_size(algorithm, key):
     # Verify that the key is instance of bytes

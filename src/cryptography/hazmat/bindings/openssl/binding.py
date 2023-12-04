@@ -4,11 +4,13 @@
 import collections
 import threading
 import types
+
 import cryptography
 from cryptography import utils
 from cryptography.exceptions import InternalError
 from cryptography.hazmat.bindings._openssl import ffi, lib
 from cryptography.hazmat.bindings.openssl._conditional import CONDITIONAL_NAMES
+
 _OpenSSLErrorWithText = collections.namedtuple('_OpenSSLErrorWithText', ['code', 'lib', 'reason', 'reason_text'])
 
 class _OpenSSLError(object):

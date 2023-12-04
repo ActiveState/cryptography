@@ -2,7 +2,9 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import os
+
 from cryptography_vectors.__about__ import __version__
+
 __all__ = ['__version__']
 
 def open_vector_file(filename, mode):

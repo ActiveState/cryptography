@@ -1,5 +1,6 @@
 from ..utils import load_wycheproof_tests
 
+
 def wycheproof_tests(*paths):
 
     def wrapper(func):

@@ -2,12 +2,18 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import binascii
+
 import pytest
+
 from cryptography.exceptions import AlreadyFinalized, _Reasons
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, base, modes
+from cryptography.hazmat.primitives.ciphers import (Cipher, algorithms, base,
+                                                    modes)
+
 from ...doubles import DummyCipherAlgorithm, DummyMode
 from ...utils import raises_unsupported_algorithm
-from .utils import generate_aead_exception_test, generate_aead_tag_exception_test
+from .utils import (generate_aead_exception_test,
+                    generate_aead_tag_exception_test)
+
 
 class TestCipher(object):
 

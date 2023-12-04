@@ -3,10 +3,14 @@
 # for complete details.
 import abc
 import datetime
+
 from cryptography import utils, x509
 from cryptography.hazmat.bindings._rust import ocsp
 from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.x509.base import _EARLIEST_UTC_TIME, PRIVATE_KEY_TYPES, _convert_to_naive_utc_time, _reject_duplicate_extension
+from cryptography.x509.base import (_EARLIEST_UTC_TIME, PRIVATE_KEY_TYPES,
+                                    _convert_to_naive_utc_time,
+                                    _reject_duplicate_extension)
+
 
 class OCSPResponderEncoding(utils.Enum):
     HASH = 'By Hash'

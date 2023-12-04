@@ -4,6 +4,7 @@
 from cryptography.exceptions import UnsupportedAlgorithm, _Reasons
 from cryptography.hazmat.primitives import hashes
 
+
 class _HashContext(hashes.HashContext):
 
     def __init__(self, backend, algorithm, ctx=None):

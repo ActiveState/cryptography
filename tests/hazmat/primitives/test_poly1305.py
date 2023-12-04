@@ -3,10 +3,16 @@
 # for complete details.
 import binascii
 import os
+
 import pytest
-from cryptography.exceptions import AlreadyFinalized, InvalidSignature, _Reasons
+
+from cryptography.exceptions import (AlreadyFinalized, InvalidSignature,
+                                     _Reasons)
 from cryptography.hazmat.primitives.poly1305 import Poly1305
-from ...utils import load_nist_vectors, load_vectors_from_file, raises_unsupported_algorithm
+
+from ...utils import (load_nist_vectors, load_vectors_from_file,
+                      raises_unsupported_algorithm)
+
 
 @pytest.mark.supported(only_if=lambda backend: not backend.poly1305_supported(), skip_message='Requires OpenSSL without poly1305 support')
 def test_poly1305_unsupported(backend):

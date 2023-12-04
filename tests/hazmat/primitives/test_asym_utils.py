@@ -2,8 +2,11 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import pytest
+
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.asymmetric.utils import Prehashed, decode_dss_signature, encode_dss_signature
+from cryptography.hazmat.primitives.asymmetric.utils import (
+    Prehashed, decode_dss_signature, encode_dss_signature)
+
 
 def test_dss_signature():
     sig = encode_dss_signature(1, 1)

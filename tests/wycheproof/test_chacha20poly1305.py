@@ -2,11 +2,15 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import binascii
+
 import pytest
+
 from cryptography.exceptions import InvalidTag
 from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305
+
 from ..hazmat.primitives.test_aead import _aead_supported
 from .utils import wycheproof_tests
+
 
 @pytest.mark.skipif(not _aead_supported(ChaCha20Poly1305), reason='Requires OpenSSL with ChaCha20Poly1305 support')
 @wycheproof_tests('chacha20_poly1305_test.json')

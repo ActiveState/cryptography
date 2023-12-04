@@ -6,6 +6,7 @@ from cryptography.exceptions import InvalidTag, UnsupportedAlgorithm, _Reasons
 from cryptography.hazmat.primitives import ciphers
 from cryptography.hazmat.primitives.ciphers import modes
 
+
 @utils.register_interface(ciphers.CipherContext)
 @utils.register_interface(ciphers.AEADCipherContext)
 @utils.register_interface(ciphers.AEADEncryptionContext)

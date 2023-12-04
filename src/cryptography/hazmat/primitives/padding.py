@@ -2,9 +2,12 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import abc
+
 from cryptography import utils
 from cryptography.exceptions import AlreadyFinalized
-from cryptography.hazmat.bindings._rust import check_ansix923_padding, check_pkcs7_padding
+from cryptography.hazmat.bindings._rust import (check_ansix923_padding,
+                                                check_pkcs7_padding)
+
 
 class PaddingContext(metaclass=abc.ABCMeta):
 

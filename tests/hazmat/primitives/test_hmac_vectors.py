@@ -2,10 +2,14 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import binascii
+
 import pytest
+
 from cryptography.hazmat.primitives import hashes, hmac
+
 from ...utils import load_hash_vectors
 from .utils import generate_hmac_test
+
 
 @pytest.mark.supported(only_if=lambda backend: backend.hmac_supported(hashes.MD5()), skip_message='Does not support MD5')
 class TestHMACMD5(object):

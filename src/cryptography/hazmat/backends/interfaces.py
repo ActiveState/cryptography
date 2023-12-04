@@ -2,10 +2,18 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import abc
+
 if typing.TYPE_CHECKING:
     from cryptography.hazmat.primitives import hashes
-    from cryptography.hazmat.primitives.asymmetric.types import PRIVATE_KEY_TYPES
-    from cryptography.x509.base import Certificate, CertificateBuilder, CertificateRevocationList, CertificateRevocationListBuilder, CertificateSigningRequest, CertificateSigningRequestBuilder, RevokedCertificate, RevokedCertificateBuilder
+    from cryptography.hazmat.primitives.asymmetric.types import \
+        PRIVATE_KEY_TYPES
+    from cryptography.x509.base import (Certificate, CertificateBuilder,
+                                        CertificateRevocationList,
+                                        CertificateRevocationListBuilder,
+                                        CertificateSigningRequest,
+                                        CertificateSigningRequestBuilder,
+                                        RevokedCertificate,
+                                        RevokedCertificateBuilder)
     from cryptography.x509.name import Name
 
 class CipherBackend(metaclass=abc.ABCMeta):

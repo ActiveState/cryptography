@@ -2,8 +2,11 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import abc
+
 import pytest
+
 from cryptography.utils import InterfaceNotImplemented, verify_interface
+
 
 class TestVerifyInterface(object):
 

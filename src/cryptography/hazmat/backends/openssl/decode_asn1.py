@@ -2,6 +2,7 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 from cryptography import x509
+
 _DISTPOINT_TYPE_FULLNAME = 0
 _DISTPOINT_TYPE_RELATIVENAME = 1
 #    CRLReason ::= ENUMERATED {

@@ -3,11 +3,17 @@
 # for complete details.
 import binascii
 import os
+
 import pytest
+
 from cryptography.exceptions import InvalidTag, UnsupportedAlgorithm, _Reasons
-from cryptography.hazmat.primitives.ciphers.aead import AESCCM, AESGCM, ChaCha20Poly1305
-from ...utils import load_nist_ccm_vectors, load_nist_vectors, load_vectors_from_file, raises_unsupported_algorithm
+from cryptography.hazmat.primitives.ciphers.aead import (AESCCM, AESGCM,
+                                                         ChaCha20Poly1305)
+
+from ...utils import (load_nist_ccm_vectors, load_nist_vectors,
+                      load_vectors_from_file, raises_unsupported_algorithm)
 from .utils import _load_all_params
+
 
 class FakeData(bytes):
 

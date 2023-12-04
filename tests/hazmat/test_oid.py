@@ -2,7 +2,9 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import pytest
+
 from cryptography.hazmat._oid import ObjectIdentifier
+
 
 def test_basic_oid():
     assert ObjectIdentifier('1.2.3.4').dotted_string == '1.2.3.4'

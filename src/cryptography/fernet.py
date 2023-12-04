@@ -6,6 +6,7 @@ import binascii
 import os
 import struct
 import time
+
 from cryptography import utils
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import _get_backend
@@ -13,6 +14,7 @@ from cryptography.hazmat.backends.interfaces import Backend
 from cryptography.hazmat.primitives import hashes, padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.hmac import HMAC
+
 
 class InvalidToken(Exception):
     pass

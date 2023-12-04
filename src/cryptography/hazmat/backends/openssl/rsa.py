@@ -2,13 +2,23 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 from cryptography import utils
-from cryptography.exceptions import InvalidSignature, UnsupportedAlgorithm, _Reasons
-from cryptography.hazmat.backends.openssl.utils import _calculate_digest_and_algorithm, _check_not_prehashed, _warn_sign_verify_deprecated
+from cryptography.exceptions import (InvalidSignature, UnsupportedAlgorithm,
+                                     _Reasons)
+from cryptography.hazmat.backends.openssl.utils import (
+    _calculate_digest_and_algorithm, _check_not_prehashed,
+    _warn_sign_verify_deprecated)
 from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import AsymmetricSignatureContext, AsymmetricVerificationContext
+from cryptography.hazmat.primitives.asymmetric import (
+    AsymmetricSignatureContext, AsymmetricVerificationContext)
 from cryptography.hazmat.primitives.asymmetric import utils as asym_utils
-from cryptography.hazmat.primitives.asymmetric.padding import MGF1, OAEP, PSS, AsymmetricPadding, PKCS1v15, calculate_max_pss_salt_length
-from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, RSAPrivateNumbers, RSAPublicKey, RSAPublicNumbers
+from cryptography.hazmat.primitives.asymmetric.padding import (
+    MGF1, OAEP, PSS, AsymmetricPadding, PKCS1v15,
+    calculate_max_pss_salt_length)
+from cryptography.hazmat.primitives.asymmetric.rsa import (RSAPrivateKey,
+                                                           RSAPrivateNumbers,
+                                                           RSAPublicKey,
+                                                           RSAPublicNumbers)
+
 
 def _get_rsa_pss_salt_length(pss, key, hash_algorithm):
     salt = pss._salt_length

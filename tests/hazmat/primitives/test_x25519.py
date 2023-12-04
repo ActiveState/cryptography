@@ -3,11 +3,17 @@
 # for complete details.
 import binascii
 import os
+
 import pytest
+
 from cryptography.exceptions import _Reasons
 from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey, X25519PublicKey
-from ...utils import load_nist_vectors, load_vectors_from_file, raises_unsupported_algorithm
+from cryptography.hazmat.primitives.asymmetric.x25519 import (X25519PrivateKey,
+                                                              X25519PublicKey)
+
+from ...utils import (load_nist_vectors, load_vectors_from_file,
+                      raises_unsupported_algorithm)
+
 
 @pytest.mark.supported(only_if=lambda backend: not backend.x25519_supported(), skip_message='Requires OpenSSL without X25519 support')
 def test_x25519_unsupported(backend):

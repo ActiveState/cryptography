@@ -2,10 +2,14 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import os
+
 import pytest
+
 from cryptography.hazmat.primitives import hashes
+
 from ...utils import load_nist_vectors
 from .utils import generate_hkdf_test
+
 
 @pytest.mark.supported(only_if=lambda backend: backend.hmac_supported(hashes.SHA1()), skip_message='Does not support SHA1.')
 class TestHKDFSHA1(object):

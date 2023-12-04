@@ -3,6 +3,7 @@
 # for complete details.
 from cryptography import utils
 
+
 class _Reasons(utils.Enum):
     BACKEND_MISSING_INTERFACE = 0
     UNSUPPORTED_HASH = 1

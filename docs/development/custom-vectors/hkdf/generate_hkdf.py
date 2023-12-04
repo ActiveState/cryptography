@@ -2,9 +2,11 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import binascii
+
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+
 IKM = binascii.unhexlify(b'0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b')
 L = 1200
 OKM = HKDF(algorithm=hashes.SHA256(), length=L, salt=None, info=None, backend=default_backend()).derive(IKM)

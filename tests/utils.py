@@ -7,9 +7,12 @@ import json
 import os
 import re
 from contextlib import contextmanager
+
 import cryptography_vectors
 import pytest
+
 from cryptography.exceptions import UnsupportedAlgorithm
+
 HashVector = collections.namedtuple('HashVector', ['message', 'digest'])
 KeyedHashVector = collections.namedtuple('KeyedHashVector', ['message', 'digest', 'key'])
 

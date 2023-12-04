@@ -5,7 +5,9 @@ import os
 import pkgutil
 import subprocess
 import sys
+
 import cryptography
+
 
 def find_all_modules():  # type: ignore[attr-defined]
     return sorted((mod for _, mod, _ in pkgutil.walk_packages(cryptography.__path__, prefix=cryptography.__name__ + '.')))

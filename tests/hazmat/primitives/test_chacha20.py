@@ -4,10 +4,14 @@
 import binascii
 import os
 import struct
+
 import pytest
+
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms
+
 from ...utils import load_nist_vectors
 from .utils import _load_all_params
+
 
 @pytest.mark.supported(only_if=lambda backend: backend.cipher_supported(algorithms.ChaCha20(b'\x00' * 32, b'0' * 16), None), skip_message='Does not support ChaCha20')
 class TestChaCha20(object):

@@ -6,6 +6,7 @@ from cryptography.hazmat.backends import _get_backend
 from cryptography.hazmat.backends.interfaces import Backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import dsa, ec, rsa
+
 _ALLOWED_PKCS12_TYPES = typing.Union[rsa.RSAPrivateKey, dsa.DSAPrivateKey, ec.EllipticCurvePrivateKey]
 
 def load_key_and_certificates(data, password, backend=None):

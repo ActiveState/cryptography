@@ -2,7 +2,9 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import abc
+
 from cryptography import utils
+
 # This exists to break an import cycle. These classes are normally accessible
 # from the serialization module.
 

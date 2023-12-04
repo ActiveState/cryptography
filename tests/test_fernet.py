@@ -6,13 +6,16 @@ import calendar
 import json
 import os
 import time
+
 import cryptography_vectors
 import iso8601
 import pretend
 import pytest
+
 from cryptography.fernet import Fernet, InvalidToken, MultiFernet
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import algorithms, modes
+
 
 def json_parametrize(keys, filename):
     vector_file = cryptography_vectors.open_vector_file(os.path.join('fernet', filename), 'r')

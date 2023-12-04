@@ -2,8 +2,10 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import pytest
+
 from cryptography.exceptions import AlreadyFinalized
 from cryptography.hazmat.primitives import padding
+
 
 class TestPKCS7(object):
 

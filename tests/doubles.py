@@ -3,8 +3,10 @@
 # for complete details.
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives.ciphers import BlockCipherAlgorithm, CipherAlgorithm
+from cryptography.hazmat.primitives.ciphers import (BlockCipherAlgorithm,
+                                                    CipherAlgorithm)
 from cryptography.hazmat.primitives.ciphers.modes import Mode
+
 
 class DummyCipherAlgorithm(CipherAlgorithm):
     name = 'dummy-cipher'

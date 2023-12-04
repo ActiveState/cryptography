@@ -2,11 +2,14 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import abc
+
 from cryptography.hazmat.backends import _get_backend
 from cryptography.hazmat.backends.interfaces import Backend
 from cryptography.hazmat.primitives import _serialization, hashes
-from cryptography.hazmat.primitives.asymmetric import AsymmetricSignatureContext, AsymmetricVerificationContext
+from cryptography.hazmat.primitives.asymmetric import (
+    AsymmetricSignatureContext, AsymmetricVerificationContext)
 from cryptography.hazmat.primitives.asymmetric import utils as asym_utils
+
 
 class DSAParameters(metaclass=abc.ABCMeta):
 

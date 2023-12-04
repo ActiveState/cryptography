@@ -3,6 +3,7 @@
 # for complete details.
 from cryptography.hazmat.primitives import hashes
 
+
 class ObjectIdentifier(object):
 
     def __init__(self, dotted_string):

@@ -3,10 +3,14 @@
 # for complete details.
 import binascii
 import os
+
 import pytest
+
 from cryptography.hazmat.primitives.ciphers import algorithms, modes
+
 from ...utils import load_nist_vectors
 from .utils import generate_encrypt_test
+
 
 @pytest.mark.supported(only_if=lambda backend: backend.cipher_supported(algorithms.Blowfish(b'\x00' * 56), modes.ECB()), skip_message='Does not support Blowfish ECB')
 class TestBlowfishModeECB(object):

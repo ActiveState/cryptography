@@ -3,11 +3,15 @@
 # for complete details.
 import binascii
 import os
+
 import pytest
+
 from cryptography.hazmat.primitives.ciphers import algorithms, base, modes
+
 from ...doubles import DummyMode
 from ...utils import load_nist_vectors
 from .utils import _load_all_params, generate_encrypt_test
+
 
 @pytest.mark.supported(only_if=lambda backend: backend.cipher_supported(algorithms.AES(b'\x00' * 32), modes.XTS(b'\x00' * 16)), skip_message='Does not support AES XTS')
 class TestAESModeXTS(object):

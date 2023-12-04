@@ -2,13 +2,18 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import os
+
 import pytest
+
 from cryptography.exceptions import _Reasons
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.hashes import MD5, SHA1
 from cryptography.hazmat.primitives.twofactor import InvalidToken
 from cryptography.hazmat.primitives.twofactor.hotp import HOTP
-from ....utils import load_nist_vectors, load_vectors_from_file, raises_unsupported_algorithm
+
+from ....utils import (load_nist_vectors, load_vectors_from_file,
+                       raises_unsupported_algorithm)
+
 vectors = load_vectors_from_file('twofactor/rfc-4226.txt', load_nist_vectors)
 
 @pytest.mark.supported(only_if=lambda backend: backend.hmac_supported(hashes.SHA1()), skip_message='Does not support HMAC-SHA1.')

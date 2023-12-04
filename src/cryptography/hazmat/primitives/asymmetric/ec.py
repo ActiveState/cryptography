@@ -3,13 +3,16 @@
 # for complete details.
 import abc
 import warnings
+
 from cryptography import utils
 from cryptography.hazmat._oid import ObjectIdentifier
 from cryptography.hazmat.backends import _get_backend
 from cryptography.hazmat.backends.interfaces import Backend
 from cryptography.hazmat.primitives import _serialization, hashes
-from cryptography.hazmat.primitives.asymmetric import AsymmetricSignatureContext, AsymmetricVerificationContext
+from cryptography.hazmat.primitives.asymmetric import (
+    AsymmetricSignatureContext, AsymmetricVerificationContext)
 from cryptography.hazmat.primitives.asymmetric import utils as asym_utils
+
 
 class EllipticCurveOID(object):
     SECP192R1 = ObjectIdentifier('1.2.840.10045.3.1.1')

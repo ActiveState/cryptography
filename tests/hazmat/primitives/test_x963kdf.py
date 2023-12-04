@@ -2,11 +2,15 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import binascii
+
 import pytest
+
 from cryptography.exceptions import AlreadyFinalized, InvalidKey, _Reasons
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.x963kdf import X963KDF
+
 from ...utils import raises_unsupported_algorithm
+
 
 class TestX963KDF(object):
 

@@ -5,16 +5,24 @@ import abc
 import datetime
 import hashlib
 import ipaddress
+
 from cryptography import utils
 from cryptography.hazmat.bindings._rust import asn1
 from cryptography.hazmat.primitives import constant_time, serialization
 from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePublicKey
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey
 from cryptography.hazmat.primitives.asymmetric.types import PUBLIC_KEY_TYPES
-from cryptography.x509.certificate_transparency import SignedCertificateTimestamp
-from cryptography.x509.general_name import _IPADDRESS_TYPES, DirectoryName, DNSName, GeneralName, IPAddress, OtherName, RegisteredID, RFC822Name, UniformResourceIdentifier
+from cryptography.x509.certificate_transparency import \
+    SignedCertificateTimestamp
+from cryptography.x509.general_name import (_IPADDRESS_TYPES, DirectoryName,
+                                            DNSName, GeneralName, IPAddress,
+                                            OtherName, RegisteredID,
+                                            RFC822Name,
+                                            UniformResourceIdentifier)
 from cryptography.x509.name import Name, RelativeDistinguishedName
-from cryptography.x509.oid import CRLEntryExtensionOID, ExtensionOID, ObjectIdentifier, OCSPExtensionOID
+from cryptography.x509.oid import (CRLEntryExtensionOID, ExtensionOID,
+                                   ObjectIdentifier, OCSPExtensionOID)
+
 ExtensionTypeVar = typing.TypeVar('ExtensionTypeVar', bound='ExtensionType')
 
 def _key_identifier_from_public_key(public_key):

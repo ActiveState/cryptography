@@ -3,7 +3,9 @@
 # for complete details.
 from hypothesis import HealthCheck, given, settings
 from hypothesis.strategies import binary
+
 from cryptography.fernet import Fernet
+
 
 @settings(suppress_health_check=[HealthCheck.too_slow], deadline=None)
 @given(binary())

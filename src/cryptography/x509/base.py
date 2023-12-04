@@ -4,17 +4,22 @@
 import abc
 import datetime
 import os
+
 from cryptography import utils
 from cryptography.hazmat.backends import _get_backend
 from cryptography.hazmat.backends.interfaces import Backend
 from cryptography.hazmat.bindings._rust import x509 as rust_x509
 from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import dsa, ec, ed448, ed25519, rsa
-from cryptography.hazmat.primitives.asymmetric.types import PRIVATE_KEY_TYPES as PRIVATE_KEY_TYPES
-from cryptography.hazmat.primitives.asymmetric.types import PUBLIC_KEY_TYPES as PUBLIC_KEY_TYPES
+from cryptography.hazmat.primitives.asymmetric import (dsa, ec, ed448, ed25519,
+                                                       rsa)
+from cryptography.hazmat.primitives.asymmetric.types import \
+    PRIVATE_KEY_TYPES as PRIVATE_KEY_TYPES
+from cryptography.hazmat.primitives.asymmetric.types import \
+    PUBLIC_KEY_TYPES as PUBLIC_KEY_TYPES
 from cryptography.x509.extensions import Extension, Extensions, ExtensionType
 from cryptography.x509.name import Name
 from cryptography.x509.oid import ObjectIdentifier
+
 _EARLIEST_UTC_TIME = datetime.datetime(1950, 1, 1)
 
 class AttributeNotFound(Exception):

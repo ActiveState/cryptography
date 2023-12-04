@@ -3,10 +3,14 @@
 # for complete details.
 import binascii
 import os
+
 import pytest
+
 from cryptography.hazmat.primitives import hashes
+
 from ...utils import load_hash_vectors, load_nist_vectors
 from .utils import _load_all_params, generate_hash_test
+
 
 @pytest.mark.supported(only_if=lambda backend: backend.hash_supported(hashes.SHA1()), skip_message='Does not support SHA1')
 class TestSHA1(object):

@@ -15,6 +15,7 @@
 # serve to show the default.
 import os
 import sys
+
 try:
     import sphinx_rtd_theme
 except ImportError:

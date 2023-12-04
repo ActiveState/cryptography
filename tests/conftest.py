@@ -2,8 +2,11 @@
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
 import pytest
+
 from cryptography.hazmat.backends.openssl import backend as openssl_backend
+
 from .utils import check_backend_support
+
 
 def pytest_configure(config):
     if config.getoption('--enable-fips'):

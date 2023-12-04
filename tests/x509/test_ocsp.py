@@ -4,16 +4,20 @@
 import base64
 import datetime
 import os
+
 import pytest
+
 from cryptography import x509
 from cryptography.exceptions import UnsupportedAlgorithm
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec, ed448, ed25519
 from cryptography.hazmat.primitives.asymmetric.padding import PKCS1v15
 from cryptography.x509 import ocsp
+
 from ..hazmat.primitives.fixtures_ec import EC_KEY_SECP256R1
 from ..utils import load_vectors_from_file
 from .test_x509 import _load_cert
+
 
 def _load_data(filename, loader):
     return load_vectors_from_file(filename=filename, loader=lambda data: loader(data.read()), mode='rb')
