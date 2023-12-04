@@ -14,12 +14,17 @@ from cryptography.hazmat.backends.interfaces import Backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import dsa
 from cryptography.hazmat.primitives.asymmetric.utils import (
-    Prehashed, encode_dss_signature)
+    Prehashed,
+    encode_dss_signature,
+)
 from cryptography.utils import CryptographyDeprecationWarning
 
 from ...doubles import DummyHashAlgorithm, DummyKeySerializationEncryption
-from ...utils import (load_fips_dsa_key_pair_vectors,
-                      load_fips_dsa_sig_vectors, load_vectors_from_file)
+from ...utils import (
+    load_fips_dsa_key_pair_vectors,
+    load_fips_dsa_sig_vectors,
+    load_vectors_from_file,
+)
 from .fixtures_dsa import DSA_KEY_1024, DSA_KEY_2048, DSA_KEY_3072
 from .utils import skip_fips_traditional_openssl
 
@@ -112,38 +117,38 @@ class TestDSA(object):
         ("p", "q", "g"),
         [
             (
-                2 ** 1000,
+                2**1000,
                 DSA_KEY_1024.public_numbers.parameter_numbers.q,
                 DSA_KEY_1024.public_numbers.parameter_numbers.g,
             ),
             (
-                2 ** 2000,
+                2**2000,
                 DSA_KEY_2048.public_numbers.parameter_numbers.q,
                 DSA_KEY_2048.public_numbers.parameter_numbers.g,
             ),
             (
-                2 ** 3000,
+                2**3000,
                 DSA_KEY_3072.public_numbers.parameter_numbers.q,
                 DSA_KEY_3072.public_numbers.parameter_numbers.g,
             ),
             (
-                2 ** 3100,
+                2**3100,
                 DSA_KEY_3072.public_numbers.parameter_numbers.q,
                 DSA_KEY_3072.public_numbers.parameter_numbers.g,
             ),
             (
                 DSA_KEY_1024.public_numbers.parameter_numbers.p,
-                2 ** 150,
+                2**150,
                 DSA_KEY_1024.public_numbers.parameter_numbers.g,
             ),
             (
                 DSA_KEY_2048.public_numbers.parameter_numbers.p,
-                2 ** 250,
+                2**250,
                 DSA_KEY_2048.public_numbers.parameter_numbers.g,
             ),
             (
                 DSA_KEY_3072.public_numbers.parameter_numbers.p,
-                2 ** 260,
+                2**260,
                 DSA_KEY_3072.public_numbers.parameter_numbers.g,
             ),
             (
@@ -159,7 +164,7 @@ class TestDSA(object):
             (
                 DSA_KEY_1024.public_numbers.parameter_numbers.p,
                 DSA_KEY_1024.public_numbers.parameter_numbers.q,
-                2 ** 1200,
+                2**1200,
             ),
         ],
     )
@@ -171,28 +176,28 @@ class TestDSA(object):
         ("p", "q", "g", "y", "x"),
         [
             (
-                2 ** 1000,
+                2**1000,
                 DSA_KEY_1024.public_numbers.parameter_numbers.q,
                 DSA_KEY_1024.public_numbers.parameter_numbers.g,
                 DSA_KEY_1024.public_numbers.y,
                 DSA_KEY_1024.x,
             ),
             (
-                2 ** 2000,
+                2**2000,
                 DSA_KEY_2048.public_numbers.parameter_numbers.q,
                 DSA_KEY_2048.public_numbers.parameter_numbers.g,
                 DSA_KEY_2048.public_numbers.y,
                 DSA_KEY_2048.x,
             ),
             (
-                2 ** 3000,
+                2**3000,
                 DSA_KEY_3072.public_numbers.parameter_numbers.q,
                 DSA_KEY_3072.public_numbers.parameter_numbers.g,
                 DSA_KEY_3072.public_numbers.y,
                 DSA_KEY_3072.x,
             ),
             (
-                2 ** 3100,
+                2**3100,
                 DSA_KEY_3072.public_numbers.parameter_numbers.q,
                 DSA_KEY_3072.public_numbers.parameter_numbers.g,
                 DSA_KEY_3072.public_numbers.y,
@@ -200,21 +205,21 @@ class TestDSA(object):
             ),
             (
                 DSA_KEY_1024.public_numbers.parameter_numbers.p,
-                2 ** 150,
+                2**150,
                 DSA_KEY_1024.public_numbers.parameter_numbers.g,
                 DSA_KEY_1024.public_numbers.y,
                 DSA_KEY_1024.x,
             ),
             (
                 DSA_KEY_2048.public_numbers.parameter_numbers.p,
-                2 ** 250,
+                2**250,
                 DSA_KEY_2048.public_numbers.parameter_numbers.g,
                 DSA_KEY_2048.public_numbers.y,
                 DSA_KEY_2048.x,
             ),
             (
                 DSA_KEY_3072.public_numbers.parameter_numbers.p,
-                2 ** 260,
+                2**260,
                 DSA_KEY_3072.public_numbers.parameter_numbers.g,
                 DSA_KEY_3072.public_numbers.y,
                 DSA_KEY_3072.x,
@@ -236,7 +241,7 @@ class TestDSA(object):
             (
                 DSA_KEY_1024.public_numbers.parameter_numbers.p,
                 DSA_KEY_1024.public_numbers.parameter_numbers.q,
-                2 ** 1200,
+                2**1200,
                 DSA_KEY_1024.public_numbers.y,
                 DSA_KEY_1024.x,
             ),
@@ -259,20 +264,20 @@ class TestDSA(object):
                 DSA_KEY_1024.public_numbers.parameter_numbers.q,
                 DSA_KEY_1024.public_numbers.parameter_numbers.g,
                 DSA_KEY_1024.public_numbers.y,
-                2 ** 159,
+                2**159,
             ),
             (
                 DSA_KEY_1024.public_numbers.parameter_numbers.p,
                 DSA_KEY_1024.public_numbers.parameter_numbers.q,
                 DSA_KEY_1024.public_numbers.parameter_numbers.g,
                 DSA_KEY_1024.public_numbers.y,
-                2 ** 200,
+                2**200,
             ),
             (
                 DSA_KEY_1024.public_numbers.parameter_numbers.p,
                 DSA_KEY_1024.public_numbers.parameter_numbers.q,
                 DSA_KEY_1024.public_numbers.parameter_numbers.g,
-                2 ** 100,
+                2**100,
                 DSA_KEY_1024.x,
             ),
         ],
@@ -291,44 +296,44 @@ class TestDSA(object):
         ("p", "q", "g", "y"),
         [
             (
-                2 ** 1000,
+                2**1000,
                 DSA_KEY_1024.public_numbers.parameter_numbers.q,
                 DSA_KEY_1024.public_numbers.parameter_numbers.g,
                 DSA_KEY_1024.public_numbers.y,
             ),
             (
-                2 ** 2000,
+                2**2000,
                 DSA_KEY_2048.public_numbers.parameter_numbers.q,
                 DSA_KEY_2048.public_numbers.parameter_numbers.g,
                 DSA_KEY_2048.public_numbers.y,
             ),
             (
-                2 ** 3000,
+                2**3000,
                 DSA_KEY_3072.public_numbers.parameter_numbers.q,
                 DSA_KEY_3072.public_numbers.parameter_numbers.g,
                 DSA_KEY_3072.public_numbers.y,
             ),
             (
-                2 ** 3100,
+                2**3100,
                 DSA_KEY_3072.public_numbers.parameter_numbers.q,
                 DSA_KEY_3072.public_numbers.parameter_numbers.g,
                 DSA_KEY_3072.public_numbers.y,
             ),
             (
                 DSA_KEY_1024.public_numbers.parameter_numbers.p,
-                2 ** 150,
+                2**150,
                 DSA_KEY_1024.public_numbers.parameter_numbers.g,
                 DSA_KEY_1024.public_numbers.y,
             ),
             (
                 DSA_KEY_2048.public_numbers.parameter_numbers.p,
-                2 ** 250,
+                2**250,
                 DSA_KEY_2048.public_numbers.parameter_numbers.g,
                 DSA_KEY_2048.public_numbers.y,
             ),
             (
                 DSA_KEY_3072.public_numbers.parameter_numbers.p,
-                2 ** 260,
+                2**260,
                 DSA_KEY_3072.public_numbers.parameter_numbers.g,
                 DSA_KEY_3072.public_numbers.y,
             ),
@@ -347,7 +352,7 @@ class TestDSA(object):
             (
                 DSA_KEY_1024.public_numbers.parameter_numbers.p,
                 DSA_KEY_1024.public_numbers.parameter_numbers.q,
-                2 ** 1200,
+                2**1200,
                 DSA_KEY_1024.public_numbers.y,
             ),
         ],

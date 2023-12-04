@@ -6,8 +6,11 @@ import abc
 import typing
 
 from cryptography import utils
-from cryptography.exceptions import (AlreadyFinalized, UnsupportedAlgorithm,
-                                     _Reasons)
+from cryptography.exceptions import (
+    AlreadyFinalized,
+    UnsupportedAlgorithm,
+    _Reasons,
+)
 from cryptography.hazmat.backends import _get_backend
 from cryptography.hazmat.backends.interfaces import Backend, HashBackend
 
@@ -230,7 +233,6 @@ class BLAKE2b(HashAlgorithm):
     block_size = 128
 
     def __init__(self, digest_size: int):
-
         if digest_size != 64:
             raise ValueError("Digest size must be 64")
 
@@ -248,7 +250,6 @@ class BLAKE2s(HashAlgorithm):
     _min_digest_size = 1
 
     def __init__(self, digest_size: int):
-
         if digest_size != 32:
             raise ValueError("Digest size must be 32")
 

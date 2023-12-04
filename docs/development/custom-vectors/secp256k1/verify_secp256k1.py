@@ -3,8 +3,9 @@ import os
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives.asymmetric.utils import \
-    encode_dss_signature
+from cryptography.hazmat.primitives.asymmetric.utils import (
+    encode_dss_signature,
+)
 from tests.utils import load_fips_ecdsa_signing_vectors, load_vectors_from_file
 
 CRYPTOGRAPHY_HASH_TYPES = {

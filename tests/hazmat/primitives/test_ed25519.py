@@ -11,7 +11,9 @@ import pytest
 from cryptography.exceptions import InvalidSignature, _Reasons
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import (
-    Ed25519PrivateKey, Ed25519PublicKey)
+    Ed25519PrivateKey,
+    Ed25519PublicKey,
+)
 
 from ...utils import load_vectors_from_file, raises_unsupported_algorithm
 

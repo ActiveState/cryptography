@@ -9,15 +9,17 @@ import pytest
 
 from cryptography.exceptions import AlreadyFinalized, InvalidKey, _Reasons
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.concatkdf import (ConcatKDFHash,
-                                                          ConcatKDFHMAC)
+from cryptography.hazmat.primitives.kdf.concatkdf import (
+    ConcatKDFHash,
+    ConcatKDFHMAC,
+)
 
 from ...utils import raises_unsupported_algorithm
 
 
 class TestConcatKDFHash(object):
     def test_length_limit(self, backend):
-        big_length = hashes.SHA256().digest_size * (2 ** 32 - 1) + 1
+        big_length = hashes.SHA256().digest_size * (2**32 - 1) + 1
 
         with pytest.raises(ValueError):
             ConcatKDFHash(hashes.SHA256(), big_length, None, backend)
@@ -126,7 +128,7 @@ class TestConcatKDFHash(object):
 
 class TestConcatKDFHMAC(object):
     def test_length_limit(self, backend):
-        big_length = hashes.SHA256().digest_size * (2 ** 32 - 1) + 1
+        big_length = hashes.SHA256().digest_size * (2**32 - 1) + 1
 
         with pytest.raises(ValueError):
             ConcatKDFHMAC(hashes.SHA256(), big_length, None, None, backend)

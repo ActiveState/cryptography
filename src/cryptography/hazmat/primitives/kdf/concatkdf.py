@@ -7,11 +7,18 @@ import struct
 import typing
 
 from cryptography import utils
-from cryptography.exceptions import (AlreadyFinalized, InvalidKey,
-                                     UnsupportedAlgorithm, _Reasons)
+from cryptography.exceptions import (
+    AlreadyFinalized,
+    InvalidKey,
+    UnsupportedAlgorithm,
+    _Reasons,
+)
 from cryptography.hazmat.backends import _get_backend
-from cryptography.hazmat.backends.interfaces import (Backend, HashBackend,
-                                                     HMACBackend)
+from cryptography.hazmat.backends.interfaces import (
+    Backend,
+    HashBackend,
+    HMACBackend,
+)
 from cryptography.hazmat.primitives import constant_time, hashes, hmac
 from cryptography.hazmat.primitives.kdf import KeyDerivationFunction
 
@@ -25,7 +32,7 @@ def _common_args_checks(
     length: int,
     otherinfo: typing.Optional[bytes],
 ) -> None:
-    max_length = algorithm.digest_size * (2 ** 32 - 1)
+    max_length = algorithm.digest_size * (2**32 - 1)
     if length > max_length:
         raise ValueError(
             "Cannot derive keys larger than {} bits.".format(max_length)

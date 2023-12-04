@@ -4,8 +4,11 @@
 
 
 from cryptography import utils
-from cryptography.exceptions import (InvalidSignature, UnsupportedAlgorithm,
-                                     _Reasons)
+from cryptography.exceptions import (
+    InvalidSignature,
+    UnsupportedAlgorithm,
+    _Reasons,
+)
 from cryptography.hazmat.primitives import constant_time
 from cryptography.hazmat.primitives.ciphers.modes import CBC
 

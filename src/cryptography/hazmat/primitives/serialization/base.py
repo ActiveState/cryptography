@@ -8,8 +8,10 @@ import typing
 from cryptography.hazmat.backends import _get_backend
 from cryptography.hazmat.backends.interfaces import Backend
 from cryptography.hazmat.primitives.asymmetric import dh
-from cryptography.hazmat.primitives.asymmetric.types import (PRIVATE_KEY_TYPES,
-                                                             PUBLIC_KEY_TYPES)
+from cryptography.hazmat.primitives.asymmetric.types import (
+    PRIVATE_KEY_TYPES,
+    PUBLIC_KEY_TYPES,
+)
 
 
 def load_pem_private_key(

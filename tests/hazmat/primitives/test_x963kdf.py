@@ -16,7 +16,7 @@ from ...utils import raises_unsupported_algorithm
 
 class TestX963KDF(object):
     def test_length_limit(self, backend):
-        big_length = hashes.SHA256().digest_size * (2 ** 32 - 1) + 1
+        big_length = hashes.SHA256().digest_size * (2**32 - 1) + 1
 
         with pytest.raises(ValueError):
             X963KDF(hashes.SHA256(), big_length, None, backend)

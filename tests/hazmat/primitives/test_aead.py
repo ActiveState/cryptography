@@ -9,17 +9,24 @@ import os
 import pytest
 
 from cryptography.exceptions import InvalidTag, UnsupportedAlgorithm, _Reasons
-from cryptography.hazmat.primitives.ciphers.aead import (AESCCM, AESGCM,
-                                                         ChaCha20Poly1305)
+from cryptography.hazmat.primitives.ciphers.aead import (
+    AESCCM,
+    AESGCM,
+    ChaCha20Poly1305,
+)
 
-from ...utils import (load_nist_ccm_vectors, load_nist_vectors,
-                      load_vectors_from_file, raises_unsupported_algorithm)
+from ...utils import (
+    load_nist_ccm_vectors,
+    load_nist_vectors,
+    load_vectors_from_file,
+    raises_unsupported_algorithm,
+)
 from .utils import _load_all_params
 
 
 class FakeData(bytes):
     def __len__(self):
-        return 2 ** 32 + 1
+        return 2**32 + 1
 
 
 def _aead_supported(cls):

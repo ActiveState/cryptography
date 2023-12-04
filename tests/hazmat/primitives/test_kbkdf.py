@@ -8,11 +8,18 @@ import pytest
 from cryptography.exceptions import AlreadyFinalized, InvalidKey, _Reasons
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers import algorithms
-from cryptography.hazmat.primitives.kdf.kbkdf import (KBKDFCMAC, KBKDFHMAC,
-                                                      CounterLocation, Mode)
+from cryptography.hazmat.primitives.kdf.kbkdf import (
+    KBKDFCMAC,
+    KBKDFHMAC,
+    CounterLocation,
+    Mode,
+)
 
-from ...doubles import (DummyBlockCipherAlgorithm, DummyCipherAlgorithm,
-                        DummyHashAlgorithm)
+from ...doubles import (
+    DummyBlockCipherAlgorithm,
+    DummyCipherAlgorithm,
+    DummyHashAlgorithm,
+)
 from ...utils import raises_unsupported_algorithm
 
 

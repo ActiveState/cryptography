@@ -3,8 +3,10 @@
 # for complete details.
 
 
-from cryptography.hazmat.primitives.asymmetric.rsa import (RSAPrivateNumbers,
-                                                           RSAPublicNumbers)
+from cryptography.hazmat.primitives.asymmetric.rsa import (
+    RSAPrivateNumbers,
+    RSAPublicNumbers,
+)
 
 RSA_KEY_512 = RSAPrivateNumbers(
     p=int(

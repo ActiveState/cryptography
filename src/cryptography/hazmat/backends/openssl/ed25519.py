@@ -6,7 +6,11 @@
 from cryptography import exceptions
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import (
-    _ED25519_KEY_SIZE, _ED25519_SIG_SIZE, Ed25519PrivateKey, Ed25519PublicKey)
+    _ED25519_KEY_SIZE,
+    _ED25519_SIG_SIZE,
+    Ed25519PrivateKey,
+    Ed25519PublicKey,
+)
 
 
 class _Ed25519PublicKey(Ed25519PublicKey):

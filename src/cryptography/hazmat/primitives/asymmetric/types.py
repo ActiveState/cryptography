@@ -4,8 +4,13 @@
 
 import typing
 
-from cryptography.hazmat.primitives.asymmetric import (dsa, ec, ed448, ed25519,
-                                                       rsa)
+from cryptography.hazmat.primitives.asymmetric import (
+    dsa,
+    ec,
+    ed448,
+    ed25519,
+    rsa,
+)
 
 PUBLIC_KEY_TYPES = typing.Union[
     dsa.DSAPublicKey,

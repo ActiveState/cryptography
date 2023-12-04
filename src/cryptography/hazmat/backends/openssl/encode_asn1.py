@@ -8,11 +8,16 @@ import ipaddress
 
 from cryptography import utils, x509
 from cryptography.hazmat.backends.openssl.decode_asn1 import (
-    _CRL_ENTRY_REASON_ENUM_TO_CODE, _DISTPOINT_TYPE_FULLNAME,
-    _DISTPOINT_TYPE_RELATIVENAME)
+    _CRL_ENTRY_REASON_ENUM_TO_CODE,
+    _DISTPOINT_TYPE_FULLNAME,
+    _DISTPOINT_TYPE_RELATIVENAME,
+)
 from cryptography.x509.name import _ASN1Type
-from cryptography.x509.oid import (CRLEntryExtensionOID, ExtensionOID,
-                                   OCSPExtensionOID)
+from cryptography.x509.oid import (
+    CRLEntryExtensionOID,
+    ExtensionOID,
+    OCSPExtensionOID,
+)
 
 
 def _encode_asn1_int(backend, x):

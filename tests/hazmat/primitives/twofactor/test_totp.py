@@ -10,8 +10,11 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.twofactor import InvalidToken
 from cryptography.hazmat.primitives.twofactor.totp import TOTP
 
-from ....utils import (load_nist_vectors, load_vectors_from_file,
-                       raises_unsupported_algorithm)
+from ....utils import (
+    load_nist_vectors,
+    load_vectors_from_file,
+    raises_unsupported_algorithm,
+)
 
 vectors = load_vectors_from_file("twofactor/rfc-6238.txt", load_nist_vectors)
 

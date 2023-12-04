@@ -7,8 +7,11 @@ import binascii
 
 import pytest
 
-from cryptography.exceptions import (AlreadyFinalized, InvalidSignature,
-                                     _Reasons)
+from cryptography.exceptions import (
+    AlreadyFinalized,
+    InvalidSignature,
+    _Reasons,
+)
 from cryptography.hazmat.primitives import hashes, hmac
 
 from ...doubles import DummyHashAlgorithm

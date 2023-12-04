@@ -7,9 +7,13 @@ import abc
 import typing
 
 from cryptography import utils
-from cryptography.exceptions import (AlreadyFinalized, AlreadyUpdated,
-                                     NotYetFinalized, UnsupportedAlgorithm,
-                                     _Reasons)
+from cryptography.exceptions import (
+    AlreadyFinalized,
+    AlreadyUpdated,
+    NotYetFinalized,
+    UnsupportedAlgorithm,
+    _Reasons,
+)
 from cryptography.hazmat.backends import _get_backend
 from cryptography.hazmat.backends.interfaces import Backend, CipherBackend
 from cryptography.hazmat.primitives._cipheralgorithm import CipherAlgorithm

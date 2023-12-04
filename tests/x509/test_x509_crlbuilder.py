@@ -11,8 +11,11 @@ import pytz
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec, ed448, ed25519
-from cryptography.x509.oid import (AuthorityInformationAccessOID, NameOID,
-                                   SignatureAlgorithmOID)
+from cryptography.x509.oid import (
+    AuthorityInformationAccessOID,
+    NameOID,
+    SignatureAlgorithmOID,
+)
 
 from ..hazmat.primitives.fixtures_dsa import DSA_KEY_2048
 from ..hazmat.primitives.fixtures_ec import EC_KEY_SECP256R1

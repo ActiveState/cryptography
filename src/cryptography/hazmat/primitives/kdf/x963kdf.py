@@ -7,8 +7,12 @@ import struct
 import typing
 
 from cryptography import utils
-from cryptography.exceptions import (AlreadyFinalized, InvalidKey,
-                                     UnsupportedAlgorithm, _Reasons)
+from cryptography.exceptions import (
+    AlreadyFinalized,
+    InvalidKey,
+    UnsupportedAlgorithm,
+    _Reasons,
+)
 from cryptography.hazmat.backends import _get_backend
 from cryptography.hazmat.backends.interfaces import Backend, HashBackend
 from cryptography.hazmat.primitives import constant_time, hashes
@@ -29,7 +33,7 @@ class X963KDF(KeyDerivationFunction):
     ):
         backend = _get_backend(backend)
 
-        max_len = algorithm.digest_size * (2 ** 32 - 1)
+        max_len = algorithm.digest_size * (2**32 - 1)
         if length > max_len:
             raise ValueError(
                 "Cannot derive keys larger than {} bits.".format(max_len)

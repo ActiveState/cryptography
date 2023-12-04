@@ -9,8 +9,11 @@ from cryptography.hazmat.backends import _get_backend
 from cryptography.hazmat.backends.interfaces import Backend, HMACBackend
 from cryptography.hazmat.primitives import constant_time
 from cryptography.hazmat.primitives.twofactor import InvalidToken
-from cryptography.hazmat.primitives.twofactor.hotp import (_ALLOWED_HASH_TYPES,
-                                                           HOTP, _generate_uri)
+from cryptography.hazmat.primitives.twofactor.hotp import (
+    _ALLOWED_HASH_TYPES,
+    HOTP,
+    _generate_uri,
+)
 
 
 class TOTP(object):

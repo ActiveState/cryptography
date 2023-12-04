@@ -9,7 +9,9 @@ import typing
 from cryptography import utils
 from cryptography.exceptions import UnsupportedAlgorithm, _Reasons
 from cryptography.hazmat.primitives._cipheralgorithm import (
-    BlockCipherAlgorithm, CipherAlgorithm)
+    BlockCipherAlgorithm,
+    CipherAlgorithm,
+)
 
 
 class Mode(metaclass=abc.ABCMeta):
@@ -190,8 +192,8 @@ class CTR(Mode, ModeWithNonce):
 
 class GCM(Mode, ModeWithInitializationVector, ModeWithAuthenticationTag):
     name = "GCM"
-    _MAX_ENCRYPTED_BYTES = (2 ** 39 - 256) // 8
-    _MAX_AAD_BYTES = (2 ** 64) // 8
+    _MAX_ENCRYPTED_BYTES = (2**39 - 256) // 8
+    _MAX_AAD_BYTES = (2**64) // 8
 
     def __init__(
         self,

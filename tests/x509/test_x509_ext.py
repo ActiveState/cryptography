@@ -18,10 +18,14 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.x509 import DNSName, NameConstraints, SubjectAlternativeName
 from cryptography.x509.extensions import _key_identifier_from_public_key
-from cryptography.x509.oid import (AuthorityInformationAccessOID,
-                                   ExtendedKeyUsageOID, ExtensionOID, NameOID,
-                                   ObjectIdentifier,
-                                   SubjectInformationAccessOID)
+from cryptography.x509.oid import (
+    AuthorityInformationAccessOID,
+    ExtendedKeyUsageOID,
+    ExtensionOID,
+    NameOID,
+    ObjectIdentifier,
+    SubjectInformationAccessOID,
+)
 
 from ..hazmat.primitives.fixtures_rsa import RSA_KEY_2048
 from ..hazmat.primitives.test_ec import _skip_curve_unsupported

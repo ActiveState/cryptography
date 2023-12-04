@@ -15,14 +15,20 @@ from cryptography import exceptions, utils, x509
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.asymmetric.utils import (
-    Prehashed, encode_dss_signature)
+    Prehashed,
+    encode_dss_signature,
+)
 from cryptography.utils import CryptographyDeprecationWarning
 
 from ...doubles import DummyKeySerializationEncryption
-from ...utils import (load_fips_ecdsa_key_pair_vectors,
-                      load_fips_ecdsa_signing_vectors, load_kasvs_ecdh_vectors,
-                      load_nist_vectors, load_vectors_from_file,
-                      raises_unsupported_algorithm)
+from ...utils import (
+    load_fips_ecdsa_key_pair_vectors,
+    load_fips_ecdsa_signing_vectors,
+    load_kasvs_ecdh_vectors,
+    load_nist_vectors,
+    load_vectors_from_file,
+    raises_unsupported_algorithm,
+)
 from .fixtures_ec import EC_KEY_SECP384R1
 from .utils import skip_fips_traditional_openssl
 
