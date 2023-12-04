@@ -4,9 +4,13 @@
 import abc
 
 from cryptography import utils
-from cryptography.exceptions import (AlreadyFinalized, AlreadyUpdated,
-                                     NotYetFinalized, UnsupportedAlgorithm,
-                                     _Reasons)
+from cryptography.exceptions import (
+    AlreadyFinalized,
+    AlreadyUpdated,
+    NotYetFinalized,
+    UnsupportedAlgorithm,
+    _Reasons,
+)
 from cryptography.hazmat.backends import _get_backend
 from cryptography.hazmat.backends.interfaces import Backend, CipherBackend
 from cryptography.hazmat.primitives._cipheralgorithm import CipherAlgorithm
@@ -14,7 +18,6 @@ from cryptography.hazmat.primitives.ciphers import modes
 
 
 class CipherContext(metaclass=abc.ABCMeta):
-
     @abc.abstractmethod
     def update(self, data):
         """
@@ -43,8 +46,8 @@ class CipherContext(metaclass=abc.ABCMeta):
 
         """
 
-class AEADCipherContext(metaclass=abc.ABCMeta):
 
+class AEADCipherContext(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def authenticate_additional_data(self, data):
         """
@@ -53,8 +56,8 @@ class AEADCipherContext(metaclass=abc.ABCMeta):
 
         """
 
-class AEADDecryptionContext(metaclass=abc.ABCMeta):
 
+class AEADDecryptionContext(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def finalize_with_tag(self, tag):
         """
@@ -65,8 +68,8 @@ class AEADDecryptionContext(metaclass=abc.ABCMeta):
 
         """
 
-class AEADEncryptionContext(metaclass=abc.ABCMeta):
 
+class AEADEncryptionContext(metaclass=abc.ABCMeta):
     @abc.abstractproperty
     def tag(self):
         """
@@ -77,14 +80,17 @@ class AEADEncryptionContext(metaclass=abc.ABCMeta):
 
         """
 
-class Cipher(object):
 
+class Cipher(object):
     def __init__(self, algorithm, mode, backend=None):
         backend = _get_backend(backend)
         if not isinstance(backend, CipherBackend):
-            raise UnsupportedAlgorithm('Backend object does not implement CipherBackend.', _Reasons.BACKEND_MISSING_INTERFACE)
+            raise UnsupportedAlgorithm(
+                "Backend object does not implement CipherBackend.",
+                _Reasons.BACKEND_MISSING_INTERFACE,
+            )
         if not isinstance(algorithm, CipherAlgorithm):
-            raise TypeError('Expected interface of CipherAlgorithm.')
+            raise TypeError("Expected interface of CipherAlgorithm.")
         if mode is not None:
             mode.validate_for_algorithm(algorithm)
         self.algorithm = algorithm
@@ -94,12 +100,18 @@ class Cipher(object):
     def encryptor(self):
         if isinstance(self.mode, modes.ModeWithAuthenticationTag):
             if self.mode.tag is not None:
-                raise ValueError('Authentication tag must be None when encrypting.')
-        ctx = self._backend.create_symmetric_encryption_ctx(self.algorithm, self.mode)
+                raise ValueError(
+                    "Authentication tag must be None when encrypting."
+                )
+        ctx = self._backend.create_symmetric_encryption_ctx(
+            self.algorithm, self.mode
+        )
         return self._wrap_ctx(ctx, encrypt=True)
 
     def decryptor(self):
-        ctx = self._backend.create_symmetric_decryption_ctx(self.algorithm, self.mode)
+        ctx = self._backend.create_symmetric_decryption_ctx(
+            self.algorithm, self.mode
+        )
         return self._wrap_ctx(ctx, encrypt=False)
 
     def _wrap_ctx(self, ctx, encrypt):
@@ -111,34 +123,34 @@ class Cipher(object):
         else:
             return _CipherContext(ctx)
 
+
 @utils.register_interface(CipherContext)
 class _CipherContext(object):
-
     def __init__(self, ctx):
         self._ctx = ctx
 
     def update(self, data):
         if self._ctx is None:
-            raise AlreadyFinalized('Context was already finalized.')
+            raise AlreadyFinalized("Context was already finalized.")
         return self._ctx.update(data)
 
     def update_into(self, data, buf):
         if self._ctx is None:
-            raise AlreadyFinalized('Context was already finalized.')
+            raise AlreadyFinalized("Context was already finalized.")
         return self._ctx.update_into(data, buf)
 
     def finalize(self):
         if self._ctx is None:
-            raise AlreadyFinalized('Context was already finalized.')
+            raise AlreadyFinalized("Context was already finalized.")
         data = self._ctx.finalize()
         self._ctx = None
         return data
+
 
 @utils.register_interface(AEADCipherContext)
 @utils.register_interface(CipherContext)
 @utils.register_interface(AEADDecryptionContext)
 class _AEADCipherContext(object):
-
     def __init__(self, ctx):
         self._ctx = ctx
         self._bytes_processed = 0
@@ -148,11 +160,15 @@ class _AEADCipherContext(object):
 
     def _check_limit(self, data_size):
         if self._ctx is None:
-            raise AlreadyFinalized('Context was already finalized.')
+            raise AlreadyFinalized("Context was already finalized.")
         self._updated = True
         self._bytes_processed += data_size
         if self._bytes_processed > self._ctx._mode._MAX_ENCRYPTED_BYTES:
-            raise ValueError('{} has a maximum encrypted byte limit of {}'.format(self._ctx._mode.name, self._ctx._mode._MAX_ENCRYPTED_BYTES))
+            raise ValueError(
+                "{} has a maximum encrypted byte limit of {}".format(
+                    self._ctx._mode.name, self._ctx._mode._MAX_ENCRYPTED_BYTES
+                )
+            )
 
     def update(self, data):
         self._check_limit(len(data))
@@ -164,7 +180,7 @@ class _AEADCipherContext(object):
 
     def finalize(self):
         if self._ctx is None:
-            raise AlreadyFinalized('Context was already finalized.')
+            raise AlreadyFinalized("Context was already finalized.")
         data = self._ctx.finalize()
         self._tag = self._ctx.tag
         self._ctx = None
@@ -172,7 +188,7 @@ class _AEADCipherContext(object):
 
     def finalize_with_tag(self, tag):
         if self._ctx is None:
-            raise AlreadyFinalized('Context was already finalized.')
+            raise AlreadyFinalized("Context was already finalized.")
         data = self._ctx.finalize_with_tag(tag)
         self._tag = self._ctx.tag
         self._ctx = None
@@ -180,20 +196,26 @@ class _AEADCipherContext(object):
 
     def authenticate_additional_data(self, data):
         if self._ctx is None:
-            raise AlreadyFinalized('Context was already finalized.')
+            raise AlreadyFinalized("Context was already finalized.")
         if self._updated:
-            raise AlreadyUpdated('Update has been called on this context.')
+            raise AlreadyUpdated("Update has been called on this context.")
         self._aad_bytes_processed += len(data)
         if self._aad_bytes_processed > self._ctx._mode._MAX_AAD_BYTES:
-            raise ValueError('{} has a maximum AAD byte limit of {}'.format(self._ctx._mode.name, self._ctx._mode._MAX_AAD_BYTES))
+            raise ValueError(
+                "{} has a maximum AAD byte limit of {}".format(
+                    self._ctx._mode.name, self._ctx._mode._MAX_AAD_BYTES
+                )
+            )
         self._ctx.authenticate_additional_data(data)
+
 
 @utils.register_interface(AEADEncryptionContext)
 class _AEADEncryptionContext(_AEADCipherContext):
-
     @property
     def tag(self):
         if self._ctx is not None:
-            raise NotYetFinalized('You must finalize encryption before getting the tag.')
+            raise NotYetFinalized(
+                "You must finalize encryption before getting the tag."
+            )
         assert self._tag is not None
         return self._tag

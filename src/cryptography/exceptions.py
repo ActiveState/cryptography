@@ -18,32 +18,38 @@ class _Reasons(utils.Enum):
     UNSUPPORTED_DIFFIE_HELLMAN = 10
     UNSUPPORTED_MAC = 11
 
-class UnsupportedAlgorithm(Exception):
 
+class UnsupportedAlgorithm(Exception):
     def __init__(self, message, reason=None):
         super(UnsupportedAlgorithm, self).__init__(message)
         self._reason = reason
 
+
 class AlreadyFinalized(Exception):
     pass
+
 
 class AlreadyUpdated(Exception):
     pass
 
+
 class NotYetFinalized(Exception):
     pass
+
 
 class InvalidTag(Exception):
     pass
 
+
 class InvalidSignature(Exception):
     pass
 
-class InternalError(Exception):
 
+class InternalError(Exception):
     def __init__(self, msg, err_code):
         super(InternalError, self).__init__(msg)
         self.err_code = err_code
+
 
 class InvalidKey(Exception):
     pass

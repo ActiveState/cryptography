@@ -6,8 +6,8 @@ import abc
 # This exists to break an import cycle. It is normally accessible from the
 # ciphers module.
 
-class CipherAlgorithm(metaclass=abc.ABCMeta):
 
+class CipherAlgorithm(metaclass=abc.ABCMeta):
     @abc.abstractproperty
     def name(self):
         """
@@ -32,8 +32,8 @@ class CipherAlgorithm(metaclass=abc.ABCMeta):
 
         """
 
-class BlockCipherAlgorithm(metaclass=abc.ABCMeta):
 
+class BlockCipherAlgorithm(metaclass=abc.ABCMeta):
     @abc.abstractproperty
     def block_size(self):
         """

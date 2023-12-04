@@ -4,8 +4,11 @@
 from docutils import nodes
 from docutils.parsers.rst import Directive
 
-DANGER_MESSAGE = '\n\nThis is a "Hazardous Materials" module. You should **ONLY** use it if you\'re\n\n100% absolutely sure that you know what you\'re doing because this module is\n\nfull of land mines, dragons, and dinosaurs with laser guns.\n\n'
-DANGER_ALTERNATE = '\n\n\n\nYou may instead be interested in :doc:`{alternate}`.\n\n'
+DANGER_MESSAGE = "\n\nThis is a \"Hazardous Materials\" module. You should **ONLY** use it if you're\n\n100% absolutely sure that you know what you're doing because this module is\n\nfull of land mines, dragons, and dinosaurs with laser guns.\n\n"
+DANGER_ALTERNATE = (
+    "\n\n\n\nYou may instead be interested in :doc:`{alternate}`.\n\n"
+)
+
 
 class HazmatDirective(Directive):
     has_content = True
@@ -14,25 +17,34 @@ class HazmatDirective(Directive):
         message = DANGER_MESSAGE
         if self.content:
             message += DANGER_ALTERNATE.format(alternate=self.content[0])
-        content = nodes.paragraph('', message)
-        admonition_node = Hazmat('\n'.join(content))
+        content = nodes.paragraph("", message)
+        admonition_node = Hazmat("\n".join(content))
         self.state.nested_parse(content, self.content_offset, admonition_node)
         admonition_node.line = self.lineno
         return [admonition_node]
 
+
 class Hazmat(nodes.Admonition, nodes.Element):
     pass
 
+
 def html_visit_hazmat_node(self, node):
-    return self.visit_admonition(node, 'danger')
+    return self.visit_admonition(node, "danger")
+
 
 def latex_visit_hazmat_node(self, node):
     return self.visit_admonition(node)
 
+
 def depart_hazmat_node(self, node):
     return self.depart_admonition(node)
 
+
 def setup(app):
-    app.add_node(Hazmat, html=(html_visit_hazmat_node, depart_hazmat_node), latex=(latex_visit_hazmat_node, depart_hazmat_node))
-    app.add_directive('hazmat', HazmatDirective)
-    return {'parallel_read_safe': True}
+    app.add_node(
+        Hazmat,
+        html=(html_visit_hazmat_node, depart_hazmat_node),
+        latex=(latex_visit_hazmat_node, depart_hazmat_node),
+    )
+    app.add_directive("hazmat", HazmatDirective)
+    return {"parallel_read_safe": True}

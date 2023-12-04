@@ -10,35 +10,45 @@ from cryptography.hazmat.backends import _get_backend
 from cryptography.hazmat.backends.interfaces import Backend
 from cryptography.hazmat.bindings._rust import x509 as rust_x509
 from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import (dsa, ec, ed448, ed25519,
-                                                       rsa)
-from cryptography.hazmat.primitives.asymmetric.types import \
-    PRIVATE_KEY_TYPES as PRIVATE_KEY_TYPES
-from cryptography.hazmat.primitives.asymmetric.types import \
-    PUBLIC_KEY_TYPES as PUBLIC_KEY_TYPES
+from cryptography.hazmat.primitives.asymmetric import (
+    dsa,
+    ec,
+    ed448,
+    ed25519,
+    rsa,
+)
+from cryptography.hazmat.primitives.asymmetric.types import (
+    PRIVATE_KEY_TYPES as PRIVATE_KEY_TYPES,
+)
+from cryptography.hazmat.primitives.asymmetric.types import (
+    PUBLIC_KEY_TYPES as PUBLIC_KEY_TYPES,
+)
 from cryptography.x509.extensions import Extension, Extensions, ExtensionType
 from cryptography.x509.name import Name
 from cryptography.x509.oid import ObjectIdentifier
 
 _EARLIEST_UTC_TIME = datetime.datetime(1950, 1, 1)
 
-class AttributeNotFound(Exception):
 
+class AttributeNotFound(Exception):
     def __init__(self, msg, oid):
         super(AttributeNotFound, self).__init__(msg)
         self.oid = oid
+
 
 def _reject_duplicate_extension(extension, extensions):
     # This is quadratic in the number of extensions
     for e in extensions:
         if e.oid == extension.oid:
-            raise ValueError('This extension has already been set.')
+            raise ValueError("This extension has already been set.")
+
 
 def _reject_duplicate_attribute(oid, attributes):
     # This is quadratic in the number of attributes
     for attr_oid, _ in attributes:
         if attr_oid == oid:
-            raise ValueError('This attribute has already been set.')
+            raise ValueError("This attribute has already been set.")
+
 
 def _convert_to_naive_utc_time(time):
     """Normalizes a datetime to a naive datetime in UTC.
@@ -57,18 +67,19 @@ def _convert_to_naive_utc_time(time):
     else:
         return time
 
+
 class Version(utils.Enum):
     v1 = 0
     v3 = 2
 
-class InvalidVersion(Exception):
 
+class InvalidVersion(Exception):
     def __init__(self, msg, parsed_version):
         super(InvalidVersion, self).__init__(msg)
         self.parsed_version = parsed_version
 
-class Certificate(metaclass=abc.ABCMeta):
 
+class Certificate(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def fingerprint(self, algorithm):
         """
@@ -206,11 +217,13 @@ class Certificate(metaclass=abc.ABCMeta):
         Serializes the certificate to PEM or DER format.
 
         """
+
+
 # Runtime isinstance checks need this since the rust class is not a subclass.
 Certificate.register(rust_x509.Certificate)
 
-class RevokedCertificate(metaclass=abc.ABCMeta):
 
+class RevokedCertificate(metaclass=abc.ABCMeta):
     @abc.abstractproperty
     def serial_number(self):
         """
@@ -234,11 +247,13 @@ class RevokedCertificate(metaclass=abc.ABCMeta):
         Returns an Extensions object containing a list of Revoked extensions.
 
         """
+
+
 # Runtime isinstance checks need this since the rust class is not a subclass.
 RevokedCertificate.register(rust_x509.RevokedCertificate)
 
-class CertificateRevocationList(metaclass=abc.ABCMeta):
 
+class CertificateRevocationList(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def public_bytes(self, encoding):
         """
@@ -386,10 +401,12 @@ class CertificateRevocationList(metaclass=abc.ABCMeta):
         Verifies signature of revocation list against given public key.
 
         """
+
+
 CertificateRevocationList.register(rust_x509.CertificateRevocationList)
 
-class CertificateSigningRequest(metaclass=abc.ABCMeta):
 
+class CertificateSigningRequest(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def __eq__(self, other):
         """
@@ -497,35 +514,53 @@ class CertificateSigningRequest(metaclass=abc.ABCMeta):
         Get the attribute value for a given OID.
 
         """
+
+
 # Runtime isinstance checks need this since the rust class is not a subclass.
 CertificateSigningRequest.register(rust_x509.CertificateSigningRequest)
 # Backend argument preserved for API compatibility, but ignored.
 
+
 def load_pem_x509_certificate(data, backend=None):
     return rust_x509.load_pem_x509_certificate(data)
+
+
 # Backend argument preserved for API compatibility, but ignored.
+
 
 def load_der_x509_certificate(data, backend=None):
     return rust_x509.load_der_x509_certificate(data)
+
+
 # Backend argument preserved for API compatibility, but ignored.
+
 
 def load_pem_x509_csr(data, backend=None):
     return rust_x509.load_pem_x509_csr(data)
+
+
 # Backend argument preserved for API compatibility, but ignored.
+
 
 def load_der_x509_csr(data, backend=None):
     return rust_x509.load_der_x509_csr(data)
+
+
 # Backend argument preserved for API compatibility, but ignored.
+
 
 def load_pem_x509_crl(data, backend=None):
     return rust_x509.load_pem_x509_crl(data)
+
+
 # Backend argument preserved for API compatibility, but ignored.
+
 
 def load_der_x509_crl(data, backend=None):
     return rust_x509.load_der_x509_crl(data)
 
-class CertificateSigningRequestBuilder(object):
 
+class CertificateSigningRequestBuilder(object):
     def __init__(self, subject_name=None, extensions=[], attributes=[]):
         """
 
@@ -543,10 +578,12 @@ class CertificateSigningRequestBuilder(object):
 
         """
         if not isinstance(name, Name):
-            raise TypeError('Expecting x509.Name object.')
+            raise TypeError("Expecting x509.Name object.")
         if self._subject_name is not None:
-            raise ValueError('The subject name may only be set once.')
-        return CertificateSigningRequestBuilder(name, self._extensions, self._attributes)
+            raise ValueError("The subject name may only be set once.")
+        return CertificateSigningRequestBuilder(
+            name, self._extensions, self._attributes
+        )
 
     def add_extension(self, extval, critical):
         """
@@ -555,10 +592,14 @@ class CertificateSigningRequestBuilder(object):
 
         """
         if not isinstance(extval, ExtensionType):
-            raise TypeError('extension must be an ExtensionType')
+            raise TypeError("extension must be an ExtensionType")
         extension = Extension(extval.oid, critical, extval)
         _reject_duplicate_extension(extension, self._extensions)
-        return CertificateSigningRequestBuilder(self._subject_name, self._extensions + [extension], self._attributes)
+        return CertificateSigningRequestBuilder(
+            self._subject_name,
+            self._extensions + [extension],
+            self._attributes,
+        )
 
     def add_attribute(self, oid, value):
         """
@@ -567,11 +608,15 @@ class CertificateSigningRequestBuilder(object):
 
         """
         if not isinstance(oid, ObjectIdentifier):
-            raise TypeError('oid must be an ObjectIdentifier')
+            raise TypeError("oid must be an ObjectIdentifier")
         if not isinstance(value, bytes):
-            raise TypeError('value must be bytes')
+            raise TypeError("value must be bytes")
         _reject_duplicate_attribute(oid, self._attributes)
-        return CertificateSigningRequestBuilder(self._subject_name, self._extensions, self._attributes + [(oid, value)])
+        return CertificateSigningRequestBuilder(
+            self._subject_name,
+            self._extensions,
+            self._attributes + [(oid, value)],
+        )
 
     def sign(self, private_key, algorithm, backend=None):
         """
@@ -581,13 +626,23 @@ class CertificateSigningRequestBuilder(object):
         """
         backend = _get_backend(backend)
         if self._subject_name is None:
-            raise ValueError('A CertificateSigningRequest must have a subject')
+            raise ValueError("A CertificateSigningRequest must have a subject")
         return backend.create_x509_csr(self, private_key, algorithm)
+
 
 class CertificateBuilder(object):
     _extensions: typing.List[Extension[ExtensionType]]
 
-    def __init__(self, issuer_name=None, subject_name=None, public_key=None, serial_number=None, not_valid_before=None, not_valid_after=None, extensions=[]):
+    def __init__(
+        self,
+        issuer_name=None,
+        subject_name=None,
+        public_key=None,
+        serial_number=None,
+        not_valid_before=None,
+        not_valid_after=None,
+        extensions=[],
+    ):
         self._version = Version.v3
         self._issuer_name = issuer_name
         self._subject_name = subject_name
@@ -604,10 +659,18 @@ class CertificateBuilder(object):
 
         """
         if not isinstance(name, Name):
-            raise TypeError('Expecting x509.Name object.')
+            raise TypeError("Expecting x509.Name object.")
         if self._issuer_name is not None:
-            raise ValueError('The issuer name may only be set once.')
-        return CertificateBuilder(name, self._subject_name, self._public_key, self._serial_number, self._not_valid_before, self._not_valid_after, self._extensions)
+            raise ValueError("The issuer name may only be set once.")
+        return CertificateBuilder(
+            name,
+            self._subject_name,
+            self._public_key,
+            self._serial_number,
+            self._not_valid_before,
+            self._not_valid_after,
+            self._extensions,
+        )
 
     def subject_name(self, name):
         """
@@ -616,10 +679,18 @@ class CertificateBuilder(object):
 
         """
         if not isinstance(name, Name):
-            raise TypeError('Expecting x509.Name object.')
+            raise TypeError("Expecting x509.Name object.")
         if self._subject_name is not None:
-            raise ValueError('The subject name may only be set once.')
-        return CertificateBuilder(self._issuer_name, name, self._public_key, self._serial_number, self._not_valid_before, self._not_valid_after, self._extensions)
+            raise ValueError("The subject name may only be set once.")
+        return CertificateBuilder(
+            self._issuer_name,
+            name,
+            self._public_key,
+            self._serial_number,
+            self._not_valid_before,
+            self._not_valid_after,
+            self._extensions,
+        )
 
     def public_key(self, key):
         """
@@ -627,11 +698,30 @@ class CertificateBuilder(object):
         Sets the requestor's public key (as found in the signing request).
 
         """
-        if not isinstance(key, (dsa.DSAPublicKey, rsa.RSAPublicKey, ec.EllipticCurvePublicKey, ed25519.Ed25519PublicKey, ed448.Ed448PublicKey)):
-            raise TypeError('Expecting one of DSAPublicKey, RSAPublicKey, EllipticCurvePublicKey, Ed25519PublicKey or Ed448PublicKey.')
+        if not isinstance(
+            key,
+            (
+                dsa.DSAPublicKey,
+                rsa.RSAPublicKey,
+                ec.EllipticCurvePublicKey,
+                ed25519.Ed25519PublicKey,
+                ed448.Ed448PublicKey,
+            ),
+        ):
+            raise TypeError(
+                "Expecting one of DSAPublicKey, RSAPublicKey, EllipticCurvePublicKey, Ed25519PublicKey or Ed448PublicKey."
+            )
         if self._public_key is not None:
-            raise ValueError('The public key may only be set once.')
-        return CertificateBuilder(self._issuer_name, self._subject_name, key, self._serial_number, self._not_valid_before, self._not_valid_after, self._extensions)
+            raise ValueError("The public key may only be set once.")
+        return CertificateBuilder(
+            self._issuer_name,
+            self._subject_name,
+            key,
+            self._serial_number,
+            self._not_valid_before,
+            self._not_valid_after,
+            self._extensions,
+        )
 
     def serial_number(self, number):
         """
@@ -640,16 +730,26 @@ class CertificateBuilder(object):
 
         """
         if not isinstance(number, int):
-            raise TypeError('Serial number must be of integral type.')
+            raise TypeError("Serial number must be of integral type.")
         if self._serial_number is not None:
-            raise ValueError('The serial number may only be set once.')
+            raise ValueError("The serial number may only be set once.")
         if number <= 0:
-            raise ValueError('The serial number should be positive.')
+            raise ValueError("The serial number should be positive.")
         # ASN.1 integers are always signed, so most significant bit must be
         # zero.
         if number.bit_length() >= 160:  # As defined in RFC 5280
-            raise ValueError('The serial number should not be more than 159 bits.')
-        return CertificateBuilder(self._issuer_name, self._subject_name, self._public_key, number, self._not_valid_before, self._not_valid_after, self._extensions)
+            raise ValueError(
+                "The serial number should not be more than 159 bits."
+            )
+        return CertificateBuilder(
+            self._issuer_name,
+            self._subject_name,
+            self._public_key,
+            number,
+            self._not_valid_before,
+            self._not_valid_after,
+            self._extensions,
+        )
 
     def not_valid_before(self, time):
         """
@@ -658,15 +758,27 @@ class CertificateBuilder(object):
 
         """
         if not isinstance(time, datetime.datetime):
-            raise TypeError('Expecting datetime object.')
+            raise TypeError("Expecting datetime object.")
         if self._not_valid_before is not None:
-            raise ValueError('The not valid before may only be set once.')
+            raise ValueError("The not valid before may only be set once.")
         time = _convert_to_naive_utc_time(time)
         if time < _EARLIEST_UTC_TIME:
-            raise ValueError('The not valid before date must be on or after 1950 January 1).')
+            raise ValueError(
+                "The not valid before date must be on or after 1950 January 1)."
+            )
         if self._not_valid_after is not None and time > self._not_valid_after:
-            raise ValueError('The not valid before date must be before the not valid after date.')
-        return CertificateBuilder(self._issuer_name, self._subject_name, self._public_key, self._serial_number, time, self._not_valid_after, self._extensions)
+            raise ValueError(
+                "The not valid before date must be before the not valid after date."
+            )
+        return CertificateBuilder(
+            self._issuer_name,
+            self._subject_name,
+            self._public_key,
+            self._serial_number,
+            time,
+            self._not_valid_after,
+            self._extensions,
+        )
 
     def not_valid_after(self, time):
         """
@@ -675,15 +787,30 @@ class CertificateBuilder(object):
 
         """
         if not isinstance(time, datetime.datetime):
-            raise TypeError('Expecting datetime object.')
+            raise TypeError("Expecting datetime object.")
         if self._not_valid_after is not None:
-            raise ValueError('The not valid after may only be set once.')
+            raise ValueError("The not valid after may only be set once.")
         time = _convert_to_naive_utc_time(time)
         if time < _EARLIEST_UTC_TIME:
-            raise ValueError('The not valid after date must be on or after 1950 January 1.')
-        if self._not_valid_before is not None and time < self._not_valid_before:
-            raise ValueError('The not valid after date must be after the not valid before date.')
-        return CertificateBuilder(self._issuer_name, self._subject_name, self._public_key, self._serial_number, self._not_valid_before, time, self._extensions)
+            raise ValueError(
+                "The not valid after date must be on or after 1950 January 1."
+            )
+        if (
+            self._not_valid_before is not None
+            and time < self._not_valid_before
+        ):
+            raise ValueError(
+                "The not valid after date must be after the not valid before date."
+            )
+        return CertificateBuilder(
+            self._issuer_name,
+            self._subject_name,
+            self._public_key,
+            self._serial_number,
+            self._not_valid_before,
+            time,
+            self._extensions,
+        )
 
     def add_extension(self, extval, critical):
         """
@@ -692,10 +819,18 @@ class CertificateBuilder(object):
 
         """
         if not isinstance(extval, ExtensionType):
-            raise TypeError('extension must be an ExtensionType')
+            raise TypeError("extension must be an ExtensionType")
         extension = Extension(extval.oid, critical, extval)
         _reject_duplicate_extension(extension, self._extensions)
-        return CertificateBuilder(self._issuer_name, self._subject_name, self._public_key, self._serial_number, self._not_valid_before, self._not_valid_after, self._extensions + [extension])
+        return CertificateBuilder(
+            self._issuer_name,
+            self._subject_name,
+            self._public_key,
+            self._serial_number,
+            self._not_valid_before,
+            self._not_valid_after,
+            self._extensions + [extension],
+        )
 
     def sign(self, private_key, algorithm, backend=None):
         """
@@ -705,24 +840,32 @@ class CertificateBuilder(object):
         """
         backend = _get_backend(backend)
         if self._subject_name is None:
-            raise ValueError('A certificate must have a subject name')
+            raise ValueError("A certificate must have a subject name")
         if self._issuer_name is None:
-            raise ValueError('A certificate must have an issuer name')
+            raise ValueError("A certificate must have an issuer name")
         if self._serial_number is None:
-            raise ValueError('A certificate must have a serial number')
+            raise ValueError("A certificate must have a serial number")
         if self._not_valid_before is None:
-            raise ValueError('A certificate must have a not valid before time')
+            raise ValueError("A certificate must have a not valid before time")
         if self._not_valid_after is None:
-            raise ValueError('A certificate must have a not valid after time')
+            raise ValueError("A certificate must have a not valid after time")
         if self._public_key is None:
-            raise ValueError('A certificate must have a public key')
+            raise ValueError("A certificate must have a public key")
         return backend.create_x509_certificate(self, private_key, algorithm)
+
 
 class CertificateRevocationListBuilder(object):
     _extensions: typing.List[Extension[ExtensionType]]
     _revoked_certificates: typing.List[RevokedCertificate]
 
-    def __init__(self, issuer_name=None, last_update=None, next_update=None, extensions=[], revoked_certificates=[]):
+    def __init__(
+        self,
+        issuer_name=None,
+        last_update=None,
+        next_update=None,
+        extensions=[],
+        revoked_certificates=[],
+    ):
         self._issuer_name = issuer_name
         self._last_update = last_update
         self._next_update = next_update
@@ -731,34 +874,60 @@ class CertificateRevocationListBuilder(object):
 
     def issuer_name(self, issuer_name):
         if not isinstance(issuer_name, Name):
-            raise TypeError('Expecting x509.Name object.')
+            raise TypeError("Expecting x509.Name object.")
         if self._issuer_name is not None:
-            raise ValueError('The issuer name may only be set once.')
-        return CertificateRevocationListBuilder(issuer_name, self._last_update, self._next_update, self._extensions, self._revoked_certificates)
+            raise ValueError("The issuer name may only be set once.")
+        return CertificateRevocationListBuilder(
+            issuer_name,
+            self._last_update,
+            self._next_update,
+            self._extensions,
+            self._revoked_certificates,
+        )
 
     def last_update(self, last_update):
         if not isinstance(last_update, datetime.datetime):
-            raise TypeError('Expecting datetime object.')
+            raise TypeError("Expecting datetime object.")
         if self._last_update is not None:
-            raise ValueError('Last update may only be set once.')
+            raise ValueError("Last update may only be set once.")
         last_update = _convert_to_naive_utc_time(last_update)
         if last_update < _EARLIEST_UTC_TIME:
-            raise ValueError('The last update date must be on or after 1950 January 1.')
+            raise ValueError(
+                "The last update date must be on or after 1950 January 1."
+            )
         if self._next_update is not None and last_update > self._next_update:
-            raise ValueError('The last update date must be before the next update date.')
-        return CertificateRevocationListBuilder(self._issuer_name, last_update, self._next_update, self._extensions, self._revoked_certificates)
+            raise ValueError(
+                "The last update date must be before the next update date."
+            )
+        return CertificateRevocationListBuilder(
+            self._issuer_name,
+            last_update,
+            self._next_update,
+            self._extensions,
+            self._revoked_certificates,
+        )
 
     def next_update(self, next_update):
         if not isinstance(next_update, datetime.datetime):
-            raise TypeError('Expecting datetime object.')
+            raise TypeError("Expecting datetime object.")
         if self._next_update is not None:
-            raise ValueError('Last update may only be set once.')
+            raise ValueError("Last update may only be set once.")
         next_update = _convert_to_naive_utc_time(next_update)
         if next_update < _EARLIEST_UTC_TIME:
-            raise ValueError('The last update date must be on or after 1950 January 1.')
+            raise ValueError(
+                "The last update date must be on or after 1950 January 1."
+            )
         if self._last_update is not None and next_update < self._last_update:
-            raise ValueError('The next update date must be after the last update date.')
-        return CertificateRevocationListBuilder(self._issuer_name, self._last_update, next_update, self._extensions, self._revoked_certificates)
+            raise ValueError(
+                "The next update date must be after the last update date."
+            )
+        return CertificateRevocationListBuilder(
+            self._issuer_name,
+            self._last_update,
+            next_update,
+            self._extensions,
+            self._revoked_certificates,
+        )
 
     def add_extension(self, extval, critical):
         """
@@ -767,10 +936,16 @@ class CertificateRevocationListBuilder(object):
 
         """
         if not isinstance(extval, ExtensionType):
-            raise TypeError('extension must be an ExtensionType')
+            raise TypeError("extension must be an ExtensionType")
         extension = Extension(extval.oid, critical, extval)
         _reject_duplicate_extension(extension, self._extensions)
-        return CertificateRevocationListBuilder(self._issuer_name, self._last_update, self._next_update, self._extensions + [extension], self._revoked_certificates)
+        return CertificateRevocationListBuilder(
+            self._issuer_name,
+            self._last_update,
+            self._next_update,
+            self._extensions + [extension],
+            self._revoked_certificates,
+        )
 
     def add_revoked_certificate(self, revoked_certificate):
         """
@@ -779,63 +954,86 @@ class CertificateRevocationListBuilder(object):
 
         """
         if not isinstance(revoked_certificate, RevokedCertificate):
-            raise TypeError('Must be an instance of RevokedCertificate')
-        return CertificateRevocationListBuilder(self._issuer_name, self._last_update, self._next_update, self._extensions, self._revoked_certificates + [revoked_certificate])
+            raise TypeError("Must be an instance of RevokedCertificate")
+        return CertificateRevocationListBuilder(
+            self._issuer_name,
+            self._last_update,
+            self._next_update,
+            self._extensions,
+            self._revoked_certificates + [revoked_certificate],
+        )
 
     def sign(self, private_key, algorithm, backend=None):
         backend = _get_backend(backend)
         if self._issuer_name is None:
-            raise ValueError('A CRL must have an issuer name')
+            raise ValueError("A CRL must have an issuer name")
         if self._last_update is None:
-            raise ValueError('A CRL must have a last update time')
+            raise ValueError("A CRL must have a last update time")
         if self._next_update is None:
-            raise ValueError('A CRL must have a next update time')
+            raise ValueError("A CRL must have a next update time")
         return backend.create_x509_crl(self, private_key, algorithm)
 
-class RevokedCertificateBuilder(object):
 
-    def __init__(self, serial_number=None, revocation_date=None, extensions=[]):
+class RevokedCertificateBuilder(object):
+    def __init__(
+        self, serial_number=None, revocation_date=None, extensions=[]
+    ):
         self._serial_number = serial_number
         self._revocation_date = revocation_date
         self._extensions = extensions
 
     def serial_number(self, number):
         if not isinstance(number, int):
-            raise TypeError('Serial number must be of integral type.')
+            raise TypeError("Serial number must be of integral type.")
         if self._serial_number is not None:
-            raise ValueError('The serial number may only be set once.')
+            raise ValueError("The serial number may only be set once.")
         if number <= 0:
-            raise ValueError('The serial number should be positive')
+            raise ValueError("The serial number should be positive")
         # ASN.1 integers are always signed, so most significant bit must be
         # zero.
         if number.bit_length() >= 160:  # As defined in RFC 5280
-            raise ValueError('The serial number should not be more than 159 bits.')
-        return RevokedCertificateBuilder(number, self._revocation_date, self._extensions)
+            raise ValueError(
+                "The serial number should not be more than 159 bits."
+            )
+        return RevokedCertificateBuilder(
+            number, self._revocation_date, self._extensions
+        )
 
     def revocation_date(self, time):
         if not isinstance(time, datetime.datetime):
-            raise TypeError('Expecting datetime object.')
+            raise TypeError("Expecting datetime object.")
         if self._revocation_date is not None:
-            raise ValueError('The revocation date may only be set once.')
+            raise ValueError("The revocation date may only be set once.")
         time = _convert_to_naive_utc_time(time)
         if time < _EARLIEST_UTC_TIME:
-            raise ValueError('The revocation date must be on or after 1950 January 1.')
-        return RevokedCertificateBuilder(self._serial_number, time, self._extensions)
+            raise ValueError(
+                "The revocation date must be on or after 1950 January 1."
+            )
+        return RevokedCertificateBuilder(
+            self._serial_number, time, self._extensions
+        )
 
     def add_extension(self, extval, critical):
         if not isinstance(extval, ExtensionType):
-            raise TypeError('extension must be an ExtensionType')
+            raise TypeError("extension must be an ExtensionType")
         extension = Extension(extval.oid, critical, extval)
         _reject_duplicate_extension(extension, self._extensions)
-        return RevokedCertificateBuilder(self._serial_number, self._revocation_date, self._extensions + [extension])
+        return RevokedCertificateBuilder(
+            self._serial_number,
+            self._revocation_date,
+            self._extensions + [extension],
+        )
 
     def build(self, backend=None):
         backend = _get_backend(backend)
         if self._serial_number is None:
-            raise ValueError('A revoked certificate must have a serial number')
+            raise ValueError("A revoked certificate must have a serial number")
         if self._revocation_date is None:
-            raise ValueError('A revoked certificate must have a revocation date')
+            raise ValueError(
+                "A revoked certificate must have a revocation date"
+            )
         return backend.create_x509_revoked_certificate(self)
 
+
 def random_serial_number():
-    return int.from_bytes(os.urandom(20), 'big') >> 1
+    return int.from_bytes(os.urandom(20), "big") >> 1

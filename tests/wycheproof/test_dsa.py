@@ -11,15 +11,38 @@ from cryptography.hazmat.primitives.asymmetric import dsa
 
 from .utils import wycheproof_tests
 
-_DIGESTS = {'SHA-1': hashes.SHA1(), 'SHA-224': hashes.SHA224(), 'SHA-256': hashes.SHA256()}
+_DIGESTS = {
+    "SHA-1": hashes.SHA1(),
+    "SHA-224": hashes.SHA224(),
+    "SHA-256": hashes.SHA256(),
+}
 
-@wycheproof_tests('dsa_test.json', 'dsa_2048_224_sha224_test.json', 'dsa_2048_224_sha256_test.json', 'dsa_2048_256_sha256_test.json', 'dsa_3072_256_sha256_test.json')
+
+@wycheproof_tests(
+    "dsa_test.json",
+    "dsa_2048_224_sha224_test.json",
+    "dsa_2048_224_sha256_test.json",
+    "dsa_2048_256_sha256_test.json",
+    "dsa_3072_256_sha256_test.json",
+)
 def test_dsa_signature(backend, wycheproof):
-    key = serialization.load_der_public_key(binascii.unhexlify(wycheproof.testgroup['keyDer']), backend)
+    key = serialization.load_der_public_key(
+        binascii.unhexlify(wycheproof.testgroup["keyDer"]), backend
+    )
     assert isinstance(key, dsa.DSAPublicKey)
-    digest = _DIGESTS[wycheproof.testgroup['sha']]
-    if wycheproof.valid or (wycheproof.acceptable and (not wycheproof.has_flag('NoLeadingZero'))):
-        key.verify(binascii.unhexlify(wycheproof.testcase['sig']), binascii.unhexlify(wycheproof.testcase['msg']), digest)
+    digest = _DIGESTS[wycheproof.testgroup["sha"]]
+    if wycheproof.valid or (
+        wycheproof.acceptable and (not wycheproof.has_flag("NoLeadingZero"))
+    ):
+        key.verify(
+            binascii.unhexlify(wycheproof.testcase["sig"]),
+            binascii.unhexlify(wycheproof.testcase["msg"]),
+            digest,
+        )
     else:
         with pytest.raises(InvalidSignature):
-            key.verify(binascii.unhexlify(wycheproof.testcase['sig']), binascii.unhexlify(wycheproof.testcase['msg']), digest)
+            key.verify(
+                binascii.unhexlify(wycheproof.testcase["sig"]),
+                binascii.unhexlify(wycheproof.testcase["msg"]),
+                digest,
+            )

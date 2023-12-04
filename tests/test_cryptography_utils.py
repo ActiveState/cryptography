@@ -9,15 +9,13 @@ from cryptography import utils
 
 
 class TestCachedProperty(object):
-
     def test_simple(self):
-
         class T(object):
-
             @utils.cached_property
             def t(self):
                 accesses.append(None)
                 return 14
+
         accesses: typing.List[typing.Optional[T]] = []
         assert T.t
         t = T()
@@ -32,13 +30,12 @@ class TestCachedProperty(object):
         assert len(accesses) == 2
 
     def test_set(self):
-
         class T(object):
-
             @utils.cached_property
             def t(self):
                 accesses.append(None)
                 return 14
+
         accesses: typing.List[typing.Optional[T]] = []
         t = T()
         with pytest.raises(AttributeError):
@@ -52,11 +49,12 @@ class TestCachedProperty(object):
         assert t.t == 14
         assert len(accesses) == 1
 
-def test_enum():
 
+def test_enum():
     class TestEnum(utils.Enum):
-        value = 'something'
+        value = "something"
+
     assert issubclass(TestEnum, enum.Enum)
     assert isinstance(TestEnum.value, enum.Enum)
     assert repr(TestEnum.value) == "<TestEnum.value: 'something'>"
-    assert str(TestEnum.value) == 'TestEnum.value'
+    assert str(TestEnum.value) == "TestEnum.value"

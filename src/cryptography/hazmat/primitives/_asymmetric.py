@@ -6,8 +6,8 @@ import abc
 # This exists to break an import cycle. It is normally accessible from the
 # asymmetric padding module.
 
-class AsymmetricPadding(metaclass=abc.ABCMeta):
 
+class AsymmetricPadding(metaclass=abc.ABCMeta):
     @abc.abstractproperty
     def name(self):
         """

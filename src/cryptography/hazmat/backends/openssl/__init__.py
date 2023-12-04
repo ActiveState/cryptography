@@ -3,4 +3,4 @@
 # for complete details.
 from cryptography.hazmat.backends.openssl.backend import backend
 
-__all__ = ['backend']
+__all__ = ["backend"]

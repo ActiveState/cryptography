@@ -12,15 +12,18 @@ from ..hazmat.primitives.test_aead import _aead_supported
 from .utils import wycheproof_tests
 
 
-@pytest.mark.skipif(not _aead_supported(ChaCha20Poly1305), reason='Requires OpenSSL with ChaCha20Poly1305 support')
-@wycheproof_tests('chacha20_poly1305_test.json')
+@pytest.mark.skipif(
+    not _aead_supported(ChaCha20Poly1305),
+    reason="Requires OpenSSL with ChaCha20Poly1305 support",
+)
+@wycheproof_tests("chacha20_poly1305_test.json")
 def test_chacha2poly1305(backend, wycheproof):
-    key = binascii.unhexlify(wycheproof.testcase['key'])
-    iv = binascii.unhexlify(wycheproof.testcase['iv'])
-    aad = binascii.unhexlify(wycheproof.testcase['aad'])
-    msg = binascii.unhexlify(wycheproof.testcase['msg'])
-    ct = binascii.unhexlify(wycheproof.testcase['ct'])
-    tag = binascii.unhexlify(wycheproof.testcase['tag'])
+    key = binascii.unhexlify(wycheproof.testcase["key"])
+    iv = binascii.unhexlify(wycheproof.testcase["iv"])
+    aad = binascii.unhexlify(wycheproof.testcase["aad"])
+    msg = binascii.unhexlify(wycheproof.testcase["msg"])
+    ct = binascii.unhexlify(wycheproof.testcase["ct"])
+    tag = binascii.unhexlify(wycheproof.testcase["tag"])
     if wycheproof.valid:
         chacha = ChaCha20Poly1305(key)
         computed_ct = chacha.encrypt(iv, msg, aad)

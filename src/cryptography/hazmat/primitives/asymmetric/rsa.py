@@ -10,12 +10,13 @@ from cryptography.hazmat.backends.interfaces import Backend, RSABackend
 from cryptography.hazmat.primitives import _serialization, hashes
 from cryptography.hazmat.primitives._asymmetric import AsymmetricPadding
 from cryptography.hazmat.primitives.asymmetric import (
-    AsymmetricSignatureContext, AsymmetricVerificationContext)
+    AsymmetricSignatureContext,
+    AsymmetricVerificationContext,
+)
 from cryptography.hazmat.primitives.asymmetric import utils as asym_utils
 
 
 class RSAPrivateKey(metaclass=abc.ABCMeta):
-
     @abc.abstractmethod
     def signer(self, padding, algorithm):
         """
@@ -71,10 +72,12 @@ class RSAPrivateKey(metaclass=abc.ABCMeta):
         Returns the key serialized as bytes.
 
         """
+
+
 RSAPrivateKeyWithSerialization = RSAPrivateKey
 
-class RSAPublicKey(metaclass=abc.ABCMeta):
 
+class RSAPublicKey(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def verifier(self, signature, padding, algorithm):
         """
@@ -130,54 +133,68 @@ class RSAPublicKey(metaclass=abc.ABCMeta):
         Recovers the original data from the signature.
 
         """
+
+
 RSAPublicKeyWithSerialization = RSAPublicKey
+
 
 def generate_private_key(public_exponent, key_size, backend=None):
     backend = _get_backend(backend)
     if not isinstance(backend, RSABackend):
-        raise UnsupportedAlgorithm('Backend object does not implement RSABackend.', _Reasons.BACKEND_MISSING_INTERFACE)
+        raise UnsupportedAlgorithm(
+            "Backend object does not implement RSABackend.",
+            _Reasons.BACKEND_MISSING_INTERFACE,
+        )
     _verify_rsa_parameters(public_exponent, key_size)
     return backend.generate_rsa_private_key(public_exponent, key_size)
 
+
 def _verify_rsa_parameters(public_exponent, key_size):
     if public_exponent not in (3, 65537):
-        raise ValueError('public_exponent must be either 3 (for legacy compatibility) or 65537. Almost everyone should choose 65537 here!')
+        raise ValueError(
+            "public_exponent must be either 3 (for legacy compatibility) or 65537. Almost everyone should choose 65537 here!"
+        )
     if key_size < 512:
-        raise ValueError('key_size must be at least 512-bits.')
+        raise ValueError("key_size must be at least 512-bits.")
 
-def _check_private_key_components(p, q, private_exponent, dmp1, dmq1, iqmp, public_exponent, modulus):
+
+def _check_private_key_components(
+    p, q, private_exponent, dmp1, dmq1, iqmp, public_exponent, modulus
+):
     if modulus < 3:
-        raise ValueError('modulus must be >= 3.')
+        raise ValueError("modulus must be >= 3.")
     if p >= modulus:
-        raise ValueError('p must be < modulus.')
+        raise ValueError("p must be < modulus.")
     if q >= modulus:
-        raise ValueError('q must be < modulus.')
+        raise ValueError("q must be < modulus.")
     if dmp1 >= modulus:
-        raise ValueError('dmp1 must be < modulus.')
+        raise ValueError("dmp1 must be < modulus.")
     if dmq1 >= modulus:
-        raise ValueError('dmq1 must be < modulus.')
+        raise ValueError("dmq1 must be < modulus.")
     if iqmp >= modulus:
-        raise ValueError('iqmp must be < modulus.')
+        raise ValueError("iqmp must be < modulus.")
     if private_exponent >= modulus:
-        raise ValueError('private_exponent must be < modulus.')
+        raise ValueError("private_exponent must be < modulus.")
     if public_exponent < 3 or public_exponent >= modulus:
-        raise ValueError('public_exponent must be >= 3 and < modulus.')
+        raise ValueError("public_exponent must be >= 3 and < modulus.")
     if public_exponent & 1 == 0:
-        raise ValueError('public_exponent must be odd.')
+        raise ValueError("public_exponent must be odd.")
     if dmp1 & 1 == 0:
-        raise ValueError('dmp1 must be odd.')
+        raise ValueError("dmp1 must be odd.")
     if dmq1 & 1 == 0:
-        raise ValueError('dmq1 must be odd.')
+        raise ValueError("dmq1 must be odd.")
     if p * q != modulus:
-        raise ValueError('p*q must equal modulus.')
+        raise ValueError("p*q must equal modulus.")
+
 
 def _check_public_key_components(e, n):
     if n < 3:
-        raise ValueError('n must be >= 3.')
+        raise ValueError("n must be >= 3.")
     if e < 3 or e >= n:
-        raise ValueError('e must be >= 3 and < n.')
+        raise ValueError("e must be >= 3 and < n.")
     if e & 1 == 0:
-        raise ValueError('e must be odd.')
+        raise ValueError("e must be odd.")
+
 
 def _modinv(e, m):
     """
@@ -193,6 +210,7 @@ def _modinv(e, m):
         a, b, x1, x2 = (b, r, x2, xn)
     return x1 % m
 
+
 def rsa_crt_iqmp(p, q):
     """
 
@@ -200,6 +218,7 @@ def rsa_crt_iqmp(p, q):
 
     """
     return _modinv(q, p)
+
 
 def rsa_crt_dmp1(private_exponent, p):
     """
@@ -211,6 +230,7 @@ def rsa_crt_dmp1(private_exponent, p):
     """
     return private_exponent % (p - 1)
 
+
 def rsa_crt_dmq1(private_exponent, q):
     """
 
@@ -220,10 +240,13 @@ def rsa_crt_dmq1(private_exponent, q):
 
     """
     return private_exponent % (q - 1)
+
+
 # Controls the number of iterations rsa_recover_prime_factors will perform
 # to obtain the prime factors. Each iteration increments by 2 so the actual
 # maximum attempts is half this number.
 _MAX_RECOVERY_ATTEMPTS = 1000
+
 
 def rsa_recover_prime_factors(n, e, d):
     """
@@ -263,20 +286,31 @@ def rsa_recover_prime_factors(n, e, d):
         # This value was not any good... let's try another!
         a += 2
     if not spotted:
-        raise ValueError('Unable to compute factors p and q from exponent d.')
+        raise ValueError("Unable to compute factors p and q from exponent d.")
     # Found !
     q, r = divmod(n, p)
     assert r == 0
     p, q = sorted((p, q), reverse=True)
     return (p, q)
 
-class RSAPrivateNumbers(object):
 
+class RSAPrivateNumbers(object):
     def __init__(self, p, q, d, dmp1, dmq1, iqmp, public_numbers):
-        if not isinstance(p, int) or not isinstance(q, int) or (not isinstance(d, int)) or (not isinstance(dmp1, int)) or (not isinstance(dmq1, int)) or (not isinstance(iqmp, int)):
-            raise TypeError('RSAPrivateNumbers p, q, d, dmp1, dmq1, iqmp arguments must all be an integers.')
+        if (
+            not isinstance(p, int)
+            or not isinstance(q, int)
+            or (not isinstance(d, int))
+            or (not isinstance(dmp1, int))
+            or (not isinstance(dmq1, int))
+            or (not isinstance(iqmp, int))
+        ):
+            raise TypeError(
+                "RSAPrivateNumbers p, q, d, dmp1, dmq1, iqmp arguments must all be an integers."
+            )
         if not isinstance(public_numbers, RSAPublicNumbers):
-            raise TypeError('RSAPrivateNumbers public_numbers must be an RSAPublicNumbers instance.')
+            raise TypeError(
+                "RSAPrivateNumbers public_numbers must be an RSAPublicNumbers instance."
+            )
         self._p = p
         self._q = q
         self._d = d
@@ -284,6 +318,7 @@ class RSAPrivateNumbers(object):
         self._dmq1 = dmq1
         self._iqmp = iqmp
         self._public_numbers = public_numbers
+
     p = property(lambda self: self._p)
     q = property(lambda self: self._q)
     d = property(lambda self: self._d)
@@ -299,21 +334,40 @@ class RSAPrivateNumbers(object):
     def __eq__(self, other):
         if not isinstance(other, RSAPrivateNumbers):
             return NotImplemented
-        return self.p == other.p and self.q == other.q and (self.d == other.d) and (self.dmp1 == other.dmp1) and (self.dmq1 == other.dmq1) and (self.iqmp == other.iqmp) and (self.public_numbers == other.public_numbers)
+        return (
+            self.p == other.p
+            and self.q == other.q
+            and (self.d == other.d)
+            and (self.dmp1 == other.dmp1)
+            and (self.dmq1 == other.dmq1)
+            and (self.iqmp == other.iqmp)
+            and (self.public_numbers == other.public_numbers)
+        )
 
     def __ne__(self, other):
         return not self == other
 
     def __hash__(self):
-        return hash((self.p, self.q, self.d, self.dmp1, self.dmq1, self.iqmp, self.public_numbers))
+        return hash(
+            (
+                self.p,
+                self.q,
+                self.d,
+                self.dmp1,
+                self.dmq1,
+                self.iqmp,
+                self.public_numbers,
+            )
+        )
+
 
 class RSAPublicNumbers(object):
-
     def __init__(self, e, n):
         if not isinstance(e, int) or not isinstance(n, int):
-            raise TypeError('RSAPublicNumbers arguments must be integers.')
+            raise TypeError("RSAPublicNumbers arguments must be integers.")
         self._e = e
         self._n = n
+
     e = property(lambda self: self._e)
     n = property(lambda self: self._n)
 
@@ -322,7 +376,7 @@ class RSAPublicNumbers(object):
         return backend.load_rsa_public_numbers(self)
 
     def __repr__(self):
-        return '<RSAPublicNumbers(e={0.e}, n={0.n})>'.format(self)
+        return "<RSAPublicNumbers(e={0.e}, n={0.n})>".format(self)
 
     def __eq__(self, other):
         if not isinstance(other, RSAPublicNumbers):

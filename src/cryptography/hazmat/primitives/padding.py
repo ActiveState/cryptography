@@ -5,12 +5,13 @@ import abc
 
 from cryptography import utils
 from cryptography.exceptions import AlreadyFinalized
-from cryptography.hazmat.bindings._rust import (check_ansix923_padding,
-                                                check_pkcs7_padding)
+from cryptography.hazmat.bindings._rust import (
+    check_ansix923_padding,
+    check_pkcs7_padding,
+)
 
 
 class PaddingContext(metaclass=abc.ABCMeta):
-
     @abc.abstractmethod
     def update(self, data):
         """
@@ -27,51 +28,56 @@ class PaddingContext(metaclass=abc.ABCMeta):
 
         """
 
+
 def _byte_padding_check(block_size):
     if not 0 <= block_size <= 2040:
-        raise ValueError('block_size must be in range(0, 2041).')
+        raise ValueError("block_size must be in range(0, 2041).")
     if block_size % 8 != 0:
-        raise ValueError('block_size must be a multiple of 8.')
+        raise ValueError("block_size must be a multiple of 8.")
+
 
 def _byte_padding_update(buffer_, data, block_size):
     if buffer_ is None:
-        raise AlreadyFinalized('Context was already finalized.')
-    utils._check_byteslike('data', data)
+        raise AlreadyFinalized("Context was already finalized.")
+    utils._check_byteslike("data", data)
     buffer_ += bytes(data)
     finished_blocks = len(buffer_) // (block_size // 8)
-    result = buffer_[:finished_blocks * (block_size // 8)]
-    buffer_ = buffer_[finished_blocks * (block_size // 8):]
+    result = buffer_[: finished_blocks * (block_size // 8)]
+    buffer_ = buffer_[finished_blocks * (block_size // 8) :]
     return (buffer_, result)
+
 
 def _byte_padding_pad(buffer_, block_size, paddingfn):
     if buffer_ is None:
-        raise AlreadyFinalized('Context was already finalized.')
+        raise AlreadyFinalized("Context was already finalized.")
     pad_size = block_size // 8 - len(buffer_)
     return buffer_ + paddingfn(pad_size)
 
+
 def _byte_unpadding_update(buffer_, data, block_size):
     if buffer_ is None:
-        raise AlreadyFinalized('Context was already finalized.')
-    utils._check_byteslike('data', data)
+        raise AlreadyFinalized("Context was already finalized.")
+    utils._check_byteslike("data", data)
     buffer_ += bytes(data)
     finished_blocks = max(len(buffer_) // (block_size // 8) - 1, 0)
-    result = buffer_[:finished_blocks * (block_size // 8)]
-    buffer_ = buffer_[finished_blocks * (block_size // 8):]
+    result = buffer_[: finished_blocks * (block_size // 8)]
+    buffer_ = buffer_[finished_blocks * (block_size // 8) :]
     return (buffer_, result)
+
 
 def _byte_unpadding_check(buffer_, block_size, checkfn):
     if buffer_ is None:
-        raise AlreadyFinalized('Context was already finalized.')
+        raise AlreadyFinalized("Context was already finalized.")
     if len(buffer_) != block_size // 8:
-        raise ValueError('Invalid padding bytes.')
+        raise ValueError("Invalid padding bytes.")
     valid = checkfn(buffer_)
     if not valid:
-        raise ValueError('Invalid padding bytes.')
+        raise ValueError("Invalid padding bytes.")
     pad_size = buffer_[-1]
     return buffer_[:-pad_size]
 
-class PKCS7(object):
 
+class PKCS7(object):
     def __init__(self, block_size):
         _byte_padding_check(block_size)
         self.block_size = block_size
@@ -82,25 +88,31 @@ class PKCS7(object):
     def unpadder(self):
         return _PKCS7UnpaddingContext(self.block_size)
 
+
 class _PKCS7PaddingContext(PaddingContext):
     _buffer: typing.Optional[bytes]
 
     def __init__(self, block_size):
         self.block_size = block_size
         # TODO: more copies than necessary, we should use zero-buffer (#193)
-        self._buffer = b''
+        self._buffer = b""
 
     def update(self, data):
-        self._buffer, result = _byte_padding_update(self._buffer, data, self.block_size)
+        self._buffer, result = _byte_padding_update(
+            self._buffer, data, self.block_size
+        )
         return result
 
     def _padding(self, size):
         return bytes([size]) * size
 
     def finalize(self):
-        result = _byte_padding_pad(self._buffer, self.block_size, self._padding)
+        result = _byte_padding_pad(
+            self._buffer, self.block_size, self._padding
+        )
         self._buffer = None
         return result
+
 
 class _PKCS7UnpaddingContext(PaddingContext):
     _buffer: typing.Optional[bytes]
@@ -108,19 +120,23 @@ class _PKCS7UnpaddingContext(PaddingContext):
     def __init__(self, block_size):
         self.block_size = block_size
         # TODO: more copies than necessary, we should use zero-buffer (#193)
-        self._buffer = b''
+        self._buffer = b""
 
     def update(self, data):
-        self._buffer, result = _byte_unpadding_update(self._buffer, data, self.block_size)
+        self._buffer, result = _byte_unpadding_update(
+            self._buffer, data, self.block_size
+        )
         return result
 
     def finalize(self):
-        result = _byte_unpadding_check(self._buffer, self.block_size, check_pkcs7_padding)
+        result = _byte_unpadding_check(
+            self._buffer, self.block_size, check_pkcs7_padding
+        )
         self._buffer = None
         return result
 
-class ANSIX923(object):
 
+class ANSIX923(object):
     def __init__(self, block_size):
         _byte_padding_check(block_size)
         self.block_size = block_size
@@ -131,25 +147,31 @@ class ANSIX923(object):
     def unpadder(self):
         return _ANSIX923UnpaddingContext(self.block_size)
 
+
 class _ANSIX923PaddingContext(PaddingContext):
     _buffer: typing.Optional[bytes]
 
     def __init__(self, block_size):
         self.block_size = block_size
         # TODO: more copies than necessary, we should use zero-buffer (#193)
-        self._buffer = b''
+        self._buffer = b""
 
     def update(self, data):
-        self._buffer, result = _byte_padding_update(self._buffer, data, self.block_size)
+        self._buffer, result = _byte_padding_update(
+            self._buffer, data, self.block_size
+        )
         return result
 
     def _padding(self, size):
         return bytes([0]) * (size - 1) + bytes([size])
 
     def finalize(self):
-        result = _byte_padding_pad(self._buffer, self.block_size, self._padding)
+        result = _byte_padding_pad(
+            self._buffer, self.block_size, self._padding
+        )
         self._buffer = None
         return result
+
 
 class _ANSIX923UnpaddingContext(PaddingContext):
     _buffer: typing.Optional[bytes]
@@ -157,13 +179,17 @@ class _ANSIX923UnpaddingContext(PaddingContext):
     def __init__(self, block_size):
         self.block_size = block_size
         # TODO: more copies than necessary, we should use zero-buffer (#193)
-        self._buffer = b''
+        self._buffer = b""
 
     def update(self, data):
-        self._buffer, result = _byte_unpadding_update(self._buffer, data, self.block_size)
+        self._buffer, result = _byte_unpadding_update(
+            self._buffer, data, self.block_size
+        )
         return result
 
     def finalize(self):
-        result = _byte_unpadding_check(self._buffer, self.block_size, check_ansix923_padding)
+        result = _byte_unpadding_check(
+            self._buffer, self.block_size, check_ansix923_padding
+        )
         self._buffer = None
         return result

@@ -18,6 +18,7 @@ def test_pkcs7(block_size, data):
     padded = padder.update(data) + padder.finalize()
     assert unpadder.update(padded) + unpadder.finalize() == data
 
+
 @settings(suppress_health_check=[HealthCheck.too_slow])
 @given(integers(min_value=1, max_value=255), binary())
 def test_ansix923(block_size, data):

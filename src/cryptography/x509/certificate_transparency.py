@@ -12,11 +12,12 @@ class LogEntryType(utils.Enum):
     X509_CERTIFICATE = 0
     PRE_CERTIFICATE = 1
 
+
 class Version(utils.Enum):
     v1 = 0
 
-class SignedCertificateTimestamp(metaclass=abc.ABCMeta):
 
+class SignedCertificateTimestamp(metaclass=abc.ABCMeta):
     @abc.abstractproperty
     def version(self):
         """
@@ -48,4 +49,6 @@ class SignedCertificateTimestamp(metaclass=abc.ABCMeta):
         Returns whether this is an SCT for a certificate or pre-certificate.
 
         """
+
+
 SignedCertificateTimestamp.register(rust_x509.Sct)

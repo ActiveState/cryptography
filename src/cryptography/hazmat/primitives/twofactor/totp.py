@@ -6,16 +6,29 @@ from cryptography.hazmat.backends import _get_backend
 from cryptography.hazmat.backends.interfaces import Backend, HMACBackend
 from cryptography.hazmat.primitives import constant_time
 from cryptography.hazmat.primitives.twofactor import InvalidToken
-from cryptography.hazmat.primitives.twofactor.hotp import (_ALLOWED_HASH_TYPES,
-                                                           HOTP, _generate_uri)
+from cryptography.hazmat.primitives.twofactor.hotp import (
+    _ALLOWED_HASH_TYPES,
+    HOTP,
+    _generate_uri,
+)
 
 
 class TOTP(object):
-
-    def __init__(self, key, length, algorithm, time_step, backend=None, enforce_key_length=True):
+    def __init__(
+        self,
+        key,
+        length,
+        algorithm,
+        time_step,
+        backend=None,
+        enforce_key_length=True,
+    ):
         backend = _get_backend(backend)
         if not isinstance(backend, HMACBackend):
-            raise UnsupportedAlgorithm('Backend object does not implement HMACBackend.', _Reasons.BACKEND_MISSING_INTERFACE)
+            raise UnsupportedAlgorithm(
+                "Backend object does not implement HMACBackend.",
+                _Reasons.BACKEND_MISSING_INTERFACE,
+            )
         self._time_step = time_step
         self._hotp = HOTP(key, length, algorithm, backend, enforce_key_length)
 
@@ -25,7 +38,13 @@ class TOTP(object):
 
     def verify(self, totp, time):
         if not constant_time.bytes_eq(self.generate(time), totp):
-            raise InvalidToken('Supplied TOTP value does not match.')
+            raise InvalidToken("Supplied TOTP value does not match.")
 
     def get_provisioning_uri(self, account_name, issuer):
-        return _generate_uri(self._hotp, 'totp', account_name, issuer, [('period', int(self._time_step))])
+        return _generate_uri(
+            self._hotp,
+            "totp",
+            account_name,
+            issuer,
+            [("period", int(self._time_step))],
+        )

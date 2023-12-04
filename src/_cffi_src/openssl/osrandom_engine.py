@@ -4,9 +4,9 @@
 import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-with open(os.path.join(HERE, 'src/osrandom_engine.h')) as f:
+with open(os.path.join(HERE, "src/osrandom_engine.h")) as f:
     INCLUDES = f.read()
-TYPES = '\n\nstatic const char *const Cryptography_osrandom_engine_name;\n\nstatic const char *const Cryptography_osrandom_engine_id;\n\n'
-FUNCTIONS = '\n\nint Cryptography_add_osrandom_engine(void);\n\n'
-with open(os.path.join(HERE, 'src/osrandom_engine.c')) as f:
+TYPES = "\n\nstatic const char *const Cryptography_osrandom_engine_name;\n\nstatic const char *const Cryptography_osrandom_engine_id;\n\n"
+FUNCTIONS = "\n\nint Cryptography_add_osrandom_engine(void);\n\n"
+with open(os.path.join(HERE, "src/osrandom_engine.c")) as f:
     CUSTOMIZATIONS = f.read()

@@ -5,7 +5,6 @@ import abc
 
 
 class KeyDerivationFunction(metaclass=abc.ABCMeta):
-
     @abc.abstractmethod
     def derive(self, key_material):
         """

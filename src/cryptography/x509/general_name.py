@@ -8,13 +8,19 @@ from email.utils import parseaddr
 from cryptography.x509.name import Name
 from cryptography.x509.oid import ObjectIdentifier
 
-_IPADDRESS_TYPES = typing.Union[ipaddress.IPv4Address, ipaddress.IPv6Address, ipaddress.IPv4Network, ipaddress.IPv6Network]
+_IPADDRESS_TYPES = typing.Union[
+    ipaddress.IPv4Address,
+    ipaddress.IPv6Address,
+    ipaddress.IPv4Network,
+    ipaddress.IPv6Network,
+]
+
 
 class UnsupportedGeneralNameType(Exception):
     pass
 
-class GeneralName(metaclass=abc.ABCMeta):
 
+class GeneralName(metaclass=abc.ABCMeta):
     @abc.abstractproperty
     def value(self):
         """
@@ -23,21 +29,23 @@ class GeneralName(metaclass=abc.ABCMeta):
 
         """
 
-class RFC822Name(GeneralName):
 
+class RFC822Name(GeneralName):
     def __init__(self, value):
         if isinstance(value, str):
             try:
-                value.encode('ascii')
+                value.encode("ascii")
             except UnicodeEncodeError:
-                raise ValueError('RFC822Name values should be passed as an A-label string. This means unicode characters should be encoded via a library like idna.')
+                raise ValueError(
+                    "RFC822Name values should be passed as an A-label string. This means unicode characters should be encoded via a library like idna."
+                )
         else:
-            raise TypeError('value must be string')
+            raise TypeError("value must be string")
         name, address = parseaddr(value)
         if name or not address:
             # parseaddr has found a name (e.g. Name <email>) or the entire
             # value is an empty string.
-            raise ValueError('Invalid rfc822name value')
+            raise ValueError("Invalid rfc822name value")
         self._value = value
 
     @property
@@ -51,7 +59,7 @@ class RFC822Name(GeneralName):
         return instance
 
     def __repr__(self):
-        return '<RFC822Name(value={0!r})>'.format(self.value)
+        return "<RFC822Name(value={0!r})>".format(self.value)
 
     def __eq__(self, other):
         if not isinstance(other, RFC822Name):
@@ -64,16 +72,18 @@ class RFC822Name(GeneralName):
     def __hash__(self):
         return hash(self.value)
 
-class DNSName(GeneralName):
 
+class DNSName(GeneralName):
     def __init__(self, value):
         if isinstance(value, str):
             try:
-                value.encode('ascii')
+                value.encode("ascii")
             except UnicodeEncodeError:
-                raise ValueError('DNSName values should be passed as an A-label string. This means unicode characters should be encoded via a library like idna.')
+                raise ValueError(
+                    "DNSName values should be passed as an A-label string. This means unicode characters should be encoded via a library like idna."
+                )
         else:
-            raise TypeError('value must be string')
+            raise TypeError("value must be string")
         self._value = value
 
     @property
@@ -87,7 +97,7 @@ class DNSName(GeneralName):
         return instance
 
     def __repr__(self):
-        return '<DNSName(value={0!r})>'.format(self.value)
+        return "<DNSName(value={0!r})>".format(self.value)
 
     def __eq__(self, other):
         if not isinstance(other, DNSName):
@@ -100,16 +110,18 @@ class DNSName(GeneralName):
     def __hash__(self):
         return hash(self.value)
 
-class UniformResourceIdentifier(GeneralName):
 
+class UniformResourceIdentifier(GeneralName):
     def __init__(self, value):
         if isinstance(value, str):
             try:
-                value.encode('ascii')
+                value.encode("ascii")
             except UnicodeEncodeError:
-                raise ValueError('URI values should be passed as an A-label string. This means unicode characters should be encoded via a library like idna.')
+                raise ValueError(
+                    "URI values should be passed as an A-label string. This means unicode characters should be encoded via a library like idna."
+                )
         else:
-            raise TypeError('value must be string')
+            raise TypeError("value must be string")
         self._value = value
 
     @property
@@ -123,7 +135,7 @@ class UniformResourceIdentifier(GeneralName):
         return instance
 
     def __repr__(self):
-        return '<UniformResourceIdentifier(value={0!r})>'.format(self.value)
+        return "<UniformResourceIdentifier(value={0!r})>".format(self.value)
 
     def __eq__(self, other):
         if not isinstance(other, UniformResourceIdentifier):
@@ -136,11 +148,11 @@ class UniformResourceIdentifier(GeneralName):
     def __hash__(self):
         return hash(self.value)
 
-class DirectoryName(GeneralName):
 
+class DirectoryName(GeneralName):
     def __init__(self, value):
         if not isinstance(value, Name):
-            raise TypeError('value must be a Name')
+            raise TypeError("value must be a Name")
         self._value = value
 
     @property
@@ -148,7 +160,7 @@ class DirectoryName(GeneralName):
         return self._value
 
     def __repr__(self):
-        return '<DirectoryName(value={})>'.format(self.value)
+        return "<DirectoryName(value={})>".format(self.value)
 
     def __eq__(self, other):
         if not isinstance(other, DirectoryName):
@@ -161,11 +173,11 @@ class DirectoryName(GeneralName):
     def __hash__(self):
         return hash(self.value)
 
-class RegisteredID(GeneralName):
 
+class RegisteredID(GeneralName):
     def __init__(self, value):
         if not isinstance(value, ObjectIdentifier):
-            raise TypeError('value must be an ObjectIdentifier')
+            raise TypeError("value must be an ObjectIdentifier")
         self._value = value
 
     @property
@@ -173,7 +185,7 @@ class RegisteredID(GeneralName):
         return self._value
 
     def __repr__(self):
-        return '<RegisteredID(value={})>'.format(self.value)
+        return "<RegisteredID(value={})>".format(self.value)
 
     def __eq__(self, other):
         if not isinstance(other, RegisteredID):
@@ -186,11 +198,21 @@ class RegisteredID(GeneralName):
     def __hash__(self):
         return hash(self.value)
 
-class IPAddress(GeneralName):
 
+class IPAddress(GeneralName):
     def __init__(self, value):
-        if not isinstance(value, (ipaddress.IPv4Address, ipaddress.IPv6Address, ipaddress.IPv4Network, ipaddress.IPv6Network)):
-            raise TypeError('value must be an instance of ipaddress.IPv4Address, ipaddress.IPv6Address, ipaddress.IPv4Network, or ipaddress.IPv6Network')
+        if not isinstance(
+            value,
+            (
+                ipaddress.IPv4Address,
+                ipaddress.IPv6Address,
+                ipaddress.IPv4Network,
+                ipaddress.IPv6Network,
+            ),
+        ):
+            raise TypeError(
+                "value must be an instance of ipaddress.IPv4Address, ipaddress.IPv6Address, ipaddress.IPv4Network, or ipaddress.IPv6Network"
+            )
         self._value = value
 
     @property
@@ -198,7 +220,7 @@ class IPAddress(GeneralName):
         return self._value
 
     def __repr__(self):
-        return '<IPAddress(value={})>'.format(self.value)
+        return "<IPAddress(value={})>".format(self.value)
 
     def __eq__(self, other):
         if not isinstance(other, IPAddress):
@@ -211,13 +233,13 @@ class IPAddress(GeneralName):
     def __hash__(self):
         return hash(self.value)
 
-class OtherName(GeneralName):
 
+class OtherName(GeneralName):
     def __init__(self, type_id, value):
         if not isinstance(type_id, ObjectIdentifier):
-            raise TypeError('type_id must be an ObjectIdentifier')
+            raise TypeError("type_id must be an ObjectIdentifier")
         if not isinstance(value, bytes):
-            raise TypeError('value must be a binary string')
+            raise TypeError("value must be a binary string")
         self._type_id = type_id
         self._value = value
 
@@ -230,7 +252,9 @@ class OtherName(GeneralName):
         return self._value
 
     def __repr__(self):
-        return '<OtherName(type_id={}, value={!r})>'.format(self.type_id, self.value)
+        return "<OtherName(type_id={}, value={!r})>".format(
+            self.type_id, self.value
+        )
 
     def __eq__(self, other):
         if not isinstance(other, OtherName):

@@ -7,6 +7,7 @@ from cryptography.hazmat.backends import _get_backend, default_backend
 def test_get_backend_no_backend():
     assert _get_backend(None) is default_backend()
 
+
 def test_get_backend():
     faux_backend = object()
     assert _get_backend(faux_backend) is faux_backend  # type: ignore[arg-type]

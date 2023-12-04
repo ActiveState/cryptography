@@ -7,14 +7,18 @@ import datetime
 from cryptography import utils, x509
 from cryptography.hazmat.bindings._rust import ocsp
 from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.x509.base import (_EARLIEST_UTC_TIME, PRIVATE_KEY_TYPES,
-                                    _convert_to_naive_utc_time,
-                                    _reject_duplicate_extension)
+from cryptography.x509.base import (
+    _EARLIEST_UTC_TIME,
+    PRIVATE_KEY_TYPES,
+    _convert_to_naive_utc_time,
+    _reject_duplicate_extension,
+)
 
 
 class OCSPResponderEncoding(utils.Enum):
-    HASH = 'By Hash'
-    NAME = 'By Name'
+    HASH = "By Hash"
+    NAME = "By Name"
+
 
 class OCSPResponseStatus(utils.Enum):
     SUCCESSFUL = 0
@@ -23,53 +27,91 @@ class OCSPResponseStatus(utils.Enum):
     TRY_LATER = 3
     SIG_REQUIRED = 5
     UNAUTHORIZED = 6
-_ALLOWED_HASHES = (hashes.SHA1, hashes.SHA224, hashes.SHA256, hashes.SHA384, hashes.SHA512)
+
+
+_ALLOWED_HASHES = (
+    hashes.SHA1,
+    hashes.SHA224,
+    hashes.SHA256,
+    hashes.SHA384,
+    hashes.SHA512,
+)
+
 
 def _verify_algorithm(algorithm):
     if not isinstance(algorithm, _ALLOWED_HASHES):
-        raise ValueError('Algorithm must be SHA1, SHA224, SHA256, SHA384, or SHA512')
+        raise ValueError(
+            "Algorithm must be SHA1, SHA224, SHA256, SHA384, or SHA512"
+        )
+
 
 class OCSPCertStatus(utils.Enum):
     GOOD = 0
     REVOKED = 1
     UNKNOWN = 2
 
-class _SingleResponse(object):
 
-    def __init__(self, cert, issuer, algorithm, cert_status, this_update, next_update, revocation_time, revocation_reason):
-        if not isinstance(cert, x509.Certificate) or not isinstance(issuer, x509.Certificate):
-            raise TypeError('cert and issuer must be a Certificate')
+class _SingleResponse(object):
+    def __init__(
+        self,
+        cert,
+        issuer,
+        algorithm,
+        cert_status,
+        this_update,
+        next_update,
+        revocation_time,
+        revocation_reason,
+    ):
+        if not isinstance(cert, x509.Certificate) or not isinstance(
+            issuer, x509.Certificate
+        ):
+            raise TypeError("cert and issuer must be a Certificate")
         _verify_algorithm(algorithm)
         if not isinstance(this_update, datetime.datetime):
-            raise TypeError('this_update must be a datetime object')
-        if next_update is not None and (not isinstance(next_update, datetime.datetime)):
-            raise TypeError('next_update must be a datetime object or None')
+            raise TypeError("this_update must be a datetime object")
+        if next_update is not None and (
+            not isinstance(next_update, datetime.datetime)
+        ):
+            raise TypeError("next_update must be a datetime object or None")
         self._cert = cert
         self._issuer = issuer
         self._algorithm = algorithm
         self._this_update = this_update
         self._next_update = next_update
         if not isinstance(cert_status, OCSPCertStatus):
-            raise TypeError('cert_status must be an item from the OCSPCertStatus enum')
+            raise TypeError(
+                "cert_status must be an item from the OCSPCertStatus enum"
+            )
         if cert_status is not OCSPCertStatus.REVOKED:
             if revocation_time is not None:
-                raise ValueError('revocation_time can only be provided if the certificate is revoked')
+                raise ValueError(
+                    "revocation_time can only be provided if the certificate is revoked"
+                )
             if revocation_reason is not None:
-                raise ValueError('revocation_reason can only be provided if the certificate is revoked')
+                raise ValueError(
+                    "revocation_reason can only be provided if the certificate is revoked"
+                )
         else:
             if not isinstance(revocation_time, datetime.datetime):
-                raise TypeError('revocation_time must be a datetime object')
+                raise TypeError("revocation_time must be a datetime object")
             revocation_time = _convert_to_naive_utc_time(revocation_time)
             if revocation_time < _EARLIEST_UTC_TIME:
-                raise ValueError('The revocation_time must be on or after 1950 January 1.')
-            if revocation_reason is not None and (not isinstance(revocation_reason, x509.ReasonFlags)):
-                raise TypeError('revocation_reason must be an item from the ReasonFlags enum or None')
+                raise ValueError(
+                    "The revocation_time must be on or after 1950 January 1."
+                )
+            if revocation_reason is not None and (
+                not isinstance(revocation_reason, x509.ReasonFlags)
+            ):
+                raise TypeError(
+                    "revocation_reason must be an item from the ReasonFlags enum or None"
+                )
         self._cert_status = cert_status
         self._revocation_time = revocation_time
         self._revocation_reason = revocation_reason
 
-class OCSPRequest(metaclass=abc.ABCMeta):
 
+class OCSPRequest(metaclass=abc.ABCMeta):
     @abc.abstractproperty
     def issuer_key_hash(self):
         """
@@ -118,8 +160,8 @@ class OCSPRequest(metaclass=abc.ABCMeta):
 
         """
 
-class OCSPResponse(metaclass=abc.ABCMeta):
 
+class OCSPResponse(metaclass=abc.ABCMeta):
     @abc.abstractproperty
     def response_status(self):
         """
@@ -300,92 +342,142 @@ class OCSPResponse(metaclass=abc.ABCMeta):
 
         """
 
-class OCSPRequestBuilder(object):
 
+class OCSPRequestBuilder(object):
     def __init__(self, request=None, extensions=[]):
         self._request = request
         self._extensions = extensions
 
     def add_certificate(self, cert, issuer, algorithm):
         if self._request is not None:
-            raise ValueError('Only one certificate can be added to a request')
+            raise ValueError("Only one certificate can be added to a request")
         _verify_algorithm(algorithm)
-        if not isinstance(cert, x509.Certificate) or not isinstance(issuer, x509.Certificate):
-            raise TypeError('cert and issuer must be a Certificate')
+        if not isinstance(cert, x509.Certificate) or not isinstance(
+            issuer, x509.Certificate
+        ):
+            raise TypeError("cert and issuer must be a Certificate")
         return OCSPRequestBuilder((cert, issuer, algorithm), self._extensions)
 
     def add_extension(self, extval, critical):
         if not isinstance(extval, x509.ExtensionType):
-            raise TypeError('extension must be an ExtensionType')
+            raise TypeError("extension must be an ExtensionType")
         extension = x509.Extension(extval.oid, critical, extval)
         _reject_duplicate_extension(extension, self._extensions)
-        return OCSPRequestBuilder(self._request, self._extensions + [extension])
+        return OCSPRequestBuilder(
+            self._request, self._extensions + [extension]
+        )
 
     def build(self):
         from cryptography.hazmat.backends.openssl.backend import backend
+
         if self._request is None:
-            raise ValueError('You must add a certificate before building')
+            raise ValueError("You must add a certificate before building")
         return backend.create_ocsp_request(self)
 
-class OCSPResponseBuilder(object):
 
-    def __init__(self, response=None, responder_id=None, certs=None, extensions=[]):
+class OCSPResponseBuilder(object):
+    def __init__(
+        self, response=None, responder_id=None, certs=None, extensions=[]
+    ):
         self._response = response
         self._responder_id = responder_id
         self._certs = certs
         self._extensions = extensions
 
-    def add_response(self, cert, issuer, algorithm, cert_status, this_update, next_update, revocation_time, revocation_reason):
+    def add_response(
+        self,
+        cert,
+        issuer,
+        algorithm,
+        cert_status,
+        this_update,
+        next_update,
+        revocation_time,
+        revocation_reason,
+    ):
         if self._response is not None:
-            raise ValueError('Only one response per OCSPResponse.')
-        singleresp = _SingleResponse(cert, issuer, algorithm, cert_status, this_update, next_update, revocation_time, revocation_reason)
-        return OCSPResponseBuilder(singleresp, self._responder_id, self._certs, self._extensions)
+            raise ValueError("Only one response per OCSPResponse.")
+        singleresp = _SingleResponse(
+            cert,
+            issuer,
+            algorithm,
+            cert_status,
+            this_update,
+            next_update,
+            revocation_time,
+            revocation_reason,
+        )
+        return OCSPResponseBuilder(
+            singleresp, self._responder_id, self._certs, self._extensions
+        )
 
     def responder_id(self, encoding, responder_cert):
         if self._responder_id is not None:
-            raise ValueError('responder_id can only be set once')
+            raise ValueError("responder_id can only be set once")
         if not isinstance(responder_cert, x509.Certificate):
-            raise TypeError('responder_cert must be a Certificate')
+            raise TypeError("responder_cert must be a Certificate")
         if not isinstance(encoding, OCSPResponderEncoding):
-            raise TypeError('encoding must be an element from OCSPResponderEncoding')
-        return OCSPResponseBuilder(self._response, (responder_cert, encoding), self._certs, self._extensions)
+            raise TypeError(
+                "encoding must be an element from OCSPResponderEncoding"
+            )
+        return OCSPResponseBuilder(
+            self._response,
+            (responder_cert, encoding),
+            self._certs,
+            self._extensions,
+        )
 
     def certificates(self, certs):
         if self._certs is not None:
-            raise ValueError('certificates may only be set once')
+            raise ValueError("certificates may only be set once")
         certs = list(certs)
         if len(certs) == 0:
-            raise ValueError('certs must not be an empty list')
+            raise ValueError("certs must not be an empty list")
         if not all((isinstance(x, x509.Certificate) for x in certs)):
-            raise TypeError('certs must be a list of Certificates')
-        return OCSPResponseBuilder(self._response, self._responder_id, certs, self._extensions)
+            raise TypeError("certs must be a list of Certificates")
+        return OCSPResponseBuilder(
+            self._response, self._responder_id, certs, self._extensions
+        )
 
     def add_extension(self, extval, critical):
         if not isinstance(extval, x509.ExtensionType):
-            raise TypeError('extension must be an ExtensionType')
+            raise TypeError("extension must be an ExtensionType")
         extension = x509.Extension(extval.oid, critical, extval)
         _reject_duplicate_extension(extension, self._extensions)
-        return OCSPResponseBuilder(self._response, self._responder_id, self._certs, self._extensions + [extension])
+        return OCSPResponseBuilder(
+            self._response,
+            self._responder_id,
+            self._certs,
+            self._extensions + [extension],
+        )
 
     def sign(self, private_key, algorithm):
         from cryptography.hazmat.backends.openssl.backend import backend
+
         if self._response is None:
-            raise ValueError('You must add a response before signing')
+            raise ValueError("You must add a response before signing")
         if self._responder_id is None:
-            raise ValueError('You must add a responder_id before signing')
-        return backend.create_ocsp_response(OCSPResponseStatus.SUCCESSFUL, self, private_key, algorithm)
+            raise ValueError("You must add a responder_id before signing")
+        return backend.create_ocsp_response(
+            OCSPResponseStatus.SUCCESSFUL, self, private_key, algorithm
+        )
 
     @classmethod
     def build_unsuccessful(cls, response_status):
         from cryptography.hazmat.backends.openssl.backend import backend
+
         if not isinstance(response_status, OCSPResponseStatus):
-            raise TypeError('response_status must be an item from OCSPResponseStatus')
+            raise TypeError(
+                "response_status must be an item from OCSPResponseStatus"
+            )
         if response_status is OCSPResponseStatus.SUCCESSFUL:
-            raise ValueError('response_status cannot be SUCCESSFUL')
+            raise ValueError("response_status cannot be SUCCESSFUL")
         return backend.create_ocsp_response(response_status, None, None, None)
+
 
 def load_der_ocsp_request(data):
     return ocsp.load_der_ocsp_request(data)
+
 
 def load_der_ocsp_response(data):
     return ocsp.load_der_ocsp_response(data)

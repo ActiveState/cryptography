@@ -7,17 +7,16 @@ from cryptography.hazmat.primitives import constant_time
 
 
 class TestConstantTimeBytesEq(object):
-
     def test_reject_unicode(self):
         with pytest.raises(TypeError):
-            constant_time.bytes_eq(b'foo', 'foo')  # type: ignore[arg-type]
+            constant_time.bytes_eq(b"foo", "foo")  # type: ignore[arg-type]
         with pytest.raises(TypeError):
-            constant_time.bytes_eq('foo', b'foo')  # type: ignore[arg-type]
+            constant_time.bytes_eq("foo", b"foo")  # type: ignore[arg-type]
         with pytest.raises(TypeError):
-            constant_time.bytes_eq('foo', 'foo')  # type: ignore[arg-type]
+            constant_time.bytes_eq("foo", "foo")  # type: ignore[arg-type]
 
     def test_compares(self):
-        assert constant_time.bytes_eq(b'foo', b'foo') is True
-        assert constant_time.bytes_eq(b'foo', b'bar') is False
-        assert constant_time.bytes_eq(b'foobar', b'foo') is False
-        assert constant_time.bytes_eq(b'foo', b'foobar') is False
+        assert constant_time.bytes_eq(b"foo", b"foo") is True
+        assert constant_time.bytes_eq(b"foo", b"bar") is False
+        assert constant_time.bytes_eq(b"foobar", b"foo") is False
+        assert constant_time.bytes_eq(b"foo", b"foobar") is False

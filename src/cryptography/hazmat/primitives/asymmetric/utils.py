@@ -7,11 +7,12 @@ from cryptography.hazmat.primitives import hashes
 decode_dss_signature = asn1.decode_dss_signature
 encode_dss_signature = asn1.encode_dss_signature
 
-class Prehashed(object):
 
+class Prehashed(object):
     def __init__(self, algorithm):
         if not isinstance(algorithm, hashes.HashAlgorithm):
-            raise TypeError('Expected instance of HashAlgorithm.')
+            raise TypeError("Expected instance of HashAlgorithm.")
         self._algorithm = algorithm
         self._digest_size = algorithm.digest_size
+
     digest_size = property(lambda self: self._digest_size)

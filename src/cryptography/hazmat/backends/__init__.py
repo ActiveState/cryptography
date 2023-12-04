@@ -5,12 +5,15 @@ from cryptography.hazmat.backends.interfaces import Backend
 
 _default_backend: typing.Optional[Backend] = None
 
+
 def default_backend():
     global _default_backend
     if _default_backend is None:
         from cryptography.hazmat.backends.openssl.backend import backend
+
         _default_backend = backend
     return _default_backend
+
 
 def _get_backend(backend):
     if backend is None:

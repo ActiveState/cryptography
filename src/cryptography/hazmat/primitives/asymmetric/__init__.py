@@ -5,7 +5,6 @@ import abc
 
 
 class AsymmetricSignatureContext(metaclass=abc.ABCMeta):
-
     @abc.abstractmethod
     def update(self, data):
         """
@@ -22,8 +21,8 @@ class AsymmetricSignatureContext(metaclass=abc.ABCMeta):
 
         """
 
-class AsymmetricVerificationContext(metaclass=abc.ABCMeta):
 
+class AsymmetricVerificationContext(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def update(self, data):
         """

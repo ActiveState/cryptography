@@ -16,16 +16,26 @@ import cryptography
 import cryptography.utils
 from cryptography.exceptions import UnsupportedAlgorithm, _Reasons
 
-from .utils import (check_backend_support, load_cryptrec_vectors,
-                    load_ed25519_vectors, load_fips_dsa_key_pair_vectors,
-                    load_fips_dsa_sig_vectors,
-                    load_fips_ecdsa_key_pair_vectors,
-                    load_fips_ecdsa_signing_vectors, load_hash_vectors,
-                    load_kasvs_dh_vectors, load_kasvs_ecdh_vectors,
-                    load_nist_ccm_vectors, load_nist_kbkdf_vectors,
-                    load_nist_vectors, load_pkcs1_vectors,
-                    load_rsa_nist_vectors, load_vectors_from_file,
-                    load_x963_vectors, raises_unsupported_algorithm)
+from .utils import (
+    check_backend_support,
+    load_cryptrec_vectors,
+    load_ed25519_vectors,
+    load_fips_dsa_key_pair_vectors,
+    load_fips_dsa_sig_vectors,
+    load_fips_ecdsa_key_pair_vectors,
+    load_fips_ecdsa_signing_vectors,
+    load_hash_vectors,
+    load_kasvs_dh_vectors,
+    load_kasvs_ecdh_vectors,
+    load_nist_ccm_vectors,
+    load_nist_kbkdf_vectors,
+    load_nist_vectors,
+    load_pkcs1_vectors,
+    load_rsa_nist_vectors,
+    load_vectors_from_file,
+    load_x963_vectors,
+    raises_unsupported_algorithm,
+)
 
 
 def test_check_backend_support_skip():

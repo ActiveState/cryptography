@@ -12,18 +12,65 @@ from ...utils import load_nist_vectors
 from .utils import generate_encrypt_test
 
 
-@pytest.mark.supported(only_if=lambda backend: backend.cipher_supported(algorithms.CAST5(b'\x00' * 16), modes.ECB()), skip_message='Does not support CAST5 ECB')
+@pytest.mark.supported(
+    only_if=lambda backend: backend.cipher_supported(
+        algorithms.CAST5(b"\x00" * 16), modes.ECB()
+    ),
+    skip_message="Does not support CAST5 ECB",
+)
 class TestCAST5ModeECB(object):
-    test_ecb = generate_encrypt_test(load_nist_vectors, os.path.join('ciphers', 'CAST5'), ['cast5-ecb.txt'], lambda key, **kwargs: algorithms.CAST5(binascii.unhexlify(key)), lambda **kwargs: modes.ECB())
+    test_ecb = generate_encrypt_test(
+        load_nist_vectors,
+        os.path.join("ciphers", "CAST5"),
+        ["cast5-ecb.txt"],
+        lambda key, **kwargs: algorithms.CAST5(binascii.unhexlify(key)),
+        lambda **kwargs: modes.ECB(),
+    )
 
-@pytest.mark.supported(only_if=lambda backend: backend.cipher_supported(algorithms.CAST5(b'\x00' * 16), modes.CBC(b'\x00' * 8)), skip_message='Does not support CAST5 CBC')
+
+@pytest.mark.supported(
+    only_if=lambda backend: backend.cipher_supported(
+        algorithms.CAST5(b"\x00" * 16), modes.CBC(b"\x00" * 8)
+    ),
+    skip_message="Does not support CAST5 CBC",
+)
 class TestCAST5ModeCBC(object):
-    test_cbc = generate_encrypt_test(load_nist_vectors, os.path.join('ciphers', 'CAST5'), ['cast5-cbc.txt'], lambda key, **kwargs: algorithms.CAST5(binascii.unhexlify(key)), lambda iv, **kwargs: modes.CBC(binascii.unhexlify(iv)))
+    test_cbc = generate_encrypt_test(
+        load_nist_vectors,
+        os.path.join("ciphers", "CAST5"),
+        ["cast5-cbc.txt"],
+        lambda key, **kwargs: algorithms.CAST5(binascii.unhexlify(key)),
+        lambda iv, **kwargs: modes.CBC(binascii.unhexlify(iv)),
+    )
 
-@pytest.mark.supported(only_if=lambda backend: backend.cipher_supported(algorithms.CAST5(b'\x00' * 16), modes.OFB(b'\x00' * 8)), skip_message='Does not support CAST5 OFB')
+
+@pytest.mark.supported(
+    only_if=lambda backend: backend.cipher_supported(
+        algorithms.CAST5(b"\x00" * 16), modes.OFB(b"\x00" * 8)
+    ),
+    skip_message="Does not support CAST5 OFB",
+)
 class TestCAST5ModeOFB(object):
-    test_ofb = generate_encrypt_test(load_nist_vectors, os.path.join('ciphers', 'CAST5'), ['cast5-ofb.txt'], lambda key, **kwargs: algorithms.CAST5(binascii.unhexlify(key)), lambda iv, **kwargs: modes.OFB(binascii.unhexlify(iv)))
+    test_ofb = generate_encrypt_test(
+        load_nist_vectors,
+        os.path.join("ciphers", "CAST5"),
+        ["cast5-ofb.txt"],
+        lambda key, **kwargs: algorithms.CAST5(binascii.unhexlify(key)),
+        lambda iv, **kwargs: modes.OFB(binascii.unhexlify(iv)),
+    )
 
-@pytest.mark.supported(only_if=lambda backend: backend.cipher_supported(algorithms.CAST5(b'\x00' * 16), modes.CFB(b'\x00' * 8)), skip_message='Does not support CAST5 CFB')
+
+@pytest.mark.supported(
+    only_if=lambda backend: backend.cipher_supported(
+        algorithms.CAST5(b"\x00" * 16), modes.CFB(b"\x00" * 8)
+    ),
+    skip_message="Does not support CAST5 CFB",
+)
 class TestCAST5ModeCFB(object):
-    test_cfb = generate_encrypt_test(load_nist_vectors, os.path.join('ciphers', 'CAST5'), ['cast5-cfb.txt'], lambda key, **kwargs: algorithms.CAST5(binascii.unhexlify(key)), lambda iv, **kwargs: modes.CFB(binascii.unhexlify(iv)))
+    test_cfb = generate_encrypt_test(
+        load_nist_vectors,
+        os.path.join("ciphers", "CAST5"),
+        ["cast5-cfb.txt"],
+        lambda key, **kwargs: algorithms.CAST5(binascii.unhexlify(key)),
+        lambda iv, **kwargs: modes.CFB(binascii.unhexlify(iv)),
+    )

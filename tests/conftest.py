@@ -9,20 +9,29 @@ from .utils import check_backend_support
 
 
 def pytest_configure(config):
-    if config.getoption('--enable-fips'):
+    if config.getoption("--enable-fips"):
         openssl_backend._enable_fips()
 
+
 def pytest_report_header(config):
-    return '\n'.join(['OpenSSL: {}'.format(openssl_backend.openssl_version_text()), 'FIPS Enabled: {}'.format(openssl_backend._fips_enabled)])
+    return "\n".join(
+        [
+            "OpenSSL: {}".format(openssl_backend.openssl_version_text()),
+            "FIPS Enabled: {}".format(openssl_backend._fips_enabled),
+        ]
+    )
+
 
 def pytest_addoption(parser):
-    parser.addoption('--wycheproof-root', default=None)
-    parser.addoption('--enable-fips', default=False)
+    parser.addoption("--wycheproof-root", default=None)
+    parser.addoption("--enable-fips", default=False)
+
 
 def pytest_runtest_setup(item):
     if openssl_backend._fips_enabled:
-        for marker in item.iter_markers(name='skip_fips'):
-            pytest.skip(marker.kwargs['reason'])
+        for marker in item.iter_markers(name="skip_fips"):
+            pytest.skip(marker.kwargs["reason"])
+
 
 @pytest.fixture()
 def backend(request):
@@ -34,6 +43,7 @@ def backend(request):
     # Ensure the error stack is clear after the test
     errors = openssl_backend._consume_errors_with_text()
     assert not errors
+
 
 @pytest.fixture
 def disable_rsa_checks(backend):

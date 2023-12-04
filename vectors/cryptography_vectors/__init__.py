@@ -5,7 +5,8 @@ import os
 
 from cryptography_vectors.__about__ import __version__
 
-__all__ = ['__version__']
+__all__ = ["__version__"]
+
 
 def open_vector_file(filename, mode):
     base = os.path.dirname(__file__)

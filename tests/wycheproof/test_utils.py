@@ -5,5 +5,5 @@ from ..utils import WycheproofTest
 
 
 def test_wycheproof_test_repr():
-    wycheproof = WycheproofTest({}, {}, {'tcId': 3})
+    wycheproof = WycheproofTest({}, {}, {"tcId": 3})
     assert repr(wycheproof) == "<WycheproofTest({}, {}, {'tcId': 3}, tcId=3)>"

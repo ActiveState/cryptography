@@ -18,15 +18,19 @@ from cryptography.hazmat.primitives.hmac import HMAC
 
 class InvalidToken(Exception):
     pass
+
+
 _MAX_CLOCK_SKEW = 60
 
-class Fernet(object):
 
+class Fernet(object):
     def __init__(self, key, backend=None):
         backend = _get_backend(backend)
         key = base64.urlsafe_b64decode(key)
         if len(key) != 32:
-            raise ValueError('Fernet key must be 32 url-safe base64-encoded bytes.')
+            raise ValueError(
+                "Fernet key must be 32 url-safe base64-encoded bytes."
+            )
         self._signing_key = key[:16]
         self._encryption_key = key[16:]
         self._backend = backend
@@ -43,12 +47,16 @@ class Fernet(object):
         return self._encrypt_from_parts(data, current_time, iv)
 
     def _encrypt_from_parts(self, data, current_time, iv):
-        utils._check_bytes('data', data)
+        utils._check_bytes("data", data)
         padder = padding.PKCS7(algorithms.AES.block_size).padder()
         padded_data = padder.update(data) + padder.finalize()
-        encryptor = Cipher(algorithms.AES(self._encryption_key), modes.CBC(iv), self._backend).encryptor()
+        encryptor = Cipher(
+            algorithms.AES(self._encryption_key), modes.CBC(iv), self._backend
+        ).encryptor()
         ciphertext = encryptor.update(padded_data) + encryptor.finalize()
-        basic_parts = b'\x80' + struct.pack('>Q', current_time) + iv + ciphertext
+        basic_parts = (
+            b"\x80" + struct.pack(">Q", current_time) + iv + ciphertext
+        )
         h = HMAC(self._signing_key, hashes.SHA256(), backend=self._backend)
         h.update(basic_parts)
         hmac = h.finalize()
@@ -64,7 +72,9 @@ class Fernet(object):
 
     def decrypt_at_time(self, token, ttl, current_time):
         if ttl is None:
-            raise ValueError('decrypt_at_time() can only be used with a non-None ttl')
+            raise ValueError(
+                "decrypt_at_time() can only be used with a non-None ttl"
+            )
         timestamp, data = Fernet._get_unverified_token_data(token)
         return self._decrypt_data(data, timestamp, (ttl, current_time))
 
@@ -76,7 +86,7 @@ class Fernet(object):
 
     @staticmethod
     def _get_unverified_token_data(token):
-        utils._check_bytes('token', token)
+        utils._check_bytes("token", token)
         try:
             data = base64.urlsafe_b64decode(token)
         except (TypeError, binascii.Error):
@@ -84,7 +94,7 @@ class Fernet(object):
         if not data or data[0] != 128:
             raise InvalidToken
         try:
-            timestamp, = struct.unpack('>Q', data[1:9])
+            (timestamp,) = struct.unpack(">Q", data[1:9])
         except struct.error:
             raise InvalidToken
         return (timestamp, data)
@@ -107,7 +117,9 @@ class Fernet(object):
         self._verify_signature(data)
         iv = data[9:25]
         ciphertext = data[25:-32]
-        decryptor = Cipher(algorithms.AES(self._encryption_key), modes.CBC(iv), self._backend).decryptor()
+        decryptor = Cipher(
+            algorithms.AES(self._encryption_key), modes.CBC(iv), self._backend
+        ).decryptor()
         plaintext_padded = decryptor.update(ciphertext)
         try:
             plaintext_padded += decryptor.finalize()
@@ -121,12 +133,14 @@ class Fernet(object):
             raise InvalidToken
         return unpadded
 
-class MultiFernet(object):
 
+class MultiFernet(object):
     def __init__(self, fernets):
         fernets = list(fernets)
         if not fernets:
-            raise ValueError('MultiFernet requires at least one Fernet instance')
+            raise ValueError(
+                "MultiFernet requires at least one Fernet instance"
+            )
         self._fernets = fernets
 
     def encrypt(self, msg):

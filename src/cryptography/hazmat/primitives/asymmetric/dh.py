@@ -9,21 +9,24 @@ from cryptography.hazmat.primitives import serialization
 
 _MIN_MODULUS_SIZE = 512
 
+
 def generate_parameters(generator, key_size, backend=None):
     backend = _get_backend(backend)
     return backend.generate_dh_parameters(generator, key_size)
 
-class DHParameterNumbers(object):
 
+class DHParameterNumbers(object):
     def __init__(self, p, g, q=None):
         if not isinstance(p, int) or not isinstance(g, int):
-            raise TypeError('p and g must be integers')
+            raise TypeError("p and g must be integers")
         if q is not None and (not isinstance(q, int)):
-            raise TypeError('q must be integer or None')
+            raise TypeError("q must be integer or None")
         if g < 2:
-            raise ValueError('DH generator must be 2 or greater')
+            raise ValueError("DH generator must be 2 or greater")
         if p.bit_length() < _MIN_MODULUS_SIZE:
-            raise ValueError('p (modulus) must be at least {}-bit'.format(_MIN_MODULUS_SIZE))
+            raise ValueError(
+                "p (modulus) must be at least {}-bit".format(_MIN_MODULUS_SIZE)
+            )
         self._p = p
         self._g = g
         self._q = q
@@ -31,7 +34,11 @@ class DHParameterNumbers(object):
     def __eq__(self, other):
         if not isinstance(other, DHParameterNumbers):
             return NotImplemented
-        return self._p == other._p and self._g == other._g and (self._q == other._q)
+        return (
+            self._p == other._p
+            and self._g == other._g
+            and (self._q == other._q)
+        )
 
     def __ne__(self, other):
         return not self == other
@@ -39,24 +46,30 @@ class DHParameterNumbers(object):
     def parameters(self, backend=None):
         backend = _get_backend(backend)
         return backend.load_dh_parameter_numbers(self)
+
     p = property(lambda self: self._p)
     g = property(lambda self: self._g)
     q = property(lambda self: self._q)
 
-class DHPublicNumbers(object):
 
+class DHPublicNumbers(object):
     def __init__(self, y, parameter_numbers):
         if not isinstance(y, int):
-            raise TypeError('y must be an integer.')
+            raise TypeError("y must be an integer.")
         if not isinstance(parameter_numbers, DHParameterNumbers):
-            raise TypeError('parameters must be an instance of DHParameterNumbers.')
+            raise TypeError(
+                "parameters must be an instance of DHParameterNumbers."
+            )
         self._y = y
         self._parameter_numbers = parameter_numbers
 
     def __eq__(self, other):
         if not isinstance(other, DHPublicNumbers):
             return NotImplemented
-        return self._y == other._y and self._parameter_numbers == other._parameter_numbers
+        return (
+            self._y == other._y
+            and self._parameter_numbers == other._parameter_numbers
+        )
 
     def __ne__(self, other):
         return not self == other
@@ -64,23 +77,29 @@ class DHPublicNumbers(object):
     def public_key(self, backend=None):
         backend = _get_backend(backend)
         return backend.load_dh_public_numbers(self)
+
     y = property(lambda self: self._y)
     parameter_numbers = property(lambda self: self._parameter_numbers)
 
-class DHPrivateNumbers(object):
 
+class DHPrivateNumbers(object):
     def __init__(self, x, public_numbers):
         if not isinstance(x, int):
-            raise TypeError('x must be an integer.')
+            raise TypeError("x must be an integer.")
         if not isinstance(public_numbers, DHPublicNumbers):
-            raise TypeError('public_numbers must be an instance of DHPublicNumbers.')
+            raise TypeError(
+                "public_numbers must be an instance of DHPublicNumbers."
+            )
         self._x = x
         self._public_numbers = public_numbers
 
     def __eq__(self, other):
         if not isinstance(other, DHPrivateNumbers):
             return NotImplemented
-        return self._x == other._x and self._public_numbers == other._public_numbers
+        return (
+            self._x == other._x
+            and self._public_numbers == other._public_numbers
+        )
 
     def __ne__(self, other):
         return not self == other
@@ -88,11 +107,12 @@ class DHPrivateNumbers(object):
     def private_key(self, backend=None):
         backend = _get_backend(backend)
         return backend.load_dh_private_numbers(self)
+
     public_numbers = property(lambda self: self._public_numbers)
     x = property(lambda self: self._x)
 
-class DHParameters(metaclass=abc.ABCMeta):
 
+class DHParameters(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def generate_private_key(self):
         """
@@ -116,10 +136,12 @@ class DHParameters(metaclass=abc.ABCMeta):
         Returns a DHParameterNumbers.
 
         """
+
+
 DHParametersWithSerialization = DHParameters
 
-class DHPublicKey(metaclass=abc.ABCMeta):
 
+class DHPublicKey(metaclass=abc.ABCMeta):
     @abc.abstractproperty
     def key_size(self):
         """
@@ -151,10 +173,12 @@ class DHPublicKey(metaclass=abc.ABCMeta):
         Returns the key serialized as bytes.
 
         """
+
+
 DHPublicKeyWithSerialization = DHPublicKey
 
-class DHPrivateKey(metaclass=abc.ABCMeta):
 
+class DHPrivateKey(metaclass=abc.ABCMeta):
     @abc.abstractproperty
     def key_size(self):
         """
@@ -204,4 +228,6 @@ class DHPrivateKey(metaclass=abc.ABCMeta):
         Returns the key serialized as bytes.
 
         """
+
+
 DHPrivateKeyWithSerialization = DHPrivateKey
