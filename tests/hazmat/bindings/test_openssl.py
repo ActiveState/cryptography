@@ -1,20 +1,12 @@
 # This file is dual licensed under the terms of the Apache License, Version
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
-
-
 import pytest
-
 from cryptography.exceptions import InternalError
-from cryptography.hazmat.bindings.openssl.binding import (
-    Binding,
-    _consume_errors,
-    _openssl_assert,
-    _verify_package_version,
-)
-
+from cryptography.hazmat.bindings.openssl.binding import Binding, _consume_errors, _openssl_assert, _verify_package_version
 
 class TestOpenSSL(object):
+
     def test_binding_loads(self):
         binding = Binding()
         assert binding
@@ -71,7 +63,6 @@ class TestOpenSSL(object):
 
     def test_conditional_removal(self):
         b = Binding()
-
         if not b.lib.CRYPTOGRAPHY_IS_LIBRESSL:
             assert b.lib.TLS_ST_OK
         else:
@@ -80,36 +71,23 @@ class TestOpenSSL(object):
 
     def test_openssl_assert_error_on_stack(self):
         b = Binding()
-        b.lib.ERR_put_error(
-            b.lib.ERR_LIB_EVP,
-            b.lib.EVP_F_EVP_ENCRYPTFINAL_EX,
-            b.lib.EVP_R_DATA_NOT_MULTIPLE_OF_BLOCK_LENGTH,
-            b"",
-            -1,
-        )
+        b.lib.ERR_put_error(b.lib.ERR_LIB_EVP, b.lib.EVP_F_EVP_ENCRYPTFINAL_EX, b.lib.EVP_R_DATA_NOT_MULTIPLE_OF_BLOCK_LENGTH, b'', -1)
         with pytest.raises(InternalError) as exc_info:
             _openssl_assert(b.lib, False)
-
         error = exc_info.value.err_code[0]
         # As of 3.0.0 OpenSSL no longer sets func codes (which we now also
         # ignore), so the combined code is a different value
         assert error.code in (101183626, 50331786)
         assert error.lib == b.lib.ERR_LIB_EVP
         assert error.reason == b.lib.EVP_R_DATA_NOT_MULTIPLE_OF_BLOCK_LENGTH
-        assert b"data not multiple of block length" in error.reason_text
+        assert b'data not multiple of block length' in error.reason_text
 
     def test_check_startup_errors_are_allowed(self):
         b = Binding()
-        b.lib.ERR_put_error(
-            b.lib.ERR_LIB_EVP,
-            b.lib.EVP_F_EVP_ENCRYPTFINAL_EX,
-            b.lib.EVP_R_DATA_NOT_MULTIPLE_OF_BLOCK_LENGTH,
-            b"",
-            -1,
-        )
+        b.lib.ERR_put_error(b.lib.ERR_LIB_EVP, b.lib.EVP_F_EVP_ENCRYPTFINAL_EX, b.lib.EVP_R_DATA_NOT_MULTIPLE_OF_BLOCK_LENGTH, b'', -1)
         b._register_osrandom_engine()
         assert _consume_errors(b.lib) == []
 
     def test_version_mismatch(self):
         with pytest.raises(ImportError):
-            _verify_package_version("nottherightversion")
+            _verify_package_version('nottherightversion')

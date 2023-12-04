@@ -1,60 +1,7 @@
 # This file is dual licensed under the terms of the Apache License, Version
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
-
-
-INCLUDES = """
-#include <openssl/bio.h>
-"""
-
-TYPES = """
-typedef ... BIO;
-typedef ... BIO_METHOD;
-typedef ... BIO_ADDR;
-"""
-
-FUNCTIONS = """
-int BIO_free(BIO *);
-void BIO_free_all(BIO *);
-BIO *BIO_new_file(const char *, const char *);
-BIO *BIO_new_dgram(int, int);
-size_t BIO_ctrl_pending(BIO *);
-int BIO_read(BIO *, void *, int);
-int BIO_gets(BIO *, char *, int);
-int BIO_write(BIO *, const void *, int);
-/* Added in 1.1.0 */
-int BIO_up_ref(BIO *);
-
-BIO *BIO_new(BIO_METHOD *);
-BIO_METHOD *BIO_s_mem(void);
-BIO_METHOD *BIO_s_datagram(void);
-BIO *BIO_new_mem_buf(const void *, int);
-long BIO_set_mem_eof_return(BIO *, int);
-long BIO_get_mem_data(BIO *, char **);
-int BIO_should_read(BIO *);
-int BIO_should_write(BIO *);
-int BIO_should_io_special(BIO *);
-int BIO_should_retry(BIO *);
-int BIO_reset(BIO *);
-void BIO_set_retry_read(BIO *);
-void BIO_clear_retry_flags(BIO *);
-
-BIO_ADDR *BIO_ADDR_new(void);
-void BIO_ADDR_free(BIO_ADDR *);
-"""
-
-CUSTOMIZATIONS = """
-#if CRYPTOGRAPHY_IS_LIBRESSL
-#include <sys/socket.h>
-#include <stdlib.h>
-typedef struct sockaddr BIO_ADDR;
-
-BIO_ADDR *BIO_ADDR_new(void) {
-    return malloc(sizeof(struct sockaddr_storage));
-}
-
-void BIO_ADDR_free(BIO_ADDR *ptr) {
-    free(ptr);
-}
-#endif
-"""
+INCLUDES = '\n\n#include <openssl/bio.h>\n\n'
+TYPES = '\n\ntypedef ... BIO;\n\ntypedef ... BIO_METHOD;\n\ntypedef ... BIO_ADDR;\n\n'
+FUNCTIONS = '\n\nint BIO_free(BIO *);\n\nvoid BIO_free_all(BIO *);\n\nBIO *BIO_new_file(const char *, const char *);\n\nBIO *BIO_new_dgram(int, int);\n\nsize_t BIO_ctrl_pending(BIO *);\n\nint BIO_read(BIO *, void *, int);\n\nint BIO_gets(BIO *, char *, int);\n\nint BIO_write(BIO *, const void *, int);\n\n/* Added in 1.1.0 */\n\nint BIO_up_ref(BIO *);\n\n\n\nBIO *BIO_new(BIO_METHOD *);\n\nBIO_METHOD *BIO_s_mem(void);\n\nBIO_METHOD *BIO_s_datagram(void);\n\nBIO *BIO_new_mem_buf(const void *, int);\n\nlong BIO_set_mem_eof_return(BIO *, int);\n\nlong BIO_get_mem_data(BIO *, char **);\n\nint BIO_should_read(BIO *);\n\nint BIO_should_write(BIO *);\n\nint BIO_should_io_special(BIO *);\n\nint BIO_should_retry(BIO *);\n\nint BIO_reset(BIO *);\n\nvoid BIO_set_retry_read(BIO *);\n\nvoid BIO_clear_retry_flags(BIO *);\n\n\n\nBIO_ADDR *BIO_ADDR_new(void);\n\nvoid BIO_ADDR_free(BIO_ADDR *);\n\n'
+CUSTOMIZATIONS = '\n\n#if CRYPTOGRAPHY_IS_LIBRESSL\n\n#include <sys/socket.h>\n\n#include <stdlib.h>\n\ntypedef struct sockaddr BIO_ADDR;\n\n\n\nBIO_ADDR *BIO_ADDR_new(void) {\n\n    return malloc(sizeof(struct sockaddr_storage));\n\n}\n\n\n\nvoid BIO_ADDR_free(BIO_ADDR *ptr) {\n\n    free(ptr);\n\n}\n\n#endif\n\n'

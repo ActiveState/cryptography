@@ -1,65 +1,7 @@
 # This file is dual licensed under the terms of the Apache License, Version
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
-
-
-INCLUDES = """
-#include <openssl/x509.h>
-
-/*
- * See the comment above Cryptography_STACK_OF_X509 in x509.py
- */
-typedef STACK_OF(X509_NAME) Cryptography_STACK_OF_X509_NAME;
-typedef STACK_OF(X509_NAME_ENTRY) Cryptography_STACK_OF_X509_NAME_ENTRY;
-"""
-
-TYPES = """
-typedef ... Cryptography_STACK_OF_X509_NAME_ENTRY;
-typedef ... X509_NAME;
-typedef ... X509_NAME_ENTRY;
-typedef ... Cryptography_STACK_OF_X509_NAME;
-"""
-
-FUNCTIONS = """
-X509_NAME *X509_NAME_new(void);
-void X509_NAME_free(X509_NAME *);
-
-unsigned long X509_NAME_hash(X509_NAME *);
-
-int i2d_X509_NAME(X509_NAME *, unsigned char **);
-X509_NAME_ENTRY *X509_NAME_delete_entry(X509_NAME *, int);
-void X509_NAME_ENTRY_free(X509_NAME_ENTRY *);
-int X509_NAME_get_index_by_NID(X509_NAME *, int, int);
-int X509_NAME_cmp(const X509_NAME *, const X509_NAME *);
-X509_NAME *X509_NAME_dup(X509_NAME *);
-/* These became const X509_NAME * in 1.1.0 */
-int X509_NAME_entry_count(X509_NAME *);
-X509_NAME_ENTRY *X509_NAME_get_entry(X509_NAME *, int);
-char *X509_NAME_oneline(X509_NAME *, char *, int);
-
-/* These became const X509_NAME_ENTRY * in 1.1.0 */
-ASN1_OBJECT *X509_NAME_ENTRY_get_object(X509_NAME_ENTRY *);
-ASN1_STRING *X509_NAME_ENTRY_get_data(X509_NAME_ENTRY *);
-int X509_NAME_add_entry(X509_NAME *, X509_NAME_ENTRY *, int, int);
-
-/* this became const unsigned char * in 1.1.0 */
-int X509_NAME_add_entry_by_NID(X509_NAME *, int, int, unsigned char *,
-                               int, int, int);
-
-/* These became const ASN1_OBJECT * in 1.1.0 */
-X509_NAME_ENTRY *X509_NAME_ENTRY_create_by_OBJ(X509_NAME_ENTRY **,
-                                               ASN1_OBJECT *, int,
-                                               const unsigned char *, int);
-
-Cryptography_STACK_OF_X509_NAME *sk_X509_NAME_new_null(void);
-int sk_X509_NAME_num(Cryptography_STACK_OF_X509_NAME *);
-int sk_X509_NAME_push(Cryptography_STACK_OF_X509_NAME *, X509_NAME *);
-X509_NAME *sk_X509_NAME_value(Cryptography_STACK_OF_X509_NAME *, int);
-void sk_X509_NAME_free(Cryptography_STACK_OF_X509_NAME *);
-Cryptography_STACK_OF_X509_NAME_ENTRY *sk_X509_NAME_ENTRY_new_null(void);
-int sk_X509_NAME_ENTRY_push(Cryptography_STACK_OF_X509_NAME_ENTRY *,
-                            X509_NAME_ENTRY *);
-"""
-
-CUSTOMIZATIONS = """
-"""
+INCLUDES = '\n\n#include <openssl/x509.h>\n\n\n\n/*\n\n * See the comment above Cryptography_STACK_OF_X509 in x509.py\n\n */\n\ntypedef STACK_OF(X509_NAME) Cryptography_STACK_OF_X509_NAME;\n\ntypedef STACK_OF(X509_NAME_ENTRY) Cryptography_STACK_OF_X509_NAME_ENTRY;\n\n'
+TYPES = '\n\ntypedef ... Cryptography_STACK_OF_X509_NAME_ENTRY;\n\ntypedef ... X509_NAME;\n\ntypedef ... X509_NAME_ENTRY;\n\ntypedef ... Cryptography_STACK_OF_X509_NAME;\n\n'
+FUNCTIONS = '\n\nX509_NAME *X509_NAME_new(void);\n\nvoid X509_NAME_free(X509_NAME *);\n\n\n\nunsigned long X509_NAME_hash(X509_NAME *);\n\n\n\nint i2d_X509_NAME(X509_NAME *, unsigned char **);\n\nX509_NAME_ENTRY *X509_NAME_delete_entry(X509_NAME *, int);\n\nvoid X509_NAME_ENTRY_free(X509_NAME_ENTRY *);\n\nint X509_NAME_get_index_by_NID(X509_NAME *, int, int);\n\nint X509_NAME_cmp(const X509_NAME *, const X509_NAME *);\n\nX509_NAME *X509_NAME_dup(X509_NAME *);\n\n/* These became const X509_NAME * in 1.1.0 */\n\nint X509_NAME_entry_count(X509_NAME *);\n\nX509_NAME_ENTRY *X509_NAME_get_entry(X509_NAME *, int);\n\nchar *X509_NAME_oneline(X509_NAME *, char *, int);\n\n\n\n/* These became const X509_NAME_ENTRY * in 1.1.0 */\n\nASN1_OBJECT *X509_NAME_ENTRY_get_object(X509_NAME_ENTRY *);\n\nASN1_STRING *X509_NAME_ENTRY_get_data(X509_NAME_ENTRY *);\n\nint X509_NAME_add_entry(X509_NAME *, X509_NAME_ENTRY *, int, int);\n\n\n\n/* this became const unsigned char * in 1.1.0 */\n\nint X509_NAME_add_entry_by_NID(X509_NAME *, int, int, unsigned char *,\n\n                               int, int, int);\n\n\n\n/* These became const ASN1_OBJECT * in 1.1.0 */\n\nX509_NAME_ENTRY *X509_NAME_ENTRY_create_by_OBJ(X509_NAME_ENTRY **,\n\n                                               ASN1_OBJECT *, int,\n\n                                               const unsigned char *, int);\n\n\n\nCryptography_STACK_OF_X509_NAME *sk_X509_NAME_new_null(void);\n\nint sk_X509_NAME_num(Cryptography_STACK_OF_X509_NAME *);\n\nint sk_X509_NAME_push(Cryptography_STACK_OF_X509_NAME *, X509_NAME *);\n\nX509_NAME *sk_X509_NAME_value(Cryptography_STACK_OF_X509_NAME *, int);\n\nvoid sk_X509_NAME_free(Cryptography_STACK_OF_X509_NAME *);\n\nCryptography_STACK_OF_X509_NAME_ENTRY *sk_X509_NAME_ENTRY_new_null(void);\n\nint sk_X509_NAME_ENTRY_push(Cryptography_STACK_OF_X509_NAME_ENTRY *,\n\n                            X509_NAME_ENTRY *);\n\n'
+CUSTOMIZATIONS = '\n\n'
