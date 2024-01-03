@@ -113,7 +113,6 @@ from cryptography.hazmat.backends.openssl.x509 import (
     _CertificateRevocationList,
     _CertificateSigningRequest,
     _RevokedCertificate,
-    _RawRevokedCertificate,
 )
 from cryptography.hazmat.bindings.openssl import binding
 from cryptography.hazmat.primitives import hashes, serialization
