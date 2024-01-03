@@ -19,7 +19,6 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import (
     AsymmetricSignatureContext,
     AsymmetricVerificationContext,
-    rsa,
 )
 from cryptography.hazmat.primitives.asymmetric.padding import (
     AsymmetricPadding,
@@ -32,6 +31,8 @@ from cryptography.hazmat.primitives.asymmetric.padding import (
 from cryptography.hazmat.primitives.asymmetric.rsa import (
     RSAPrivateKeyWithSerialization,
     RSAPublicKeyWithSerialization,
+    RSAPublicNumbers,
+    RSAPrivateNumbers,
 )
 
 
@@ -354,11 +355,17 @@ class _RSAVerificationContext(object):
 
 @utils.register_interface(RSAPrivateKeyWithSerialization)
 class _RSAPrivateKey(object):
-    def __init__(self, backend, rsa_cdata, evp_pkey):
-        res = backend._lib.RSA_check_key(rsa_cdata)
-        if res != 1:
-            errors = backend._consume_errors_with_text()
-            raise ValueError("Invalid private key", errors)
+    def __init__(self, backend, rsa_cdata, evp_pkey, _skip_check_key):
+        # RSA_check_key is slower in OpenSSL 3.0.0 due to improved
+        # primality checking. In normal use this is unlikely to be a problem
+        # since users don't load new keys constantly, but for TESTING we've
+        # added an init arg that allows skipping the checks. You should not
+        # use this in production code unless you understand the consequences.
+        if not _skip_check_key:
+            res = backend._lib.RSA_check_key(rsa_cdata)
+            if res != 1:
+                errors = backend._consume_errors_with_text()
+                raise ValueError("Invalid private key", errors)
 
         # Blinding is on by default in many versions of OpenSSL, but let's
         # just be conservative here.
@@ -422,14 +429,14 @@ class _RSAPrivateKey(object):
         self._backend.openssl_assert(dmp1[0] != self._backend._ffi.NULL)
         self._backend.openssl_assert(dmq1[0] != self._backend._ffi.NULL)
         self._backend.openssl_assert(iqmp[0] != self._backend._ffi.NULL)
-        return rsa.RSAPrivateNumbers(
+        return RSAPrivateNumbers(
             p=self._backend._bn_to_int(p[0]),
             q=self._backend._bn_to_int(q[0]),
             d=self._backend._bn_to_int(d[0]),
             dmp1=self._backend._bn_to_int(dmp1[0]),
             dmq1=self._backend._bn_to_int(dmq1[0]),
             iqmp=self._backend._bn_to_int(iqmp[0]),
-            public_numbers=rsa.RSAPublicNumbers(
+            public_numbers=RSAPublicNumbers(
                 e=self._backend._bn_to_int(e[0]),
                 n=self._backend._bn_to_int(n[0]),
             ),
@@ -491,7 +498,7 @@ class _RSAPublicKey(object):
         )
         self._backend.openssl_assert(n[0] != self._backend._ffi.NULL)
         self._backend.openssl_assert(e[0] != self._backend._ffi.NULL)
-        return rsa.RSAPublicNumbers(
+        return RSAPublicNumbers(
             e=self._backend._bn_to_int(e[0]),
             n=self._backend._bn_to_int(n[0]),
         )
