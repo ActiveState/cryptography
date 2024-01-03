@@ -36,6 +36,7 @@ static const long Cryptography_HAS_RELEASE_BUFFERS;
  * supported
  */
 static const long Cryptography_HAS_OP_NO_COMPRESSION;
+static const long Cryptography_HAS_OP_NO_RENEGOTIATION;
 static const long Cryptography_HAS_SSL_OP_MSIE_SSLV2_RSA_PADDING;
 static const long Cryptography_HAS_SSL_SET_SSL_CTX;
 static const long Cryptography_HAS_SSL_OP_NO_TICKET;
@@ -44,6 +45,7 @@ static const long Cryptography_HAS_NEXTPROTONEG;
 static const long Cryptography_HAS_SET_CERT_CB;
 static const long Cryptography_HAS_CUSTOM_EXT;
 static const long Cryptography_HAS_SRTP;
+static const long Cryptography_HAS_DTLS_GET_DATA_MTU;
 
 static const long SSL_FILETYPE_PEM;
 static const long SSL_FILETYPE_ASN1;
@@ -65,6 +67,7 @@ static const long SSL_OP_NO_TLSv1_2;
 static const long SSL_OP_NO_TLSv1_3;
 static const long SSL_OP_NO_DTLSv1;
 static const long SSL_OP_NO_DTLSv1_2;
+static const long SSL_OP_NO_RENEGOTIATION;
 static const long SSL_OP_NO_COMPRESSION;
 static const long SSL_OP_SINGLE_DH_USE;
 static const long SSL_OP_EPHEMERAL_RSA;
@@ -131,6 +134,12 @@ static const long SSL_MODE_AUTO_RETRY;
 static const long SSL3_RANDOM_SIZE;
 static const long TLS_ST_BEFORE;
 static const long TLS_ST_OK;
+
+static const long SSL3_VERSION;
+static const long TLS1_VERSION;
+static const long TLS1_1_VERSION;
+static const long TLS1_2_VERSION;
+static const long TLS1_3_VERSION;
 
 typedef ... SSL_METHOD;
 typedef ... SSL_CTX;
@@ -220,6 +229,13 @@ void SSL_CTX_set_cookie_generate_cb(SSL_CTX *,
                                         unsigned char *,
                                         unsigned int *
                                     ));
+void SSL_CTX_set_cookie_verify_cb(SSL_CTX *,
+                                    int (*)(
+                                        SSL *,
+                                        const unsigned char *,
+                                        unsigned int
+                                    ));
+
 long SSL_CTX_get_read_ahead(SSL_CTX *);
 long SSL_CTX_set_read_ahead(SSL_CTX *, long);
 
@@ -463,6 +479,10 @@ long Cryptography_DTLSv1_get_timeout(SSL *, time_t *, long *);
 long DTLSv1_handle_timeout(SSL *);
 long DTLS_set_link_mtu(SSL *, long);
 long DTLS_get_link_min_mtu(SSL *);
+long SSL_set_mtu(SSL *, long);
+int DTLSv1_listen(SSL *, BIO_ADDR *);
+size_t DTLS_get_data_mtu(SSL *);
+
 
 /* Custom extensions. */
 typedef int (*custom_ext_add_cb)(SSL *, unsigned int,
@@ -551,6 +571,13 @@ static const long Cryptography_HAS_SSL_SET_SSL_CTX = 1;
 static const long Cryptography_HAS_NEXTPROTONEG = 0;
 static const long Cryptography_HAS_ALPN = 1;
 
+#ifdef SSL_OP_NO_RENEGOTIATION
+static const long Cryptography_HAS_OP_NO_RENEGOTIATION = 1;
+#else
+static const long Cryptography_HAS_OP_NO_RENEGOTIATION = 0;
+static const long SSL_OP_NO_RENEGOTIATION = 0;
+#endif
+
 #if CRYPTOGRAPHY_IS_LIBRESSL
 void (*SSL_CTX_set_cert_cb)(SSL_CTX *, int (*)(SSL *, void *), void *) = NULL;
 void (*SSL_set_cert_cb)(SSL *, int (*)(SSL *, void *), void *) = NULL;
@@ -581,10 +608,19 @@ static const long TLS_ST_OK = 0;
 #endif
 
 #if CRYPTOGRAPHY_IS_LIBRESSL
+#if CRYPTOGRAPHY_LIBRESSL_LESS_THAN_332
 static const long SSL_OP_NO_DTLSv1 = 0;
 static const long SSL_OP_NO_DTLSv1_2 = 0;
+#endif
 long (*DTLS_set_link_mtu)(SSL *, long) = NULL;
 long (*DTLS_get_link_min_mtu)(SSL *) = NULL;
+#endif
+
+#if CRYPTOGRAPHY_OPENSSL_LESS_THAN_111
+static const long Cryptography_HAS_DTLS_GET_DATA_MTU = 0;
+size_t (*DTLS_get_data_mtu)(SSL *) = NULL;
+#else
+static const long Cryptography_HAS_DTLS_GET_DATA_MTU = 1;
 #endif
 
 static const long Cryptography_HAS_DTLS = 1;
@@ -678,6 +714,7 @@ SRTP_PROTECTION_PROFILE * (*SSL_get_selected_srtp_profile)(SSL *) = NULL;
 
 #if CRYPTOGRAPHY_OPENSSL_LESS_THAN_111
 static const long Cryptography_HAS_TLSv1_3 = 0;
+static const long TLS1_3_VERSION = 0;
 static const long SSL_OP_NO_TLSv1_3 = 0;
 static const long SSL_VERIFY_POST_HANDSHAKE = 0;
 int (*SSL_CTX_set_ciphersuites)(SSL_CTX *, const char *) = NULL;
