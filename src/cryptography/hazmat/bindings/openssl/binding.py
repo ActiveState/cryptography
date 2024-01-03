@@ -161,6 +161,7 @@ class Binding(object):
                 # are ugly legacy, but we aren't going to get rid of them
                 # any time soon.
                 if cls.lib.CRYPTOGRAPHY_OPENSSL_300_OR_GREATER:
+                    #Disable Legacy Provider for Python2:
                     #cls._legacy_provider = cls.lib.OSSL_PROVIDER_load(
                     #    cls.ffi.NULL, b"legacy"
                     #)
