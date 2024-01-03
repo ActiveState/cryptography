@@ -4,12 +4,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 def cryptography_has_ec2m():
     return [
-        "EC_POINT_set_affine_coordinates_GF2m",
         "EC_POINT_get_affine_coordinates_GF2m",
-        "EC_POINT_set_compressed_coordinates_GF2m",
     ]
 
 
@@ -30,20 +27,6 @@ def cryptography_has_ssl3_method():
         "SSLv3_method",
         "SSLv3_client_method",
         "SSLv3_server_method",
-    ]
-
-
-def cryptography_has_102_verification():
-    return [
-        "X509_V_ERR_SUITE_B_INVALID_VERSION",
-        "X509_V_ERR_SUITE_B_INVALID_ALGORITHM",
-        "X509_V_ERR_SUITE_B_INVALID_CURVE",
-        "X509_V_ERR_SUITE_B_INVALID_SIGNATURE_ALGORITHM",
-        "X509_V_ERR_SUITE_B_LOS_NOT_ALLOWED",
-        "X509_V_ERR_SUITE_B_CANNOT_SIGN_P_384_WITH_P_256",
-        "X509_V_FLAG_SUITEB_128_LOS_ONLY",
-        "X509_V_FLAG_SUITEB_192_LOS",
-        "X509_V_FLAG_SUITEB_128_LOS",
     ]
 
 
@@ -89,28 +72,6 @@ def cryptography_has_evp_pkey_dhx():
 def cryptography_has_mem_functions():
     return [
         "Cryptography_CRYPTO_set_mem_functions",
-    ]
-
-
-def cryptography_has_sct():
-    return [
-        "SCT_get_version",
-        "SCT_get_log_entry_type",
-        "SCT_get0_log_id",
-        "SCT_get0_signature",
-        "SCT_get_timestamp",
-        "SCT_set_source",
-        "sk_SCT_new_null",
-        "sk_SCT_free",
-        "sk_SCT_num",
-        "sk_SCT_value",
-        "sk_SCT_push",
-        "SCT_LIST_free",
-        "SCT_new",
-        "SCT_set1_log_id",
-        "SCT_set_timestamp",
-        "SCT_set_version",
-        "SCT_set_log_entry_type",
     ]
 
 
@@ -299,6 +260,8 @@ def cryptography_has_300_fips():
         "EVP_default_properties_is_fips_enabled",
         "EVP_default_properties_enable_fips",
     ]
+
+
 # This is a mapping of
 # {condition: function-returning-names-dependent-on-that-condition} so we can
 # loop over them and delete unsupported names at runtime. It will be removed
@@ -309,7 +272,6 @@ CONDITIONAL_NAMES = {
     "Cryptography_HAS_RSA_OAEP_MD": cryptography_has_rsa_oaep_md,
     "Cryptography_HAS_RSA_OAEP_LABEL": cryptography_has_rsa_oaep_label,
     "Cryptography_HAS_SSL3_METHOD": cryptography_has_ssl3_method,
-    "Cryptography_HAS_102_VERIFICATION": cryptography_has_102_verification,
     "Cryptography_HAS_110_VERIFICATION_PARAMS": (
         cryptography_has_110_verification_params
     ),
@@ -319,7 +281,6 @@ CONDITIONAL_NAMES = {
     "Cryptography_HAS_SCRYPT": cryptography_has_scrypt,
     "Cryptography_HAS_EVP_PKEY_DHX": cryptography_has_evp_pkey_dhx,
     "Cryptography_HAS_MEM_FUNCTIONS": cryptography_has_mem_functions,
-    "Cryptography_HAS_SCT": cryptography_has_sct,
     "Cryptography_HAS_X509_STORE_CTX_GET_ISSUER": (
         cryptography_has_x509_store_ctx_get_issuer
     ),
