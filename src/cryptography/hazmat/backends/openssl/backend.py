@@ -622,7 +622,10 @@ class Backend(object):
         self.openssl_assert(res == 1)
         evp_pkey = self._rsa_cdata_to_evp_pkey(rsa_cdata)
 
-        return _RSAPublicKey(self, rsa_cdata, evp_pkey)
+        return _RSAPrivateKey(
+            self, rsa_cdata, evp_pkey, self._rsa_skip_check_key
+        )
+
 
     def generate_rsa_parameters_supported(self, public_exponent, key_size):
         return (
@@ -677,9 +680,7 @@ class Backend(object):
         self.openssl_assert(res == 1)
         evp_pkey = self._rsa_cdata_to_evp_pkey(rsa_cdata)
 
-        return _RSAPrivateKey(
-            self, rsa_cdata, evp_pkey, self._rsa_skip_check_key
-        )
+        return _RSAPublicKey(self, rsa_cdata, evp_pkey)
 
 
     def _create_evp_pkey_gc(self):

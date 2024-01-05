@@ -67,6 +67,7 @@ class RSAPrivateKeyWithSerialization(RSAPrivateKey):
         Returns the key serialized as bytes.
         """
 
+RSAPrivateKeyWithSerialization = RSAPrivateKey
 
 @six.add_metaclass(abc.ABCMeta)
 class RSAPublicKey(object):
