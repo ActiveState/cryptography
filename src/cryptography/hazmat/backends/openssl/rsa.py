@@ -354,11 +354,12 @@ class _RSAVerificationContext(object):
 
 @utils.register_interface(RSAPrivateKeyWithSerialization)
 class _RSAPrivateKey(object):
-    def __init__(self, backend, rsa_cdata, evp_pkey):
-        res = backend._lib.RSA_check_key(rsa_cdata)
-        if res != 1:
-            errors = backend._consume_errors_with_text()
-            raise ValueError("Invalid private key", errors)
+    def __init__(self, backend, rsa_cdata, evp_pkey, _skip_check_key):
+        if not _skip_check_key:
+            res = backend._lib.RSA_check_key(rsa_cdata)
+            if res != 1:
+                errors = backend._consume_errors_with_text()
+                raise ValueError("Invalid private key", errors)
 
         # Blinding is on by default in many versions of OpenSSL, but let's
         # just be conservative here.
