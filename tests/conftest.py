@@ -61,3 +61,12 @@ def backend(request):
 
     check_backend_support(openssl_backend, request)
     return openssl_backend
+
+
+@pytest.fixture
+def disable_rsa_checks(backend):
+    # Use this fixture to skip RSA key checks in tests that need the
+    # performance.
+    backend._rsa_skip_check_key = True
+    yield
+    backend._rsa_skip_check_key = False
