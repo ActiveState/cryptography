@@ -4,8 +4,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-from enum import Enum
+import typing
 
+from cryptography import utils
 from cryptography import x509
 from cryptography.hazmat.backends import _get_backend
 from cryptography.hazmat.primitives import hashes, serialization
@@ -21,6 +22,19 @@ def load_pem_pkcs7_certificates(data):
 def load_der_pkcs7_certificates(data):
     backend = _get_backend(None)
     return backend.load_der_pkcs7_certificates(data)
+
+
+_ALLOWED_PKCS7_HASH_TYPES = typing.Union[
+    hashes.SHA1,
+    hashes.SHA224,
+    hashes.SHA256,
+    hashes.SHA384,
+    hashes.SHA512,
+]
+
+_ALLOWED_PRIVATE_KEY_TYPES = typing.Union[
+    rsa.RSAPrivateKey, ec.EllipticCurvePrivateKey
+]
 
 
 class PKCS7SignatureBuilder(object):
@@ -123,7 +137,7 @@ class PKCS7SignatureBuilder(object):
         return backend.pkcs7_sign(self, encoding, options)
 
 
-class PKCS7Options(Enum):
+class PKCS7Options(utils.Enum):
     Text = "Add text/plain MIME type"
     Binary = "Don't translate input data into canonical MIME format"
     DetachedSignature = "Don't embed data in the PKCS7 structure"
