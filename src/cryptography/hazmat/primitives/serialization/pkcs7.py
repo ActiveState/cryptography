@@ -6,6 +6,8 @@ from __future__ import absolute_import, division, print_function
 
 import typing
 
+from enum import Enum
+
 from cryptography import utils
 from cryptography import x509
 from cryptography.hazmat.backends import _get_backend
@@ -137,7 +139,7 @@ class PKCS7SignatureBuilder(object):
         return backend.pkcs7_sign(self, encoding, options)
 
 
-class PKCS7Options(utils.Enum):
+class PKCS7Options(Enum):
     Text = "Add text/plain MIME type"
     Binary = "Don't translate input data into canonical MIME format"
     DetachedSignature = "Don't embed data in the PKCS7 structure"
