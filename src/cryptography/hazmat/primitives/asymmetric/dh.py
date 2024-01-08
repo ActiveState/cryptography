@@ -5,6 +5,7 @@
 
 import abc
 
+import six
 from cryptography.hazmat.backends import _get_backend
 
 _MIN_MODULUS_SIZE = 512
