@@ -24,7 +24,7 @@ class DHParameterNumbers(object):
             g, six.integer_types
         ):
             raise TypeError("p and g must be integers")
-        if q is not None and not isinstance(q, int):
+        if q is not None and not isinstance(q, six.integer_types):
             raise TypeError("q must be integer or None")
 
         if g < 2:
