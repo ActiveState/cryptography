@@ -5,13 +5,15 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+from datetime import datetime
 
 import pytest
 
 from cryptography import x509
 from cryptography.hazmat.backends.interfaces import DERSerializationBackend
 from cryptography.hazmat.backends.openssl.backend import _RC2
-from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
 from cryptography.hazmat.primitives.serialization.pkcs12 import (
     load_key_and_certificates,
@@ -20,7 +22,6 @@ from cryptography.hazmat.primitives.serialization.pkcs12 import (
 
 from .utils import load_vectors_from_file
 from ...doubles import DummyKeySerializationEncryption
-
 
 @pytest.mark.requires_backend_interface(interface=DERSerializationBackend)
 class TestPKCS12Loading(object):
@@ -60,20 +61,6 @@ class TestPKCS12Loading(object):
     def test_load_pkcs12_ec_keys(self, filename, password, backend):
         self._test_load_pkcs12_ec_keys(filename, password, backend)
 
-    @pytest.mark.parametrize(
-        ("filename", "password"),
-        [
-            ("cert-rc2-key-3des.p12", b"cryptography"),
-            ("no-password.p12", None),
-        ],
-    )
-    @pytest.mark.supported(
-        only_if=lambda backend: backend.cipher_supported(_RC2(), None),
-        skip_message="Does not support RC2",
-    )
-    @pytest.mark.skip_fips(reason="Unsupported algorithm in FIPS mode")
-    def test_load_pkcs12_ec_keys_rc2(self, filename, password, backend):
-        self._test_load_pkcs12_ec_keys(filename, password, backend)
 
     def test_load_pkcs12_cert_only(self, backend):
         cert = load_vectors_from_file(
@@ -166,6 +153,9 @@ def _load_ca(backend):
     return cert, key
 
 
+@pytest.mark.skip_fips(
+    reason="PKCS12 unsupported in FIPS mode. So much bad crypto in it."
+)
 class TestPKCS12Creation(object):
     @pytest.mark.parametrize("name", [None, b"name"])
     @pytest.mark.parametrize(
@@ -185,6 +175,7 @@ class TestPKCS12Creation(object):
             p12, password, backend
         )
         assert parsed_cert == cert
+        assert parsed_key is not None
         assert parsed_key.private_numbers() == key.private_numbers()
         assert parsed_more_certs == []
 
@@ -203,6 +194,7 @@ class TestPKCS12Creation(object):
             p12, None, backend
         )
         assert parsed_cert == cert
+        assert parsed_key is not None
         assert parsed_key.private_numbers() == key.private_numbers()
         assert parsed_more_certs == [cert2, cert3]
 
@@ -246,6 +238,7 @@ class TestPKCS12Creation(object):
             p12, None, backend
         )
         assert parsed_cert is None
+        assert parsed_key is not None
         assert parsed_key.private_numbers() == key.private_numbers()
         assert parsed_more_certs == []
 
@@ -269,3 +262,60 @@ class TestPKCS12Creation(object):
                 DummyKeySerializationEncryption(),
             )
         assert str(exc.value) == "Unsupported key encryption type"
+
+
+@pytest.mark.skip_fips(
+    reason="PKCS12 unsupported in FIPS mode. So much bad crypto in it."
+)
+def test_pkcs12_ordering():
+    """
+    In OpenSSL < 3.0.0 PKCS12 parsing reverses the order. However, we
+    accidentally thought it was **encoding** that did it, leading to bug
+    https://github.com/pyca/cryptography/issues/5872
+    This test ensures our ordering is correct going forward.
+    """
+
+    def make_cert(name):
+        key = ec.generate_private_key(ec.SECP256R1())
+        subject = x509.Name(
+            [
+                x509.NameAttribute(x509.NameOID.COMMON_NAME, name),
+            ]
+        )
+        now = datetime.utcnow()
+        cert = (
+            x509.CertificateBuilder()
+            .subject_name(subject)
+            .issuer_name(subject)
+            .public_key(key.public_key())
+            .serial_number(x509.random_serial_number())
+            .not_valid_before(now)
+            .not_valid_after(now)
+            .sign(key, hashes.SHA256())
+        )
+        return (key, cert)
+
+    # Make some certificates with distinct names.
+    a_name = u"A" * 20
+    b_name = u"B" * 20
+    c_name = u"C" * 20
+    a_key, a_cert = make_cert(a_name)
+    _, b_cert = make_cert(b_name)
+    _, c_cert = make_cert(c_name)
+
+    # Bundle them in a PKCS#12 file in order A, B, C.
+    p12 = serialize_key_and_certificates(
+        b"p12", a_key, a_cert, [b_cert, c_cert], serialization.NoEncryption()
+    )
+
+    # Parse them out. The API should report them in the same order.
+    (key, cert, certs) = load_key_and_certificates(p12, None)
+    assert cert == a_cert
+    assert certs == [b_cert, c_cert]
+
+    # The ordering in the PKCS#12 file itself should also match.
+    a_idx = p12.index(a_name.encode("utf-8"))
+    b_idx = p12.index(b_name.encode("utf-8"))
+    c_idx = p12.index(c_name.encode("utf-8"))
+
+    assert a_idx < b_idx < c_idx
