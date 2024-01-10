@@ -75,6 +75,28 @@ def cryptography_has_mem_functions():
     ]
 
 
+def cryptography_has_sct():
+    return [
+        "SCT_get_version",
+        "SCT_get_log_entry_type",
+        "SCT_get0_log_id",
+        "SCT_get0_signature",
+        "SCT_get_timestamp",
+        "SCT_set_source",
+        "sk_SCT_new_null",
+        "sk_SCT_free",
+        "sk_SCT_num",
+        "sk_SCT_value",
+        "sk_SCT_push",
+        "SCT_LIST_free",
+        "SCT_new",
+        "SCT_set1_log_id",
+        "SCT_set_timestamp",
+        "SCT_set_version",
+        "SCT_set_log_entry_type",
+    ]
+
+
 def cryptography_has_x509_store_ctx_get_issuer():
     return [
         "X509_STORE_get_get_issuer",
@@ -260,8 +282,6 @@ def cryptography_has_300_fips():
         "EVP_default_properties_is_fips_enabled",
         "EVP_default_properties_enable_fips",
     ]
-
-
 # This is a mapping of
 # {condition: function-returning-names-dependent-on-that-condition} so we can
 # loop over them and delete unsupported names at runtime. It will be removed
@@ -281,6 +301,7 @@ CONDITIONAL_NAMES = {
     "Cryptography_HAS_SCRYPT": cryptography_has_scrypt,
     "Cryptography_HAS_EVP_PKEY_DHX": cryptography_has_evp_pkey_dhx,
     "Cryptography_HAS_MEM_FUNCTIONS": cryptography_has_mem_functions,
+    "Cryptography_HAS_SCT": cryptography_has_sct,
     "Cryptography_HAS_X509_STORE_CTX_GET_ISSUER": (
         cryptography_has_x509_store_ctx_get_issuer
     ),
