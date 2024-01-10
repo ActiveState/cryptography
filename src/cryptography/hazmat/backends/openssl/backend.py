@@ -461,6 +461,10 @@ class Backend(object):
         # https://tools.ietf.org/html/rfc6960#section-4.4.5
         singleresp_handlers = _REVOKED_EXTENSION_HANDLERS.copy()
 
+        if self._lib.Cryptography_HAS_SCT:
+            ext_handlers.update(_EXTENSION_HANDLERS_SCT)
+            singleresp_handlers.update(_OCSP_SINGLERESP_EXTENSION_HANDLERS_SCT)
+
         self._certificate_extension_parser = _X509ExtensionParser(
             self,
             ext_count=self._lib.X509_get_ext_count,
