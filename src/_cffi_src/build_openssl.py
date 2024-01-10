@@ -89,6 +89,7 @@ ffi = build_ffi_for_binding(
         "cmac",
         "conf",
         "crypto",
+        "ct",
         "dh",
         "dsa",
         "ec",
