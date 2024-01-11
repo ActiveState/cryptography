@@ -268,12 +268,4 @@ CUSTOMIZATIONS = """
 X509_REVOKED *Cryptography_X509_REVOKED_dup(X509_REVOKED *rev) {
     return X509_REVOKED_dup(rev);
 }
-void X509_get0_signature(const ASN1_BIT_STRING **psig,
-                         const X509_ALGOR **palg, const X509 *x)
-{
-    if (psig)
-        *psig = x->signature;
-    if (palg)
-        *palg = x->sig_alg;
-}
 """
