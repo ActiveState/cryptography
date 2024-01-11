@@ -90,6 +90,7 @@ int X509_REQ_add_extensions(X509_REQ *, X509_EXTENSIONS *);
 X509_EXTENSIONS *X509_REQ_get_extensions(X509_REQ *);
 X509_ATTRIBUTE *X509_REQ_get_attr(const X509_REQ *, int);
 int X509_REQ_get_attr_by_OBJ(const X509_REQ *, const ASN1_OBJECT *, int);
+int X509_ATTRIBUTE_count(const X509_ATTRIBUTE *);
 int X509_REQ_add1_attr_by_OBJ(X509_REQ *, const ASN1_OBJECT *,
                               int, const unsigned char *, int);
 
