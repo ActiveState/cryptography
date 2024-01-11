@@ -139,7 +139,6 @@ from cryptography.hazmat.primitives.ciphers.algorithms import (
     ChaCha20,
     IDEA,
     SEED,
-    SM4,
     TripleDES,
 )
 from cryptography.hazmat.primitives.ciphers.modes import (
@@ -201,6 +200,7 @@ class Backend(object):
     }
     _fips_ciphers = (AES, TripleDES)
     _fips_hashes = (
+        hashes.SHA1,
         hashes.SHA224,
         hashes.SHA256,
         hashes.SHA384,
@@ -213,12 +213,6 @@ class Backend(object):
         hashes.SHA3_512,
         hashes.SHAKE128,
         hashes.SHAKE256,
-    )
-    _fips_ecdh_curves = (
-        ec.SECP224R1,
-        ec.SECP256R1,
-        ec.SECP384R1,
-        ec.SECP521R1,
     )
     _fips_rsa_min_key_size = 2048
     _fips_rsa_min_public_exponent = 65537
@@ -449,11 +443,6 @@ class Backend(object):
             ChaCha20, type(None), GetCipherByName("chacha20")
         )
         self.register_cipher_adapter(AES, XTS, _get_xts_cipher)
-        for mode_cls in [ECB, CBC, OFB, CFB, CTR]:
-            self.register_cipher_adapter(
-                SM4, mode_cls, GetCipherByName("sm4-{mode.name}")
-            )
-
 
     def _register_x509_ext_parsers(self):
         ext_handlers = _EXTENSION_HANDLERS_BASE.copy()
@@ -668,10 +657,7 @@ class Backend(object):
         self.openssl_assert(res == 1)
         evp_pkey = self._rsa_cdata_to_evp_pkey(rsa_cdata)
 
-        return _RSAPrivateKey(
-            self, rsa_cdata, evp_pkey, self._rsa_skip_check_key
-        )
-
+        return _RSAPrivateKey(self, rsa_cdata, evp_pkey)
 
     def load_rsa_public_numbers(self, numbers):
         rsa._check_public_key_components(numbers.e, numbers.n)
@@ -1066,7 +1052,7 @@ class Backend(object):
             errors = self._consume_errors_with_text()
             raise ValueError("Signing failed", errors)
 
-        return self._ossl2csr(x509_req)
+        return _CertificateSigningRequest(self, x509_req)
 
     def create_x509_certificate(self, builder, private_key, algorithm):
         if not isinstance(builder, x509.CertificateBuilder):
@@ -1750,9 +1736,7 @@ class Backend(object):
         ocsp_req = self._ffi.gc(ocsp_req, self._lib.OCSP_REQUEST_free)
         cert, issuer, algorithm = builder._request
         evp_md = self._evp_md_non_null_from_algorithm(algorithm)
-        ossl_cert = self._cert2ossl(cert)
-        ossl_issuer = self._cert2ossl(issuer)
-        certid = self._lib.OCSP_cert_to_id(evp_md, ossl_cert, ossl_issuer)
+        certid = self._lib.OCSP_cert_to_id(evp_md, cert._x509, issuer._x509)
         self.openssl_assert(certid != self._ffi.NULL)
         onereq = self._lib.OCSP_request_add0_id(ocsp_req, certid)
         self.openssl_assert(onereq != self._ffi.NULL)
@@ -1763,11 +1747,7 @@ class Backend(object):
             add_func=self._lib.OCSP_REQUEST_add_ext,
             gc=True,
         )
-
-        bio = self._create_mem_bio_gc()
-        res = self._lib.i2d_OCSP_REQUEST_bio(bio, ocsp_req)
-        self.openssl_assert(res > 0)
-        return ocsp.load_der_ocsp_request(self._read_mem_bio(bio))
+        return _OCSPRequest(self, ocsp_req)
 
     def _create_ocsp_basic_response(self, builder, private_key, algorithm):
         self._x509_check_signature_params(private_key, algorithm)
@@ -1778,12 +1758,8 @@ class Backend(object):
         evp_md = self._evp_md_non_null_from_algorithm(
             builder._response._algorithm
         )
-        ossl_cert = self._cert2ossl(builder._response._cert)
-        ossl_issuer = self._cert2ossl(builder._response._issuer)
         certid = self._lib.OCSP_cert_to_id(
             evp_md,
-            ossl_cert,
-            ossl_issuer,
             builder._response._cert._x509,
             builder._response._issuer._x509,
         )
@@ -1827,13 +1803,9 @@ class Backend(object):
         if responder_encoding is ocsp.OCSPResponderEncoding.HASH:
             flags |= self._lib.OCSP_RESPID_KEY
 
-        # This list is to keep the x509 values alive until end of function
-        ossl_certs = []
         if builder._certs is not None:
             for cert in builder._certs:
-                ossl_cert = self._cert2ossl(cert)
-                ossl_certs.append(ossl_cert)
-                res = self._lib.OCSP_basic_add1_cert(basic, ossl_cert)
+                res = self._lib.OCSP_basic_add1_cert(basic, cert._x509)
                 self.openssl_assert(res == 1)
 
         self._create_x509_extensions(
@@ -1844,10 +1816,9 @@ class Backend(object):
             gc=True,
         )
 
-        ossl_cert = self._cert2ossl(responder_cert)
         res = self._lib.OCSP_basic_sign(
             basic,
-            ossl_cert,
+            responder_cert._x509,
             private_key._evp_pkey,
             evp_md,
             self._ffi.NULL,
@@ -1878,19 +1849,9 @@ class Backend(object):
         )
         self.openssl_assert(ocsp_resp != self._ffi.NULL)
         ocsp_resp = self._ffi.gc(ocsp_resp, self._lib.OCSP_RESPONSE_free)
-        bio = self._create_mem_bio_gc()
-        res = self._lib.i2d_OCSP_RESPONSE_bio(bio, ocsp_resp)
-        self.openssl_assert(res > 0)
-        data = self._read_mem_bio(bio)
-        return ocsp.load_der_ocsp_response(data)
-
+        return _OCSPResponse(self, ocsp_resp)
 
     def elliptic_curve_exchange_algorithm_supported(self, algorithm, curve):
-        if self._fips_enabled and not isinstance(
-            curve, self._fips_ecdh_curves
-        ):
-            return False
-
         return self.elliptic_curve_supported(curve) and isinstance(
             algorithm, ec.ECDH
         )
@@ -2652,8 +2613,7 @@ class Backend(object):
                 x509 = self._lib.sk_X509_value(sk_x509, i)
                 self.openssl_assert(x509 != self._ffi.NULL)
                 x509 = self._ffi.gc(x509, self._lib.X509_free)
-                addl_cert = self._ossl2cert(x509)
-                additional_certificates.append(addl_cert)
+                additional_certificates.append(_Certificate(self, x509))
 
         return (key, cert, additional_certificates)
 
@@ -2692,23 +2652,19 @@ class Backend(object):
             sk_x509 = self._lib.sk_X509_new_null()
             sk_x509 = self._ffi.gc(sk_x509, self._lib.sk_X509_free)
 
-            # This list is to keep the x509 values alive until end of function
-            ossl_cas = []
-            for ca in cas:
-                ossl_ca = self._cert2ossl(ca)
-                ossl_cas.append(ossl_ca)
-                res = self._lib.sk_X509_push(sk_x509, ossl_ca)
+            # reverse the list when building the stack so that they're encoded
+            # in the order they were originally provided. it is a mystery
+            for ca in reversed(cas):
+                res = self._lib.sk_X509_push(sk_x509, ca._x509)
                 backend.openssl_assert(res >= 1)
 
         with self._zeroed_null_terminated_buf(password) as password_buf:
             with self._zeroed_null_terminated_buf(name) as name_buf:
-                ossl_cert = self._cert2ossl(cert) if cert else self._ffi.NULL
-                evp_pkey = key._evp_pkey if key else self._ffi.NULL
                 p12 = self._lib.PKCS12_create(
                     password_buf,
                     name_buf,
-                    evp_pkey,
-                    ossl_cert,
+                    key._evp_pkey if key else self._ffi.NULL,
+                    cert._x509 if cert else self._ffi.NULL,
                     sk_x509,
                     nid_key,
                     nid_cert,
@@ -2782,8 +2738,6 @@ class Backend(object):
             # refcount. On 1.1.0+ it returns 1 for success.
             self.openssl_assert(res >= 1)
             x509 = self._ffi.gc(x509, self._lib.X509_free)
-            cert = self._ossl2cert(x509)
-            certs.append(cert)
             certs.append(_Certificate(self, x509))
 
         return certs
@@ -2798,12 +2752,8 @@ class Backend(object):
         else:
             certs = self._lib.sk_X509_new_null()
             certs = self._ffi.gc(certs, self._lib.sk_X509_free)
-            # This list is to keep the x509 values alive until end of function
-            ossl_certs = []
             for cert in builder._additional_certs:
-                ossl_cert = self._cert2ossl(cert)
-                ossl_certs.append(ossl_cert)
-                res = self._lib.sk_X509_push(certs, ossl_cert)
+                res = self._lib.sk_X509_push(certs, cert._x509)
                 self.openssl_assert(res >= 1)
 
         if pkcs7.PKCS7Options.DetachedSignature in options:
@@ -2835,10 +2785,9 @@ class Backend(object):
             signer_flags |= self._lib.PKCS7_NOCERTS
 
         for certificate, private_key, hash_algorithm in builder._signers:
-            ossl_cert = self._cert2ossl(certificate)
             md = self._evp_md_non_null_from_algorithm(hash_algorithm)
             p7signerinfo = self._lib.PKCS7_sign_add_signer(
-                p7, ossl_cert, private_key._evp_pkey, md, signer_flags
+                p7, certificate._x509, private_key._evp_pkey, md, signer_flags
             )
             self.openssl_assert(p7signerinfo != self._ffi.NULL)
 
