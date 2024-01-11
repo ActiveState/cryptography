@@ -657,7 +657,9 @@ class Backend(object):
         self.openssl_assert(res == 1)
         evp_pkey = self._rsa_cdata_to_evp_pkey(rsa_cdata)
 
-        return _RSAPrivateKey(self, rsa_cdata, evp_pkey)
+        return _RSAPrivateKey(
+            self, rsa_cdata, evp_pkey, self._rsa_skip_check_key
+        )
 
     def load_rsa_public_numbers(self, numbers):
         rsa._check_public_key_components(numbers.e, numbers.n)
