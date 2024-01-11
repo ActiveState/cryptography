@@ -88,6 +88,7 @@ EVP_PKEY *X509_REQ_get_pubkey(X509_REQ *);
 int X509_REQ_print_ex(BIO *, X509_REQ *, unsigned long, unsigned long);
 int X509_REQ_add_extensions(X509_REQ *, X509_EXTENSIONS *);
 X509_EXTENSIONS *X509_REQ_get_extensions(X509_REQ *);
+int X509_REQ_get_attr_by_OBJ(const X509_REQ *, const ASN1_OBJECT *, int);
 int X509_REQ_add1_attr_by_OBJ(X509_REQ *, const ASN1_OBJECT *,
                               int, const unsigned char *, int);
 
@@ -261,6 +262,8 @@ int sk_ASN1_OBJECT_push(Cryptography_STACK_OF_ASN1_OBJECT *, ASN1_OBJECT *);
 /* these functions were added in 1.1.0 */
 const ASN1_INTEGER *X509_REVOKED_get0_serialNumber(const X509_REVOKED *);
 const ASN1_TIME *X509_REVOKED_get0_revocationDate(const X509_REVOKED *);
+void X509_CRL_get0_signature(const X509_CRL *, const ASN1_BIT_STRING **,
+                             const X509_ALGOR **);
 """
 
 CUSTOMIZATIONS = """
