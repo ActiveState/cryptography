@@ -88,6 +88,7 @@ EVP_PKEY *X509_REQ_get_pubkey(X509_REQ *);
 int X509_REQ_print_ex(BIO *, X509_REQ *, unsigned long, unsigned long);
 int X509_REQ_add_extensions(X509_REQ *, X509_EXTENSIONS *);
 X509_EXTENSIONS *X509_REQ_get_extensions(X509_REQ *);
+X509_ATTRIBUTE *X509_REQ_get_attr(const X509_REQ *, int);
 int X509_REQ_get_attr_by_OBJ(const X509_REQ *, const ASN1_OBJECT *, int);
 int X509_REQ_add1_attr_by_OBJ(X509_REQ *, const ASN1_OBJECT *,
                               int, const unsigned char *, int);
@@ -185,6 +186,7 @@ int X509_CRL_get0_by_serial(X509_CRL *, X509_REVOKED **, ASN1_INTEGER *);
 X509_REVOKED *X509_REVOKED_dup(X509_REVOKED *);
 X509_REVOKED *Cryptography_X509_REVOKED_dup(X509_REVOKED *);
 
+int i2d_re_X509_tbs(X509 *, unsigned char **);
 int X509_get_signature_nid(const X509 *);
 
 const X509_ALGOR *X509_get0_tbs_sigalg(const X509 *);
@@ -263,6 +265,10 @@ int sk_ASN1_OBJECT_push(Cryptography_STACK_OF_ASN1_OBJECT *, ASN1_OBJECT *);
 const ASN1_INTEGER *X509_REVOKED_get0_serialNumber(const X509_REVOKED *);
 const ASN1_TIME *X509_REVOKED_get0_revocationDate(const X509_REVOKED *);
 void X509_CRL_get0_signature(const X509_CRL *, const ASN1_BIT_STRING **,
+                             const X509_ALGOR **);
+int i2d_re_X509_REQ_tbs(X509_REQ *, unsigned char **);
+int i2d_re_X509_CRL_tbs(X509_CRL *, unsigned char **);
+void X509_REQ_get0_signature(const X509_REQ *, const ASN1_BIT_STRING **,
                              const X509_ALGOR **);
 """
 
