@@ -188,6 +188,9 @@ int X509_get_signature_nid(const X509 *);
 
 const X509_ALGOR *X509_get0_tbs_sigalg(const X509 *);
 
+void X509_get0_signature(const ASN1_BIT_STRING **,
+                         const X509_ALGOR **, const X509 *);
+
 long X509_get_version(X509 *);
 
 ASN1_TIME *X509_get_notBefore(X509 *);
@@ -264,5 +267,13 @@ CUSTOMIZATIONS = """
 /* Being kept around for pyOpenSSL */
 X509_REVOKED *Cryptography_X509_REVOKED_dup(X509_REVOKED *rev) {
     return X509_REVOKED_dup(rev);
+}
+void X509_get0_signature(const ASN1_BIT_STRING **psig,
+                         const X509_ALGOR **palg, const X509 *x)
+{
+    if (psig)
+        *psig = x->signature;
+    if (palg)
+        *palg = x->sig_alg;
 }
 """
