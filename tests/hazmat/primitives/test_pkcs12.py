@@ -71,7 +71,6 @@ class TestPKCS12Loading(object):
         only_if=lambda backend: backend.cipher_supported(_RC2(), None),
         skip_message="Does not support RC2",
     )
-    @pytest.mark.skip_fips(reason="Unsupported algorithm in FIPS mode")
     def test_load_pkcs12_ec_keys_rc2(self, filename, password, backend):
         self._test_load_pkcs12_ec_keys(filename, password, backend)
 
@@ -166,6 +165,9 @@ def _load_ca(backend):
     return cert, key
 
 
+@pytest.mark.skip_fips(
+    reason="PKCS12 unsupported in FIPS mode. So much bad crypto in it."
+)
 class TestPKCS12Creation(object):
     @pytest.mark.parametrize("name", [None, b"name"])
     @pytest.mark.parametrize(
@@ -185,6 +187,7 @@ class TestPKCS12Creation(object):
             p12, password, backend
         )
         assert parsed_cert == cert
+        assert parsed_key is not None
         assert parsed_key.private_numbers() == key.private_numbers()
         assert parsed_more_certs == []
 
@@ -203,6 +206,7 @@ class TestPKCS12Creation(object):
             p12, None, backend
         )
         assert parsed_cert == cert
+        assert parsed_key is not None
         assert parsed_key.private_numbers() == key.private_numbers()
         assert parsed_more_certs == [cert2, cert3]
 
@@ -246,6 +250,7 @@ class TestPKCS12Creation(object):
             p12, None, backend
         )
         assert parsed_cert is None
+        assert parsed_key is not None
         assert parsed_key.private_numbers() == key.private_numbers()
         assert parsed_more_certs == []
 
