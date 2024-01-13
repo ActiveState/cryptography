@@ -53,7 +53,8 @@ class _Poly1305Context(object):
 
     def finalize(self):
         buf = self._backend._ffi.new("unsigned char[]", _POLY1305_TAG_SIZE)
-        outlen = self._backend._ffi.new("size_t *")
+        # https://bugs.launchpad.net/ubuntu/+source/python-cryptography/+bug/1956514
+        outlen = self._backend._ffi.new("size_t *", _POLY1305_TAG_SIZE)
         res = self._backend._lib.EVP_DigestSignFinal(self._ctx, buf, outlen)
         self._backend.openssl_assert(res != 0)
         self._backend.openssl_assert(outlen[0] == _POLY1305_TAG_SIZE)
