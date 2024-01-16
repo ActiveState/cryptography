@@ -30,12 +30,3 @@ __all__ = [
     "__license__",
     "__copyright__",
 ]
-
-if sys.version_info[0] == 2:
-    warnings.warn(
-        "Python 2 is no longer supported by the Python core team. Support for "
-        "it is now deprecated in cryptography, and will be removed in the "
-        "next release.",
-        CryptographyDeprecationWarning,
-        stacklevel=2,
-    )
