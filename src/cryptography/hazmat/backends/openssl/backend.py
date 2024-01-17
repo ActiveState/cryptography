@@ -139,6 +139,7 @@ from cryptography.hazmat.primitives.ciphers.algorithms import (
     ChaCha20,
     IDEA,
     SEED,
+    SM4,
     TripleDES,
 )
 from cryptography.hazmat.primitives.ciphers.modes import (
@@ -214,6 +215,12 @@ class Backend(object):
         hashes.SHAKE128,
         hashes.SHAKE256,
     )
+    _fips_ecdh_curves = (
+        ec.SECP224R1,
+        ec.SECP256R1,
+        ec.SECP384R1,
+        ec.SECP521R1,
+    )
     _fips_rsa_min_key_size = 2048
     _fips_rsa_min_public_exponent = 65537
     _fips_dsa_min_modulus = 1 << 2048
@@ -246,6 +253,7 @@ class Backend(object):
         return "<OpenSSLBackend(version: {}, FIPS: {})>".format(
             self.openssl_version_text(), self._fips_enabled
         )
+
     def openssl_assert(self, ok, errors=None):
         return binding._openssl_assert(self._lib, ok, errors=errors)
 
@@ -256,10 +264,12 @@ class Backend(object):
             )
         else:
             mode = getattr(self._lib, "FIPS_mode", lambda: 0)()
+
         if mode == 0:
             # OpenSSL without FIPS pushes an error on the error stack
             self._lib.ERR_clear_error()
         return bool(mode)
+
     def _enable_fips(self):
         # This function enables FIPS mode for OpenSSL 3.0.0 on installs that
         # have the FIPS provider installed properly.
@@ -360,6 +370,7 @@ class Backend(object):
 
         evp_md = self._evp_md_from_algorithm(algorithm)
         return evp_md != self._ffi.NULL
+
     def scrypt_supported(self):
         if self._fips_enabled:
             return False
@@ -367,8 +378,10 @@ class Backend(object):
             return self._lib.Cryptography_HAS_SCRYPT == 1
 
     def hmac_supported(self, algorithm):
+        # FIPS mode still allows SHA1 for HMAC
         if self._fips_enabled and isinstance(algorithm, hashes.SHA1):
             return True
+
         return self.hash_supported(algorithm)
 
     def create_hash_ctx(self, algorithm):
@@ -383,6 +396,7 @@ class Backend(object):
                 and not isinstance(mode, (CBC, ECB))
             ):
                 return False
+
         try:
             adapter = self._cipher_registry[type(cipher), type(mode)]
         except KeyError:
@@ -443,6 +457,10 @@ class Backend(object):
             ChaCha20, type(None), GetCipherByName("chacha20")
         )
         self.register_cipher_adapter(AES, XTS, _get_xts_cipher)
+        for mode_cls in [ECB, CBC, OFB, CFB, CTR]:
+            self.register_cipher_adapter(
+                SM4, mode_cls, GetCipherByName("sm4-{mode.name}")
+            )
 
     def _register_x509_ext_parsers(self):
         ext_handlers = _EXTENSION_HANDLERS_BASE.copy()
@@ -619,7 +637,6 @@ class Backend(object):
             self, rsa_cdata, evp_pkey, self._rsa_skip_check_key
         )
 
-
     def generate_rsa_parameters_supported(self, public_exponent, key_size):
         return (
             public_exponent >= 3
@@ -673,7 +690,6 @@ class Backend(object):
         evp_pkey = self._rsa_cdata_to_evp_pkey(rsa_cdata)
 
         return _RSAPublicKey(self, rsa_cdata, evp_pkey)
-
 
     def _create_evp_pkey_gc(self):
         evp_pkey = self._lib.EVP_PKEY_new()
@@ -829,6 +845,7 @@ class Backend(object):
         if isinstance(padding, PKCS1v15):
             return True
         elif isinstance(padding, PSS) and isinstance(padding._mgf, MGF1):
+            # SHA1 is permissible in MGF1 in FIPS
             if self._fips_enabled and isinstance(
                 padding._mgf._algorithm, hashes.SHA1
             ):
@@ -1009,7 +1026,9 @@ class Backend(object):
 
         # Set subject public key.
         public_key = private_key.public_key()
-        res = self._lib.X509_REQ_set_pubkey(x509_req, public_key._evp_pkey)
+        res = self._lib.X509_REQ_set_pubkey(
+            x509_req, public_key._evp_pkey  # type: ignore[union-attr]
+        )
         self.openssl_assert(res == 1)
 
         # Add extensions.
@@ -1049,7 +1068,9 @@ class Backend(object):
             self.openssl_assert(res == 1)
 
         # Sign the request using the requester's private key.
-        res = self._lib.X509_REQ_sign(x509_req, private_key._evp_pkey, evp_md)
+        res = self._lib.X509_REQ_sign(
+            x509_req, private_key._evp_pkey, evp_md  # type: ignore[union-attr]
+        )
         if res == 0:
             errors = self._consume_errors_with_text()
             raise ValueError("Signing failed", errors)
@@ -1082,7 +1103,8 @@ class Backend(object):
 
         # Set the subject's public key.
         res = self._lib.X509_set_pubkey(
-            x509_cert, builder._public_key._evp_pkey
+            x509_cert,
+            builder._public_key._evp_pkey,  # type: ignore[union-attr]
         )
         self.openssl_assert(res == 1)
 
@@ -1117,7 +1139,11 @@ class Backend(object):
         self.openssl_assert(res == 1)
 
         # Sign the certificate with the issuer's private key.
-        res = self._lib.X509_sign(x509_cert, private_key._evp_pkey, evp_md)
+        res = self._lib.X509_sign(
+            x509_cert,
+            private_key._evp_pkey,  # type: ignore[union-attr]
+            evp_md,
+        )
         if res == 0:
             errors = self._consume_errors_with_text()
             raise ValueError("Signing failed", errors)
@@ -1350,7 +1376,11 @@ class Backend(object):
     def _evp_pkey_from_der_traditional_key(self, bio_data, password):
         key = self._lib.d2i_PrivateKey_bio(bio_data.bio, self._ffi.NULL)
         if key != self._ffi.NULL:
+            # In OpenSSL 3.0.0-alpha15 there exist scenarios where the key will
+            # successfully load but errors are still put on the stack. Tracked
+            # as https://github.com/openssl/openssl/issues/14996
             self._consume_errors()
+
             key = self._ffi.gc(key, self._lib.EVP_PKEY_free)
             if password is not None:
                 raise TypeError(
@@ -1518,7 +1548,11 @@ class Backend(object):
             else:
                 self._handle_key_loading_error()
 
+        # In OpenSSL 3.0.0-alpha15 there exist scenarios where the key will
+        # successfully load but errors are still put on the stack. Tracked
+        # as https://github.com/openssl/openssl/issues/14996
         self._consume_errors()
+
         evp_pkey = self._ffi.gc(evp_pkey, self._lib.EVP_PKEY_free)
 
         if password is not None and userdata.called == 0:
@@ -1541,6 +1575,7 @@ class Backend(object):
                 "incorrect format or it may be encrypted with an unsupported "
                 "algorithm."
             )
+
         elif (
             errors[0]._lib_reason_match(
                 self._lib.ERR_LIB_EVP, self._lib.EVP_R_BAD_DECRYPT
@@ -1856,6 +1891,11 @@ class Backend(object):
         return _OCSPResponse(self, ocsp_resp)
 
     def elliptic_curve_exchange_algorithm_supported(self, algorithm, curve):
+        if self._fips_enabled and not isinstance(
+            curve, self._fips_ecdh_curves
+        ):
+            return False
+
         return self.elliptic_curve_supported(curve) and isinstance(
             algorithm, ec.ECDH
         )
@@ -2823,6 +2863,8 @@ class Backend(object):
             # finalize.
             res = self._lib.PKCS7_final(p7, bio.bio, final_flags)
             self.openssl_assert(res == 1)
+            # OpenSSL 3.0 leaves a random bio error on the stack:
+            # https://github.com/openssl/openssl/issues/16681
             if self._lib.CRYPTOGRAPHY_OPENSSL_300_OR_GREATER:
                 self._consume_errors()
             res = self._lib.i2d_PKCS7_bio(bio_out, p7)
