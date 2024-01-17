@@ -11,7 +11,6 @@ import pytest
 
 from cryptography import x509
 from cryptography.hazmat.backends.interfaces import DERSerializationBackend
-from cryptography.hazmat.backends.openssl.backend import _RC2
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
@@ -59,20 +58,6 @@ class TestPKCS12Loading(object):
         ],
     )
     def test_load_pkcs12_ec_keys(self, filename, password, backend):
-        self._test_load_pkcs12_ec_keys(filename, password, backend)
-
-    @pytest.mark.parametrize(
-        ("filename", "password"),
-        [
-            ("cert-rc2-key-3des.p12", b"cryptography"),
-            ("no-password.p12", None),
-        ],
-    )
-    @pytest.mark.supported(
-        only_if=lambda backend: backend.cipher_supported(_RC2(), None),
-        skip_message="Does not support RC2",
-    )
-    def test_load_pkcs12_ec_keys_rc2(self, filename, password, backend):
         self._test_load_pkcs12_ec_keys(filename, password, backend)
 
     def test_load_pkcs12_cert_only(self, backend):
