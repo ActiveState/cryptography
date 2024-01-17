@@ -309,9 +309,9 @@ def test_pkcs12_ordering():
         return (key, cert)
 
     # Make some certificates with distinct names.
-    a_name = "A" * 20
-    b_name = "B" * 20
-    c_name = "C" * 20
+    a_name = u"A" * 20
+    b_name = u"B" * 20
+    c_name = u"C" * 20
     a_key, a_cert = make_cert(a_name)
     _, b_cert = make_cert(b_name)
     _, c_cert = make_cert(c_name)
