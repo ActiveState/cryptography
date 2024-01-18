@@ -6,9 +6,12 @@ Changelog
 3.3.2.1 - 2024-01-18
 ~~~~~~~~~~~~~~~~~~~~
 
-* Fixed a null-pointer-dereference and segfault that could occur when loading
-  certificates from a PKCS#7 bundle.  Credit to **pkuzco** for reporting the
-  issue. **CVE-2023-49083**
+* **SECURITY ISSUE** - Fixed a null-pointer-dereference and segfault that could
+  occur when loading certificates from a PKCS#7 bundle.  Credit to **pkuzco** 
+  for reporting the issue. **CVE-2023-49083**
+
+* **SECURITY ISSUE** - Fixed a bug where ``Cipher.update_into`` accepted Python
+  buffer protocol objects, but allowed immutable buffers. **CVE-2023-23931**
 
 .. _v3-3-2:
 
