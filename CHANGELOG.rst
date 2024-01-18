@@ -1,6 +1,15 @@
 Changelog
 =========
 
+.. _v3-3-2-1:
+
+3.3.2.1 - 2024-01-18
+~~~~~~~~~~~~~~~~~~~~
+
+* Fixed a null-pointer-dereference and segfault that could occur when loading
+  certificates from a PKCS#7 bundle.  Credit to **pkuzco** for reporting the
+  issue. **CVE-2023-49083**
+
 .. _v3-3-2:
 
 3.3.2 - 2021-02-07
