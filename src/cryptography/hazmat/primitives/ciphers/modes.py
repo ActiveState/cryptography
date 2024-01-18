@@ -79,6 +79,13 @@ def _check_iv_length(self, algorithm):
         )
 
 
+def _check_nonce_length(nonce, name, algorithm):
+    if len(nonce) * 8 != algorithm.block_size:
+        raise ValueError(
+            "Invalid nonce size ({}) for {}.".format(len(nonce), name)
+        )
+
+
 def _check_iv_and_key_length(self, algorithm):
     _check_aes_key_length(self, algorithm)
     _check_iv_length(self, algorithm)
@@ -179,12 +186,7 @@ class CTR(object):
 
     def validate_for_algorithm(self, algorithm):
         _check_aes_key_length(self, algorithm)
-        if len(self.nonce) * 8 != algorithm.block_size:
-            raise ValueError(
-                "Invalid nonce size ({}) for {}.".format(
-                    len(self.nonce), self.name
-                )
-            )
+        _check_nonce_length(self.nonce, self.name, algorithm)
 
 
 @utils.register_interface(Mode)
