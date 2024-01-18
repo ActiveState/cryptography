@@ -1,0 +1,32 @@
+ActiveState Cryptography 3.3.2.35 Release Notes
+###############################################
+
+This is a custom release of Cryptography for Python2 that brings forward limited support for OpenSSL3.
+
+The process to create this release was to work from the Python2 compatible version 3.3.2, and bring in as much code as we could from version 35 which was the first version to support OpenSSL3.  
+
+Source Repository
+*****************
+
+`Github: ActiveState/cryptography/tree/3.3.2.x-openssl3 <https://github.com/ActiveState/cryptography/tree/3.3.2.x-openssl3cryptography>`_
+
+
+Known Limitations
+*****************
+
+To simplify this process we have chosen not to support `OpenSSL Legacy Providers <https://www.openssl.org/docs/man3.1/man7/OSSL_PROVIDER-legacy.html>`_. As a result there is no expected support for the following Operations and Algorithms:
+MD2, MD4, MDC2, WHIRLPOOL, RIPEMD160, Blowfish, CAST, DES, IDEA, RC2, RC4, RC5, SEED, PBKDF1
+
+We don't expect this to impact modern use cases, but it shows up clearly in the tests which we have left on in the distribution.  
+
+
+Known Test Failures
+*******************
+
+Legacy Algorithm failures - As we don't support them, they fail. To test without the noise of the deprecated Algorithms simply `git apply` the patch in this folder.
+
+TestRSADecryption - We have observed this test failing for OpenSSL3 >= 3.2.0
+According to https://github.com/pyca/cryptography/issues/9950 this is expected, due to changes in OpenSSL 3.2.x.
+
+TestPKCS12Loading - We have observed test failures with PKCS12, these are related to RC2 deprecation, and will be removed.
+See https://github.com/pyca/cryptography/issues/5065 and https://github.com/pyca/cryptography/issues/2860 for more information.
