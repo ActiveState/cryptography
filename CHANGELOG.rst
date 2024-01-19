@@ -6,29 +6,9 @@ Changelog
 3.3.2.35 - 2024-01-18
 ~~~~~~~~~~~~~~~~~~~~
 
-Normalize this formatting:
-
-This is a custom release of Cryptography for Python2 that attempts to bring forward support for OpenSSL3 while perilously clutching back to the Python2 compatible code.
-
-Known limitations:
-
-This version of cryptography does not support OpenSSL Legacy Providers
-See: https://www.openssl.org/docs/man3.1/man7/OSSL_PROVIDER-legacy.html
-
-We have explicitly removed legacy support to streamline this work, as a result there is no expected support for the following Operations and Algorithms:
-MD2, MD4, MDC2, WHIRLPOOL, RIPEMD160, Blowfish, CAST, DES, IDEA, RC2, RC4, RC5, SEED, PBKDF1
-
-We don't expect this to impact any modern use cases.
-
-
-Known Test failures:
-
-TestRSADecryption - We have observed this test failing for OpenSSL3 >= 3.2.0
-According to https://github.com/pyca/cryptography/issues/9950 this is expected, due to changes in OpenSSL 3.2.x.
-
-TestPKCS12Loading - We have observed test failures with PKCS12, these are related to RC2 deprecation, and will be removed.
-https://github.com/pyca/cryptography/issues/5065
-https://github.com/pyca/cryptography/issues/2860
+* This is a custom release of Cryptography for Python2 that provides limited 
+  support for OpenSSL3. This version of cryptography does not support OpenSSL 
+  Legacy Providers. For Additional information see the ActiveState directory.
 
 .. _v3-3-2-1:
 
