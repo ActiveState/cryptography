@@ -1,6 +1,18 @@
 Changelog
 =========
 
+.. _v3-3-2-2:
+
+3.3.2+security.2 - 2026-05-28
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **SECURITY ISSUE** - Fixed missing EC public key subgroup membership
+  validation in all public key loading paths. An attacker could supply a
+  public key from a small-order subgroup to leak private key bits via ECDH
+  (CRT attack) or forge ECDSA signatures. Added ``EC_KEY_check_key()`` call
+  to CFFI bindings and all three EC public key construction paths in the
+  OpenSSL backend. **CVE-2026-26007** (GHSA-r6ph-v2qm-q3c2)
+
 .. _v3-3-2-1:
 
 3.3.2.1 - 2024-01-18
