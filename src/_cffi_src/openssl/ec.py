@@ -55,6 +55,7 @@ const EC_POINT *EC_KEY_get0_public_key(const EC_KEY *);
 int EC_KEY_set_public_key(EC_KEY *, const EC_POINT *);
 void EC_KEY_set_asn1_flag(EC_KEY *, int);
 int EC_KEY_generate_key(EC_KEY *);
+int EC_KEY_check_key(const EC_KEY *);
 int EC_KEY_set_public_key_affine_coordinates(EC_KEY *, BIGNUM *, BIGNUM *);
 
 EC_POINT *EC_POINT_new(const EC_GROUP *);
