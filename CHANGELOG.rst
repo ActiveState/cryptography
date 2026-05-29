@@ -1,6 +1,16 @@
 Changelog
 =========
 
+.. _security-assessment-cve-2026-34073:
+
+Security Assessment - CVE-2026-34073 (GHSA-m959-cc7f-wv43)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **NOT APPLICABLE** - Name constraint bypass on wildcard SANs during X.509
+  verification. The fix is in the x509.verification module
+  (CertificateVerificationContext) first introduced in cryptography 40.0.
+  This API does not exist in 3.3.2 — the vulnerable code path is absent.
+
 .. _security-assessment-cve-2024-0727:
 
 Security Assessment - CVE-2024-0727 (GHSA-9v9h-cgj8-h64p)
