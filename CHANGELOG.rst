@@ -1,6 +1,11 @@
 Changelog
 =========
 
+.. _v3-3-2-3:
+
+3.3.2+security.3 - 2026-05-29
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. _security-assessment-ghsa-5cpq-jm77-v8gr:
 
 Security Assessment - GHSA-5cpq-8wj7-hf2v, GHSA-jm77-qphf-c4w8, GHSA-v8gr-m533-ghj9
