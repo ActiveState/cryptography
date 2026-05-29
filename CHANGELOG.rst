@@ -1,6 +1,15 @@
 Changelog
 =========
 
+.. _security-assessment-cve-2024-0727:
+
+Security Assessment - CVE-2024-0727 (GHSA-9v9h-cgj8-h64p)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **NOT APPLICABLE** - OpenSSL PKCS#12 null pointer dereference. Fixed in
+  OpenSSL 3.0.13 / 3.1.5 / 3.2.1 (OpenSSL 3.x series only). Our build uses
+  system OpenSSL 1.1.x which is unaffected by this vulnerability.
+
 .. _security-assessment-cve-2023-50782:
 
 Security Assessment - CVE-2023-50782 (GHSA-3ww4-gg4f-jr7f)
