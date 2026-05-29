@@ -1,6 +1,15 @@
 Changelog
 =========
 
+.. _security-assessment-cve-2023-0286:
+
+Security Assessment - CVE-2023-0286 (GHSA-x4qr-2fvf-3mr5)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **NOT APPLICABLE** - OpenSSL X.509 GeneralName type confusion. The ActiveState
+  Platform build links against system OpenSSL (1.11.0.23), not bundled OpenSSL
+  wheels. System OpenSSL >= 1.1.1t contains the fix. No code change required.
+
 .. _v3-3-2-2:
 
 3.3.2+security.2 - 2026-05-28
