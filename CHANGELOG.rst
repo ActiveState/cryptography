@@ -1,6 +1,16 @@
 Changelog
 =========
 
+.. _security-assessment-cve-2023-50782:
+
+Security Assessment - CVE-2023-50782 (GHSA-3ww4-gg4f-jr7f)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **CANNOT FIX AT CFFI LAYER** - RSA PKCS#1 v1.5 Bleichenbacher timing oracle.
+  Constant-time RSA decryption requires OpenSSL 3.2+. Our build uses system
+  OpenSSL 1.1.x; no Python/CFFI code change can address this timing property.
+  Applications requiring constant-time PKCS#1v1.5 must migrate to a newer OpenSSL.
+
 .. _security-assessment-cve-2023-0286:
 
 Security Assessment - CVE-2023-0286 (GHSA-x4qr-2fvf-3mr5)
