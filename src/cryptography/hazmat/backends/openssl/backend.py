@@ -753,6 +753,11 @@ class Backend(object):
             ec_cdata = self._lib.EVP_PKEY_get1_EC_KEY(evp_pkey)
             self.openssl_assert(ec_cdata != self._ffi.NULL)
             ec_cdata = self._ffi.gc(ec_cdata, self._lib.EC_KEY_free)
+            # Backport of CVE-2026-26007: validate subgroup membership
+            res = self._lib.EC_KEY_check_key(ec_cdata)
+            if res != 1:
+                self._consume_errors()
+                raise ValueError("Invalid EC key.")
             return _EllipticCurvePublicKey(self, ec_cdata, evp_pkey)
         elif key_type in self._dh_types:
             dh_cdata = self._lib.EVP_PKEY_get1_DH(evp_pkey)
@@ -1610,6 +1615,11 @@ class Backend(object):
 
         res = self._lib.EC_KEY_set_public_key(ec_cdata, point)
         self.openssl_assert(res == 1)
+        # Backport of CVE-2026-26007: validate subgroup membership
+        res = self._lib.EC_KEY_check_key(ec_cdata)
+        if res != 1:
+            self._consume_errors()
+            raise ValueError("Invalid EC key.")
         evp_pkey = self._ec_cdata_to_evp_pkey(ec_cdata)
         return _EllipticCurvePublicKey(self, ec_cdata, evp_pkey)
 
@@ -1879,6 +1889,12 @@ class Backend(object):
         x = self._ffi.gc(self._int_to_bn(x), self._lib.BN_free)
         y = self._ffi.gc(self._int_to_bn(y), self._lib.BN_free)
         res = self._lib.EC_KEY_set_public_key_affine_coordinates(ctx, x, y)
+        if res != 1:
+            self._consume_errors()
+            raise ValueError("Invalid EC key.")
+
+        # Backport of CVE-2026-26007: validate subgroup membership
+        res = self._lib.EC_KEY_check_key(ctx)
         if res != 1:
             self._consume_errors()
             raise ValueError("Invalid EC key.")

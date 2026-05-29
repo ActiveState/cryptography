@@ -1,6 +1,70 @@
 Changelog
 =========
 
+.. _v3-3-2-3:
+
+3.3.2+security.3 - 2026-05-29
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _security-assessment-ghsa-5cpq-jm77-v8gr:
+
+Security Assessment - GHSA-5cpq-8wj7-hf2v, GHSA-jm77-qphf-c4w8, GHSA-v8gr-m533-ghj9
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **NOT APPLICABLE** - Three OpenSSL vulnerabilities affecting bundled-wheel
+  distributions only (OpenSSL 3.x series). Our build uses system OpenSSL 1.1.x
+  which is unaffected. No code change required.
+
+.. _security-assessment-cve-2026-34073:
+
+Security Assessment - CVE-2026-34073 (GHSA-m959-cc7f-wv43)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **NOT APPLICABLE** - Name constraint bypass on wildcard SANs during X.509
+  verification. The fix is in the x509.verification module
+  (CertificateVerificationContext) first introduced in cryptography 40.0.
+  This API does not exist in 3.3.2 — the vulnerable code path is absent.
+
+.. _security-assessment-cve-2024-0727:
+
+Security Assessment - CVE-2024-0727 (GHSA-9v9h-cgj8-h64p)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **NOT APPLICABLE** - OpenSSL PKCS#12 null pointer dereference. Fixed in
+  OpenSSL 3.0.13 / 3.1.5 / 3.2.1 (OpenSSL 3.x series only). Our build uses
+  system OpenSSL 1.1.x which is unaffected by this vulnerability.
+
+.. _security-assessment-cve-2023-50782:
+
+Security Assessment - CVE-2023-50782 (GHSA-3ww4-gg4f-jr7f)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **CANNOT FIX AT CFFI LAYER** - RSA PKCS#1 v1.5 Bleichenbacher timing oracle.
+  Constant-time RSA decryption requires OpenSSL 3.2+. Our build uses system
+  OpenSSL 1.1.x; no Python/CFFI code change can address this timing property.
+  Applications requiring constant-time PKCS#1v1.5 must migrate to a newer OpenSSL.
+
+.. _security-assessment-cve-2023-0286:
+
+Security Assessment - CVE-2023-0286 (GHSA-x4qr-2fvf-3mr5)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **NOT APPLICABLE** - OpenSSL X.509 GeneralName type confusion. The ActiveState
+  Platform build links against system OpenSSL (1.11.0.23), not bundled OpenSSL
+  wheels. System OpenSSL >= 1.1.1t contains the fix. No code change required.
+
+.. _v3-3-2-2:
+
+3.3.2+security.2 - 2026-05-28
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **SECURITY ISSUE** - Fixed missing EC public key subgroup membership
+  validation in all public key loading paths. An attacker could supply a
+  public key from a small-order subgroup to leak private key bits via ECDH
+  (CRT attack) or forge ECDSA signatures. Added ``EC_KEY_check_key()`` call
+  to CFFI bindings and all three EC public key construction paths in the
+  OpenSSL backend. **CVE-2026-26007** (GHSA-r6ph-v2qm-q3c2)
+
 .. _v3-3-2-1:
 
 3.3.2.1 - 2024-01-18
