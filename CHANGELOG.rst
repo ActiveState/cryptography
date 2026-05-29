@@ -1,6 +1,15 @@
 Changelog
 =========
 
+.. _security-assessment-ghsa-5cpq-jm77-v8gr:
+
+Security Assessment - GHSA-5cpq-8wj7-hf2v, GHSA-jm77-qphf-c4w8, GHSA-v8gr-m533-ghj9
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **NOT APPLICABLE** - Three OpenSSL vulnerabilities affecting bundled-wheel
+  distributions only (OpenSSL 3.x series). Our build uses system OpenSSL 1.1.x
+  which is unaffected. No code change required.
+
 .. _security-assessment-cve-2026-34073:
 
 Security Assessment - CVE-2026-34073 (GHSA-m959-cc7f-wv43)
