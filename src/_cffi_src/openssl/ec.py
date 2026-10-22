@@ -48,6 +48,7 @@ void EC_KEY_free(EC_KEY *);
 EC_KEY *EC_KEY_new_by_curve_name(int);
 const EC_GROUP *EC_KEY_get0_group(const EC_KEY *);
 int EC_GROUP_get_order(const EC_GROUP *, BIGNUM *, BN_CTX *);
+int EC_GROUP_get_cofactor(const EC_GROUP *, BIGNUM *, BN_CTX *);
 int EC_KEY_set_group(EC_KEY *, const EC_GROUP *);
 const BIGNUM *EC_KEY_get0_private_key(const EC_KEY *);
 int EC_KEY_set_private_key(EC_KEY *, const BIGNUM *);

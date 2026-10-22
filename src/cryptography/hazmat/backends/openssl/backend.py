@@ -753,11 +753,7 @@ class Backend(object):
             ec_cdata = self._lib.EVP_PKEY_get1_EC_KEY(evp_pkey)
             self.openssl_assert(ec_cdata != self._ffi.NULL)
             ec_cdata = self._ffi.gc(ec_cdata, self._lib.EC_KEY_free)
-            # Backport of CVE-2026-26007: validate subgroup membership
-            res = self._lib.EC_KEY_check_key(ec_cdata)
-            if res != 1:
-                self._consume_errors()
-                raise ValueError("Invalid EC key.")
+            self._ec_key_check_subgroup(ec_cdata)
             return _EllipticCurvePublicKey(self, ec_cdata, evp_pkey)
         elif key_type in self._dh_types:
             dh_cdata = self._lib.EVP_PKEY_get1_DH(evp_pkey)
@@ -1615,11 +1611,7 @@ class Backend(object):
 
         res = self._lib.EC_KEY_set_public_key(ec_cdata, point)
         self.openssl_assert(res == 1)
-        # Backport of CVE-2026-26007: validate subgroup membership
-        res = self._lib.EC_KEY_check_key(ec_cdata)
-        if res != 1:
-            self._consume_errors()
-            raise ValueError("Invalid EC key.")
+        self._ec_key_check_subgroup(ec_cdata)
         evp_pkey = self._ec_cdata_to_evp_pkey(ec_cdata)
         return _EllipticCurvePublicKey(self, ec_cdata, evp_pkey)
 
@@ -1836,6 +1828,27 @@ class Backend(object):
             )
         return curve_nid
 
+    def _ec_key_check_subgroup(self, ec_cdata):
+        """
+        Backport of CVE-2026-26007: reject a public key outside the prime-order
+        subgroup. Only curves with a cofactor other than 1 (in practice the
+        binary SECT curves) have such points; on prime-order curves every
+        valid point is in the subgroup, so skip the cost of EC_KEY_check_key
+        (a scalar multiplication) there, as upstream does.
+        """
+        group = self._lib.EC_KEY_get0_group(ec_cdata)
+        self.openssl_assert(group != self._ffi.NULL)
+        with self._tmp_bn_ctx() as bn_ctx:
+            cofactor = self._lib.BN_CTX_get(bn_ctx)
+            self.openssl_assert(cofactor != self._ffi.NULL)
+            res = self._lib.EC_GROUP_get_cofactor(group, cofactor, bn_ctx)
+            self.openssl_assert(res == 1)
+            if self._bn_to_int(cofactor) == 1:
+                return
+        if self._lib.EC_KEY_check_key(ec_cdata) != 1:
+            self._consume_errors()
+            raise ValueError("Invalid EC key.")
+
     @contextmanager
     def _tmp_bn_ctx(self):
         bn_ctx = self._lib.BN_CTX_new()
@@ -1893,11 +1906,7 @@ class Backend(object):
             self._consume_errors()
             raise ValueError("Invalid EC key.")
 
-        # Backport of CVE-2026-26007: validate subgroup membership
-        res = self._lib.EC_KEY_check_key(ctx)
-        if res != 1:
-            self._consume_errors()
-            raise ValueError("Invalid EC key.")
+        self._ec_key_check_subgroup(ctx)
 
         return ctx
 
