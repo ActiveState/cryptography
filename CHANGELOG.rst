@@ -1,6 +1,124 @@
 Changelog
 =========
 
+.. _v3-3-2-post4:
+
+3.3.2.post4 - 2026-10-22
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **Version ordering:** this release uses the ``.postN`` scheme. Under
+  PEP 440 it sorts after ``3.3.2+security.3`` but *below* the earlier
+  four-segment releases ``3.3.2.1`` and ``3.3.2.35`` (the separate OpenSSL 3
+  line). Do not serve ``3.3.2.1`` alongside this release: a range such as
+  ``>=3.3.2,<3.4`` would resolve to it and miss every fix since.
+
+.. _security-assessment-ghsa-537c-gmf6-5ccf:
+
+Security Assessment - GHSA-537c-gmf6-5ccf
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **NOT APPLICABLE TO THIS PACKAGE; REMEDIATE IN OPENSSL** - The advisory
+  covers the OpenSSL that pyca statically links into the wheels it publishes
+  on PyPI, which carried the issues in the OpenSSL security advisory of
+  2026-06-09. This build is compiled from the sdist and links the platform's
+  shared OpenSSL 1.1.1 at runtime; it bundles no OpenSSL, so no change to
+  cryptography can fix or mitigate these issues.
+
+  Unlike the earlier bundled-wheel advisories, OpenSSL 1.1.1 **is** affected
+  by five of the issues in this batch: CVE-2026-45447 (High, use-after-free
+  in ``PKCS7_verify()``), CVE-2026-7383 (Low, ASN.1 multibyte string
+  conversion), CVE-2026-34180 (Low, ASN.1 content parsing over-read),
+  CVE-2026-9076 and CVE-2026-42766 (Low, password-based CMS decryption).
+  CVE-2026-42768 (Bleichenbacher/Marvin variants in ``CMS_decrypt()`` and
+  ``PKCS7_decrypt()``) also lists 1.1.1 as affected, with no fix; the rest of
+  the batch affects OpenSSL 3.x only.
+
+  Reachability from cryptography 3.3.2: ``PKCS7_verify`` is bound in
+  ``_cffi_src/openssl/pkcs7.py`` but never called; there are no CMS bindings
+  at all, and nothing calls ``PKCS7_decrypt`` (the RSA side of 42768 is the
+  CVE-2023-50782 entry below); X.509 name encoding passes plain ``V_ASN1_*``
+  types, never ``MBSTRING_FLAG``, so ``ASN1_mbstring_*`` (7383) is not
+  reached. The one direct ASN.1 decode of caller-supplied bytes is
+  ``d2i_ASN1_TYPE`` on ``OtherName.value`` (``encode_asn1.py``), which is
+  in scope for CVE-2026-34180. Upstream fixed 1.1.1 only in 1.1.1zh (premium
+  support), so remediation must come from the OpenSSL that cryptography
+  links against, not from this package.
+
+.. _v3-3-2-3:
+
+3.3.2+security.3 - 2026-05-29
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _security-assessment-ghsa-5cpq-jm77-v8gr:
+
+Security Assessment - GHSA-5cpq-8wj7-hf2v, GHSA-jm77-qphf-c4w8, GHSA-v8gr-m533-ghj9
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **NOT APPLICABLE** - These advisories cover the OpenSSL bundled in pyca's
+  wheels (fixed in wheels 41.0.0, 41.0.3 and 41.0.4). The underlying OpenSSL
+  issues: CVE-2023-2650 (fixed in 1.1.1u), CVE-2023-3446 and CVE-2023-3817
+  (1.1.1v), CVE-2023-4807 (1.1.1w), and CVE-2023-2975 (OpenSSL 3.x only).
+  This build bundles no OpenSSL and links the Platform's OpenSSL 1.1.1w, which
+  contains all of these fixes. A build against an OpenSSL 1.1.1 older than
+  1.1.1w would be affected. No code change required.
+
+.. _security-assessment-cve-2026-34073:
+
+Security Assessment - CVE-2026-34073 (GHSA-m959-cc7f-wv43)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **NOT APPLICABLE** - Name constraint bypass on wildcard SANs during X.509
+  verification. The fix is in the x509.verification module
+  (CertificateVerificationContext) first introduced in cryptography 40.0.
+  This API does not exist in 3.3.2 — the vulnerable code path is absent.
+
+.. _security-assessment-cve-2024-0727:
+
+Security Assessment - CVE-2024-0727 (GHSA-9v9h-cgj8-h64p)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **CANNOT FIX IN THIS PACKAGE; REMEDIATE IN OPENSSL** - OpenSSL PKCS#12
+  NULL pointer dereference on a malformed file. Per OpenSSL's advisory of
+  2024-01-25, OpenSSL 3.2, 3.1, 3.0, 1.1.1 *and* 1.0.2 are affected; 1.1.1 is
+  fixed only in 1.1.1x (premium support). The Platform's OpenSSL is 1.1.1w,
+  whose one ActiveState patch is unrelated (.pdb install), so it is
+  vulnerable. The issue is reachable from this package:
+  ``pkcs12.load_key_and_certificates()`` calls ``d2i_PKCS12_bio`` and
+  ``PKCS12_parse``, so an application that loads an untrusted ``.p12`` can
+  be crashed (denial of service). The fix belongs in the linked OpenSSL.
+  (This entry previously said "not applicable"; that was wrong.)
+
+.. _security-assessment-cve-2023-50782:
+
+Security Assessment - CVE-2023-50782 (GHSA-3ww4-gg4f-jr7f)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **CANNOT FIX AT CFFI LAYER** - RSA PKCS#1 v1.5 Bleichenbacher timing oracle.
+  Constant-time RSA decryption requires OpenSSL 3.2+. Our build uses system
+  OpenSSL 1.1.x; no Python/CFFI code change can address this timing property.
+  Applications requiring constant-time PKCS#1v1.5 must migrate to a newer OpenSSL.
+
+.. _security-assessment-cve-2023-0286:
+
+Security Assessment - CVE-2023-0286 (GHSA-x4qr-2fvf-3mr5)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **NOT APPLICABLE** - OpenSSL X.509 GeneralName type confusion. The ActiveState
+  Platform build links against system OpenSSL (1.11.0.23), not bundled OpenSSL
+  wheels. System OpenSSL >= 1.1.1t contains the fix. No code change required.
+
+.. _v3-3-2-2:
+
+3.3.2+security.2 - 2026-05-28
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **SECURITY ISSUE** - Fixed missing EC public key subgroup membership
+  validation in all public key loading paths. An attacker could supply a
+  public key from a small-order subgroup to leak private key bits via ECDH
+  (CRT attack) or forge ECDSA signatures. Added ``EC_KEY_check_key()`` call
+  to CFFI bindings and all three EC public key construction paths in the
+  OpenSSL backend. **CVE-2026-26007** (GHSA-r6ph-v2qm-q3c2)
+
 .. _v3-3-2-1:
 
 3.3.2.1 - 2024-01-18

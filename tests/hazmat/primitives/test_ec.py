@@ -7,6 +7,7 @@ from __future__ import absolute_import, division, print_function
 import binascii
 import itertools
 import os
+import textwrap
 from binascii import hexlify
 
 import pytest
@@ -1304,3 +1305,44 @@ class TestECDH(object):
 
         with pytest.raises(ValueError):
             key.exchange(ec.ECDH(), public_key)
+
+
+@pytest.mark.requires_backend_interface(interface=EllipticCurveBackend)
+def test_invalid_sect_public_keys(backend):
+    # CVE-2026-26007 (GHSA-r6ph-v2qm-q3c2), ported from upstream 0eebb9dbb6:
+    # each construction path must reject a point outside the prime-order
+    # subgroup of a curve with cofactor > 1.
+    _skip_curve_unsupported(backend, ec.SECT571K1())
+    public_numbers = ec.EllipticCurvePublicNumbers(1, 1, ec.SECT571K1())
+    with pytest.raises(ValueError):
+        public_numbers.public_key(backend)
+
+    point = binascii.unhexlify(
+        b"0400000000000000000000000000000000000000000000000000000000000000000"
+        b"0000000000000000000000000000000000000000000000000000000000000000000"
+        b"0000000000010000000000000000000000000000000000000000000000000000000"
+        b"0000000000000000000000000000000000000000000000000000000000000000000"
+        b"0000000000000000000001"
+    )
+    with pytest.raises(ValueError):
+        ec.EllipticCurvePublicKey.from_encoded_point(ec.SECT571K1(), point)
+
+    der = binascii.unhexlify(
+        b"3081a7301006072a8648ce3d020106052b810400260381920004000000000000000"
+        b"0000000000000000000000000000000000000000000000000000000000000000000"
+        b"0000000000000000000000000000000000000000000000000000000000000100000"
+        b"0000000000000000000000000000000000000000000000000000000000000000000"
+        b"0000000000000000000000000000000000000000000000000000000000000000000"
+        b"00001"
+    )
+    with pytest.raises(ValueError):
+        serialization.load_der_public_key(der, backend)
+
+    pem = textwrap.dedent("""-----BEGIN PUBLIC KEY-----
+    MIGnMBAGByqGSM49AgEGBSuBBAAmA4GSAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE=
+    -----END PUBLIC KEY-----""").encode()
+    with pytest.raises(ValueError):
+        serialization.load_pem_public_key(pem, backend)
