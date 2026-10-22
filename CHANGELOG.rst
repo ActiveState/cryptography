@@ -54,9 +54,13 @@ Security Assessment - GHSA-537c-gmf6-5ccf
 Security Assessment - GHSA-5cpq-8wj7-hf2v, GHSA-jm77-qphf-c4w8, GHSA-v8gr-m533-ghj9
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* **NOT APPLICABLE** - Three OpenSSL vulnerabilities affecting bundled-wheel
-  distributions only (OpenSSL 3.x series). Our build uses system OpenSSL 1.1.x
-  which is unaffected. No code change required.
+* **NOT APPLICABLE** - These advisories cover the OpenSSL bundled in pyca's
+  wheels (fixed in wheels 41.0.0, 41.0.3 and 41.0.4). The underlying OpenSSL
+  issues: CVE-2023-2650 (fixed in 1.1.1u), CVE-2023-3446 and CVE-2023-3817
+  (1.1.1v), CVE-2023-4807 (1.1.1w), and CVE-2023-2975 (OpenSSL 3.x only).
+  This build bundles no OpenSSL and links the Platform's OpenSSL 1.1.1w, which
+  contains all of these fixes. A build against an OpenSSL 1.1.1 older than
+  1.1.1w would be affected. No code change required.
 
 .. _security-assessment-cve-2026-34073:
 
@@ -73,9 +77,16 @@ Security Assessment - CVE-2026-34073 (GHSA-m959-cc7f-wv43)
 Security Assessment - CVE-2024-0727 (GHSA-9v9h-cgj8-h64p)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* **NOT APPLICABLE** - OpenSSL PKCS#12 null pointer dereference. Fixed in
-  OpenSSL 3.0.13 / 3.1.5 / 3.2.1 (OpenSSL 3.x series only). Our build uses
-  system OpenSSL 1.1.x which is unaffected by this vulnerability.
+* **CANNOT FIX IN THIS PACKAGE; REMEDIATE IN OPENSSL** - OpenSSL PKCS#12
+  NULL pointer dereference on a malformed file. Per OpenSSL's advisory of
+  2024-01-25, OpenSSL 3.2, 3.1, 3.0, 1.1.1 *and* 1.0.2 are affected; 1.1.1 is
+  fixed only in 1.1.1x (premium support). The Platform's OpenSSL is 1.1.1w,
+  whose one ActiveState patch is unrelated (.pdb install), so it is
+  vulnerable. The issue is reachable from this package:
+  ``pkcs12.load_key_and_certificates()`` calls ``d2i_PKCS12_bio`` and
+  ``PKCS12_parse``, so an application that loads an untrusted ``.p12`` can
+  be crashed (denial of service). The fix belongs in the linked OpenSSL.
+  (This entry previously said "not applicable"; that was wrong.)
 
 .. _security-assessment-cve-2023-50782:
 
