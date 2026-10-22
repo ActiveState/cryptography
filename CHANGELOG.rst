@@ -1,6 +1,49 @@
 Changelog
 =========
 
+.. _v3-3-2-post4:
+
+3.3.2.post4 - 2026-10-22
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **Version ordering:** this release uses the ``.postN`` scheme. Under
+  PEP 440 it sorts after ``3.3.2+security.3`` but *below* the earlier
+  four-segment releases ``3.3.2.1`` and ``3.3.2.35`` (the separate OpenSSL 3
+  line). Do not serve ``3.3.2.1`` alongside this release: a range such as
+  ``>=3.3.2,<3.4`` would resolve to it and miss every fix since.
+
+.. _security-assessment-ghsa-537c-gmf6-5ccf:
+
+Security Assessment - GHSA-537c-gmf6-5ccf
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **NOT APPLICABLE TO THIS PACKAGE; REMEDIATE IN OPENSSL** - The advisory
+  covers the OpenSSL that pyca statically links into the wheels it publishes
+  on PyPI, which carried the issues in the OpenSSL security advisory of
+  2026-06-09. This build is compiled from the sdist and links the platform's
+  shared OpenSSL 1.1.1 at runtime; it bundles no OpenSSL, so no change to
+  cryptography can fix or mitigate these issues.
+
+  Unlike the earlier bundled-wheel advisories, OpenSSL 1.1.1 **is** affected
+  by five of the issues in this batch: CVE-2026-45447 (High, use-after-free
+  in ``PKCS7_verify()``), CVE-2026-7383 (Low, ASN.1 multibyte string
+  conversion), CVE-2026-34180 (Low, ASN.1 content parsing over-read),
+  CVE-2026-9076 and CVE-2026-42766 (Low, password-based CMS decryption).
+  CVE-2026-42768 (Bleichenbacher/Marvin variants in ``CMS_decrypt()`` and
+  ``PKCS7_decrypt()``) also lists 1.1.1 as affected, with no fix; the rest of
+  the batch affects OpenSSL 3.x only.
+
+  Reachability from cryptography 3.3.2: ``PKCS7_verify`` is bound in
+  ``_cffi_src/openssl/pkcs7.py`` but never called; there are no CMS bindings
+  at all, and nothing calls ``PKCS7_decrypt`` (the RSA side of 42768 is the
+  CVE-2023-50782 entry below); X.509 name encoding passes plain ``V_ASN1_*``
+  types, never ``MBSTRING_FLAG``, so ``ASN1_mbstring_*`` (7383) is not
+  reached. The one direct ASN.1 decode of caller-supplied bytes is
+  ``d2i_ASN1_TYPE`` on ``OtherName.value`` (``encode_asn1.py``), which is
+  in scope for CVE-2026-34180. Upstream fixed 1.1.1 only in 1.1.1zh (premium
+  support), so remediation must come from the OpenSSL that cryptography
+  links against, not from this package.
+
 .. _v3-3-2-3:
 
 3.3.2+security.3 - 2026-05-29
