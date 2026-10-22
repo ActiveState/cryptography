@@ -1,6 +1,36 @@
 Changelog
 =========
 
+.. _v3-3-2-post4:
+
+3.3.2.post4 - 2026-10-22
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _security-assessment-ghsa-537c-gmf6-5ccf:
+
+Security Assessment - GHSA-537c-gmf6-5ccf
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **NOT APPLICABLE TO THIS PACKAGE; REMEDIATE IN OPENSSL** - The advisory
+  covers the OpenSSL that pyca statically links into the wheels it publishes
+  on PyPI, which carried the issues in the OpenSSL security advisory of
+  2026-06-09. This build is compiled from the sdist and links the platform's
+  shared OpenSSL 1.1.1 at runtime; it bundles no OpenSSL, so no change to
+  cryptography can fix or mitigate these issues.
+
+  Unlike the earlier bundled-wheel advisories, OpenSSL 1.1.1 **is** affected
+  by five of the issues in this batch: CVE-2026-45447 (High, use-after-free
+  in ``PKCS7_verify()``), CVE-2026-7383 (Low, ASN.1 multibyte string
+  conversion), CVE-2026-34180 (Low, ASN.1 content parsing over-read),
+  CVE-2026-9076 and CVE-2026-42766 (Low, password-based CMS decryption). The
+  rest of the batch affects OpenSSL 3.x only. cryptography 3.3.2 does not call
+  ``PKCS7_verify()`` or the CMS APIs (they are exposed only as raw CFFI
+  bindings), but ``load_pem_pkcs7_certificates()``,
+  ``load_der_pkcs7_certificates()`` and X.509 parsing do reach OpenSSL's ASN.1
+  decoder. Upstream fixed these for 1.1.1 only in 1.1.1zh (premium support), so
+  remediation must come from the OpenSSL that cryptography links against, not
+  from this package.
+
 .. _v3-3-2-3:
 
 3.3.2+security.3 - 2026-05-29
