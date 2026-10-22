@@ -22,14 +22,21 @@ Security Assessment - GHSA-537c-gmf6-5ccf
   by five of the issues in this batch: CVE-2026-45447 (High, use-after-free
   in ``PKCS7_verify()``), CVE-2026-7383 (Low, ASN.1 multibyte string
   conversion), CVE-2026-34180 (Low, ASN.1 content parsing over-read),
-  CVE-2026-9076 and CVE-2026-42766 (Low, password-based CMS decryption). The
-  rest of the batch affects OpenSSL 3.x only. cryptography 3.3.2 does not call
-  ``PKCS7_verify()`` or the CMS APIs (they are exposed only as raw CFFI
-  bindings), but ``load_pem_pkcs7_certificates()``,
-  ``load_der_pkcs7_certificates()`` and X.509 parsing do reach OpenSSL's ASN.1
-  decoder. Upstream fixed these for 1.1.1 only in 1.1.1zh (premium support), so
-  remediation must come from the OpenSSL that cryptography links against, not
-  from this package.
+  CVE-2026-9076 and CVE-2026-42766 (Low, password-based CMS decryption).
+  CVE-2026-42768 (Bleichenbacher/Marvin variants in ``CMS_decrypt()`` and
+  ``PKCS7_decrypt()``) also lists 1.1.1 as affected, with no fix; the rest of
+  the batch affects OpenSSL 3.x only.
+
+  Reachability from cryptography 3.3.2: ``PKCS7_verify`` is bound in
+  ``_cffi_src/openssl/pkcs7.py`` but never called; there are no CMS bindings
+  at all, and nothing calls ``PKCS7_decrypt`` (the RSA side of 42768 is the
+  CVE-2023-50782 entry below); X.509 name encoding passes plain ``V_ASN1_*``
+  types, never ``MBSTRING_FLAG``, so ``ASN1_mbstring_*`` (7383) is not
+  reached. The one direct ASN.1 decode of caller-supplied bytes is
+  ``d2i_ASN1_TYPE`` on ``OtherName.value`` (``encode_asn1.py``), which is
+  in scope for CVE-2026-34180. Upstream fixed 1.1.1 only in 1.1.1zh (premium
+  support), so remediation must come from the OpenSSL that cryptography
+  links against, not from this package.
 
 .. _v3-3-2-3:
 
