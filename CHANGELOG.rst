@@ -6,6 +6,12 @@ Changelog
 3.3.2.post4 - 2026-10-22
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
+* **Version ordering:** this release uses the ``.postN`` scheme. Under
+  PEP 440 it sorts after ``3.3.2+security.3`` but *below* the earlier
+  four-segment releases ``3.3.2.1`` and ``3.3.2.35`` (the separate OpenSSL 3
+  line). Do not serve ``3.3.2.1`` alongside this release: a range such as
+  ``>=3.3.2,<3.4`` would resolve to it and miss every fix since.
+
 .. _security-assessment-ghsa-537c-gmf6-5ccf:
 
 Security Assessment - GHSA-537c-gmf6-5ccf
